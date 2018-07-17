@@ -8,25 +8,12 @@ scenes:
         // Dand can see the landing site and @son
         // etc.
         objectives:
-            *A [@dawn @son]  `You must get to the landing site`:
-                when near  @dawn  @land: 
-                    tell #all `Dawn has arrived at site`
-                when near  @son  @land: 
-                    tell #all `Dawn has arrived at site`
-                when near @son @land and near @dawn @land:
-                    complete
+            *A [@dawn @son]  `You must get to the landing site`
 
-        interactions:
-            ?A [@dawn @son] "Get to the landing site" search  @land
+       
 
 
 
     $one :
         objectives: 
-            *A [@dawn @son]  `You must get to the landing site`:
-                when near  @dawn  @land: 
-                    tell #all `Dawn has arrived at site`
-                when near  @son  @land: 
-                    tell #all `Dawn has arrived at site`
-                when near @son @land and near @dawn @land:
-                    complete
+            *A [@dawn @son]  `You must get to the landing site`

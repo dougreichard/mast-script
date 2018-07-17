@@ -106,36 +106,36 @@ module.exports = ($) => {
         $.SUBRULE($.roleCastIdList)
        // $.SUBRULE($.seachConditionals)
     })
-/*
-    $.RULE("whenBlock", ()=> {
-        $.CONSUME(toks.WhenSec)
-        // $.SUBRULE($.whenCond)
-        $.SUBRULE($.whenCmdBlock)
-    })
-    $.RULE("whenCmdBlock", ()=> {
+
+    // $.RULE("whenBlock", ()=> {
+    //     $.CONSUME(toks.WhenSec)
+    //     // $.SUBRULE($.whenCond)
+    //     $.SUBRULE($.whenCmdBlock)
+    // })
+    $.RULE("ifElseCmdBlock", ()=> {
         $.OR([
-            {ALT: ()=> $.SUBRULE($.whenCmd)},
+            {ALT: ()=> $.SUBRULE($.ifElseCmd)},
             {ALT: ()=> {
                     $.CONSUME(toks.Colon);
                     $.CONSUME(toks.Indent)
-                    $.MANY(()=> $.SUBRULE1($.whenCmd))
+                    $.MANY(()=> $.SUBRULE1($.ifElseCmd))
                     $.CONSUME(toks.Outdent)
                 }
             },
         ])
     })
-    $.RULE("whenCmd", ()=> {
+    $.RULE("ifElseCmd", ()=> {
         $.OR([
             {ALT: ()=> $.SUBRULE($.tellCmd)},
             // {ALT: ()=> $.SUBRULE($.sceneCmd)},
             // {ALT: ()=> $.SUBRULE($.setCmd)},
-            // {ALT: ()=> $.SUBRULE($.delayCmd)},
+            {ALT: ()=> $.SUBRULE($.delayCmd)},
             // {ALT: ()=> $.SUBRULE($.completeCmd)},
             // {ALT: ()=> $.SUBRULE($.failCmd)},
             // {ALT: ()=> $.SUBRULE($.showCmd)},
             // {ALT: ()=> $.SUBRULE($.askCmd)}
         ])
     })
-*/
+
 
 }

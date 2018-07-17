@@ -1,7 +1,7 @@
 "use strict"
-const spsLexer = require('./sps-lex')
+const spsLexer = require('../sps-lex')
 const expect = require("chai").expect
-const spsParse = require("./sps-parse")
+const spsParse = require("../sps-parse")
 const fs = require("fs")
 
 function parseFragment(input, fragment) {

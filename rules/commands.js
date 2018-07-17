@@ -60,6 +60,6 @@ module.exports = ($) => {
     $.RULE('delayCmd', ()=> {
         $.CONSUME(toks.DelayCmd)
         $.SUBRULE($.timeUnits);
-        $.SUBRULE($.whenCmdBlock)
+        $.SUBRULE($.ifElseCmdBlock)
     })
 }

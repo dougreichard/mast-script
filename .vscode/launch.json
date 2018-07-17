@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Parse Tests",
+            "name": "Mocha Tests",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [
                 "-u",
@@ -15,46 +15,9 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/sps-parse_test"
+                "${workspaceFolder}/test"
             ],
             "internalConsoleOptions": "openOnSessionStart"
-        },
-        
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Ou Tests",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-            "args": [
-                "-u",
-                "tdd",
-                "--timeout",
-                "999999",
-                "--colors",
-                "${workspaceFolder}/pyEx_test"
-            ],
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Lex Tests",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-            "args": [
-                "-u",
-                "tdd",
-                "--timeout",
-                "999999",
-                "--colors",
-                "${workspaceFolder}/sps-lex_test"
-            ],
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/sps_test.js"
         }
     ]
 }

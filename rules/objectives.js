@@ -24,7 +24,7 @@ module.exports = ($) => {
     $.RULE('objective', ()=>{
         $.OR([
             {ALT: ()=> $.CONSUME(toks.ObjectiveId)},
-            {ALT: ()=> $.CONSUME(toks.Identity)}
+            {ALT: ()=> $.CONSUME(toks.Identifier)}
         ])
         
         $.SUBRULE($.roleCastIdList);

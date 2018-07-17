@@ -1,7 +1,7 @@
 "use strict"
 
 const expect = require("chai").expect
-const indentationExample = require("./sps-lex")
+const indentationExample = require("../sps-lex")
 const { tokenMatcher } = require("chevrotain")
 const tokenize = indentationExample.tokenize
 
