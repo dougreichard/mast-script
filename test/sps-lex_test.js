@@ -71,15 +71,33 @@ describe("The Chevrotain Lexer ability to lex python like indentation.", () => {
 })
 
 describe("Sps lex.", () => {
-    it("Can Lex time units", () => {
+    it("Can Lex time minutes", () => {
         let input ="delay 1m"
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
         expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).to.be.true
-        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.IntegerLiteral))
+        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.MinuteLiteral))
             .to.be.true
-        expect(tokenMatcher(actualTokens[2], indentationExample.tokens.Minutes))
+        
+    })
+    it("Can Lex time seconds", () => {
+        let input ="delay 1s"
+
+        let lexResult = tokenize(input)
+        let actualTokens = lexResult.tokens
+        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).to.be.true
+        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.SecondLiteral))
+            .to.be.true
+        
+    })
+    it("Can Lex time ms", () => {
+        let input ="delay 1ms"
+
+        let lexResult = tokenize(input)
+        let actualTokens = lexResult.tokens
+        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).to.be.true
+        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.MillisecondLiteral))
             .to.be.true
         
     })

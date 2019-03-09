@@ -3,17 +3,18 @@ const spsLexer = require('../sps-lex')
 const toks = spsLexer.tokens
 
 module.exports = ($) => {
-    $.RULE('objectives', ()=>{
+    $.RULE('objectives', () => {
         $.CONSUME(toks.ObjectiveSec);
         $.OR([
-            {ALT: () => $.SUBRULE($.objective)},
-            {ALT: ()=> {
-                $.CONSUME(toks.Colon);
-                $.CONSUME(toks.Indent);
-                $.MANY(()=>{
-                    $.SUBRULE1($.objective)
-                })
-                $.CONSUME(toks.Outdent);
+            { ALT: () => $.SUBRULE($.objective) },
+            {
+                ALT: () => {
+                    $.CONSUME(toks.Colon);
+                    $.CONSUME(toks.Indent);
+                    $.MANY(() => {
+                        $.SUBRULE1($.objective)
+                    })
+                    $.CONSUME(toks.Outdent);
                 }
             }
         ])
@@ -21,15 +22,13 @@ module.exports = ($) => {
     // objective-command 
     // : OBJECTIVE_ID role-cast-list string show-state? COLON (objective-when-block)?
     // ;
-    $.RULE('objective', ()=>{
+    $.RULE('objective', () => {
         $.OR([
-            {ALT: ()=> $.CONSUME(toks.ObjectiveId)},
-            {ALT: ()=> $.CONSUME(toks.Identifier)}
+            { ALT: () => $.CONSUME(toks.ObjectiveId) },
+            { ALT: () => $.CONSUME(toks.Identifier) }
         ])
-        
         $.SUBRULE($.roleCastIdList);
         $.CONSUME(toks.StringLiteral);
     })
-
-
+    
 }

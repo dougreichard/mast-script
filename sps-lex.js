@@ -163,6 +163,10 @@ const matchOutdent = _.partialRight(matchIndentBase, "outdent")
 
 tok("NumberLiteral", /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/);
 tok("IntegerLiteral", /\d+/);
+tok("MinuteLiteral", /(\d+)(m)/);
+tok("SecondLiteral", /(\d+)(s)/);
+tok("MillisecondLiteral", /(\d+)(ms)/);
+
 tok("SingleLineComment", /[/]+.*/, { group: Lexer.SKIPPED })
 tok("BlockComment", /\/[*]([^*]|([*][^/]))*[*]\//, { group: Lexer.SKIPPED })
 //tok("DoubleStringLiteral", /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/);
@@ -174,9 +178,9 @@ const Identifier = tok("Identifier", /[a-zA-Z]\w*/);
 
 //
 
-tok("Minutes", /m/, { longer_alt: Identifier });
-tok("Seconds", /s/, { longer_alt: Identifier });
-tok("MilliSeconds", /ms/, { longer_alt: Identifier });
+//tok("Minutes", /minutes/, { longer_alt: Identifier });
+//tok("Seconds", /s/, { longer_alt: Identifier });
+//tok("MilliSeconds", /ms/, { longer_alt: Identifier });
 
 tok("HasOp", /has/, { longer_alt: Identifier });
 tok("TellCmd", /tell/, { longer_alt: Identifier });
@@ -223,23 +227,26 @@ tok("LeaveBlock", /leave/, { longer_alt: Identifier });
 tok("ObjectiveBlock", /objective/, { longer_alt: Identifier });
 tok("ObjectiveSec", /objectives/, { longer_alt: Identifier });
 
-tok("WhenSec", /when/, { longer_alt: Identifier });
+// tok("WhenSec", /when/, { longer_alt: Identifier });
 // Objective Commands
 tok("CompleteCmd", /complete/, { longer_alt: Identifier });
 tok("FailCmd", /fail/, { longer_alt: Identifier });
 tok("HideCmd", /hide/, { longer_alt: Identifier });
 tok("ShowCmd", /show/, { longer_alt: Identifier });
 tok("AskCmd", /ask/, { longer_alt: Identifier });
+tok("ClickCmd", /click/, { longer_alt: Identifier });
 // Conditions
 tok("NearCond", /near/, { longer_alt: Identifier });
 tok("HasRoleCond", /has-role/, { longer_alt: Identifier });
 tok("AndCond", /and/, { longer_alt: Identifier });
+tok("OrCond", /or/, { longer_alt: Identifier });
 tok("DurationCond", /duration/, { longer_alt: Identifier });
 // 
 tok("InteractionBlock", /interaction/, { longer_alt: Identifier });
 tok("InteractionSec", /interactions/, { longer_alt: Identifier });
 
 tok("FormBlock", /form/, { longer_alt: Identifier });
+tok("KeysBlock", /keys/, { longer_alt: Identifier });
 // form elements
 tok("InputElement", /input/, { longer_alt: Identifier });
 tok("LabelElement", /label/, { longer_alt: Identifier });
@@ -248,6 +255,7 @@ tok("SubmitElement", /submit/, { longer_alt: Identifier });
 //
 tok("If", /if/, { longer_alt: Identifier });
 tok("Else", /else/, { longer_alt: Identifier });
+tok("Always", /always/, { longer_alt: Identifier });
 
 // operators
 tok("IsOp", /is/, { longer_alt: Identifier });
@@ -263,6 +271,7 @@ tok("LE_Op", /<=/);
 tok("AssignAdd", /\+=/);
 tok("AssignSub", /-=/);
 tok("AssignMul", /\*=/);
+tok("AssignPercent", /\%=/);
 
 /////////////////////////////////////
 // These rule must be first

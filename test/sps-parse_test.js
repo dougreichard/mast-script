@@ -95,7 +95,8 @@ describe("Parse states", () => {
 `
 startup:
     tell #role1 "Hello"
-    delay 5s tell "World"
+    delay 5s:
+       tell "World"
 
 `
         let out = parseFragment(input, 'startup');
@@ -117,7 +118,8 @@ enter:
 `
 leave:
     tell #role1 "Hello"
-    delay 5s tell "world"
+    delay 5s:
+      tell "world"
 `
         let out = parseFragment(input, 'leave');
         expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
@@ -137,24 +139,23 @@ describe("Parse files", () => {
         "cast", 
         "comments",
         "delay",
-        //"interaction",
-        // "linecontinue",
+        "interaction",
+        //"linecontinue",
         "media",
         "objective",
         "roles",
-        // "scene-play",
+        "scene-play",
         "scenes",
         "scriptid",
         "search",
-        //"set",
+        "set",
         "startup-enter-leave",
         "tell",
         "story"
     ])  {
         parseFile('parse', fn)        
     }
-
-    
+ 
 })
 
 

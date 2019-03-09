@@ -20,7 +20,7 @@ scenes:
             // Assign
             set @cast1.data = 5
             set [@dawn @son].XP = 100
-            set [@dawn @son] = {XP: 100, HP: 10}
+            set [@dawn @son] = {"XP": 100, HP: 10}
             set @dawn.XP = #security.XP 
 
             // Add

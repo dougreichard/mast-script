@@ -45,42 +45,35 @@ module.exports = ($) => {
             { ALT: () => $.CONSUME(toks.CastId) }
         ])
     })
-
-
-
-    ////////////////////////////////
-    // Time stuff
-    // minutes
-    // : INT MINUTES_STATEMENT
-    // ;
-    $.RULE('minutes', () => {
-        $.CONSUME(toks.IntegerLiteral);
-        $.CONSUME(toks.Minutes)
+    
+    $.RULE("ObjectiveIdList", () => {
+        $.OR([
+            {
+                ALT: () => {
+                    $.CONSUME(toks.LBracket);
+                    $.MANY(() => {
+                        $.CONSUME(toks.ObjectiveId)
+                    })
+                    $.CONSUME(toks.RBracket);
+                }
+            },
+            { ALT: () => $.CONSUME2(toks.ObjectiveId) },
+        ])
     })
 
-    // seconds
-    //     : INT SECONDS_STATEMENT
-    //     ;
-    $.RULE('seconds', () => {
-        $.CONSUME(toks.IntegerLiteral);
-        $.CONSUME(toks.Seconds)
-    })
 
-    // milliseconds
-    //     : INT MILLISECONDS_STATEMENT
-    //     ;
-    $.RULE('milliseconds', () => {
-        $.CONSUME(toks.IntegerLiteral);
-        $.CONSUME(toks.MilliSeconds)
-    })
+
     $.RULE('mTime', () => {
-        $.SUBRULE($.minutes)
-        $.OPTION(()=> $.SUBRULE($.seconds))
-        $.OPTION1(()=> $.SUBRULE($.milliseconds))
+        $.CONSUME(toks.MinuteLiteral)
+        $.OPTION(()=> $.CONSUME(toks.SecondLiteral))
+        $.OPTION1(()=> $.CONSUME(toks.MillisecondLiteral))
     })
     $.RULE('sTime', () => {
-        $.SUBRULE($.seconds)
-        $.OPTION(()=> $.SUBRULE($.milliseconds))
+        $.CONSUME(toks.SecondLiteral)
+        $.OPTION(()=> $.CONSUME(toks.MillisecondLiteral))
+    })
+    $.RULE('msTime', () => {
+        $.CONSUME(toks.MillisecondLiteral)
     })
 
     // time-unit
@@ -95,7 +88,7 @@ module.exports = ($) => {
         $.OR([
             { ALT: () => $.SUBRULE($.mTime) },
             { ALT: () => $.SUBRULE($.sTime) },
-            { ALT: () => $.SUBRULE($.milliseconds) }
+            { ALT: () => $.SUBRULE($.msTime) }
         ])
 
 

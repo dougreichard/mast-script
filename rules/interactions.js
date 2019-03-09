@@ -1,8 +1,11 @@
 const spsLexer = require('../sps-lex')
+const submitRules = require('./submit');
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
+
 module.exports = ($) => {
+    submitRules($)
     $.RULE('interactions', () => {
         $.CONSUME(toks.InteractionSec);
         $.OR([
@@ -22,7 +25,7 @@ module.exports = ($) => {
 
     // interaction-command 
     //     : INTERACTION_STATEMENT INTERACTION_ID? role-cast-list? string?  FORM
-    //     | INTERACTION_STATEMENT INTERACTION_ID? role-cast-list? string?  SEACH
+    //     | INTERACTION_STATEMENT INTERACTION_ID? role-cast-list? string?  SEARCH
     //     ;
     $.RULE('interaction', () => {
         $.CONSUME(toks.InteractionId);
@@ -36,14 +39,57 @@ module.exports = ($) => {
         $.OR([
             { ALT: () => $.SUBRULE($.form) },
             { ALT: () => $.SUBRULE($.searchCmd) },
+            { ALT: () => $.SUBRULE($.completeObjCmd) },
+            { ALT: () => $.SUBRULE($.KeysInteraction) },
+            { ALT: () => $.SUBRULE($.MediaInteraction) },
         ])
+    })
+
+    $.RULE('KeysInteraction', () => {
+        $.CONSUME(toks.KeysBlock);
+        $.CONSUME(toks.Colon)
+        $.CONSUME(toks.Indent)                  
+        $.MANY(()=> {
+            $.CONSUME(toks.StringLiteral)
+            $.SUBRULE($.IfElseCmdBlock)
+         })
+         $.CONSUME(toks.Outdent)       
+    })
+
+    $.RULE('MediaInteraction', () => {
+        $.CONSUME(toks.MediaSec);
+        $.CONSUME(toks.MediaId);
+        $.CONSUME(toks.Colon)
+        $.CONSUME(toks.Indent)                  
+        $.MANY(()=> {
+            $.SUBRULE($.ClickData)
+            $.SUBRULE($.IfElseCmdBlock)
+         })
+         $.CONSUME(toks.Outdent)       
+    })
+    $.RULE('ClickData', () => {
+        $.CONSUME(toks.ClickCmd);
+        $.CONSUME1(toks.IntegerLiteral);
+        $.CONSUME2(toks.Comma);
+        $.CONSUME3(toks.IntegerLiteral);
+        $.CONSUME4(toks.Comma);
+        $.CONSUME5(toks.IntegerLiteral);
+        $.CONSUME6(toks.Comma);
+        $.CONSUME7(toks.IntegerLiteral);
+        
+    })
+
+    $.RULE('completeObjCmd', () => {
+        $.CONSUME(toks.CompleteCmd);
+        $.SUBRULE($.ObjectiveIdList)
+        $.SUBRULE($.IfElseCmdBlock)
     })
 
 
     $.RULE('form', () => {
         $.CONSUME(toks.FormBlock);
         $.SUBRULE($.formElementBlock)
-        $.SUBRULE($.ifElseBlock)
+        //$.SUBRULE($.submitFormElement)
     })
     $.RULE('formElementBlock', () => {
         $.OR([
@@ -52,27 +98,14 @@ module.exports = ($) => {
                 ALT: () => {
                     $.CONSUME(toks.Colon)
                     $.CONSUME(toks.Indent)
-                    $.SUBRULE1($.formElement)
+                    $.MANY(()=>$.SUBRULE1($.formElement))
                     $.CONSUME(toks.Outdent)
                 }
             }
         ])
     })
 
-    $.RULE('ifElseBlock', () => {
-        $.OPTION(() => {
-            $.SUBRULE($.ifStatement)
-            $.MANY(() => $.SUBRULE($.elseStatement))
-        })
-    })
-
-    $.RULE('ifStatement', () => {
-        $.CONSUME($.If)
-    })
-
-    $.RULE('elseStatement', () => {
-        $.CONSUME($.Else)
-    })
+  
 
 
     $.RULE('formElement', () => {
@@ -85,17 +118,34 @@ module.exports = ($) => {
     })
     $.RULE('inputFormElement', () => {
         $.CONSUME(toks.InputElement)
+        $.CONSUME(toks.Identifier)
     })
     $.RULE('labelFormElement', () => {
         $.CONSUME(toks.LabelElement)
+        $.CONSUME(toks.StringLiteral);
     }) 
     $.RULE('selectFormElement', () => {
         $.CONSUME(toks.SelectElement)
-    })
-    $.RULE('submitFormElement', () => {
-        $.CONSUME(toks.SubmitElement)
+        $.CONSUME(toks.Identifier)
+        $.SUBRULE($.selectChoiceList)
     })
 
+    $.RULE('selectChoiceList', () => {
+            $.CONSUME(toks.Colon);
+            $.CONSUME(toks.Indent)
+            $.MANY(()=> $.SUBRULE1($.selectChoice))
+            $.CONSUME(toks.Outdent)
+    })
+
+    $.RULE("selectChoice", ()=> {
+        $.OR([
+            {ALT: ()=> $.CONSUME(toks.RoleId)},
+            {ALT: ()=> $.CONSUME(toks.CastId)},
+            {ALT: ()=> $.CONSUME(toks.StringLiteral)}
+        ])
+    })
+
+    
     // NOTE: Change this from original the interaction has the who is search
     /// the search block has the FOR who
     // search-command
@@ -112,30 +162,5 @@ module.exports = ($) => {
     //     // $.SUBRULE($.whenCond)
     //     $.SUBRULE($.whenCmdBlock)
     // })
-    $.RULE("ifElseCmdBlock", ()=> {
-        $.OR([
-            {ALT: ()=> $.SUBRULE($.ifElseCmd)},
-            {ALT: ()=> {
-                    $.CONSUME(toks.Colon);
-                    $.CONSUME(toks.Indent)
-                    $.MANY(()=> $.SUBRULE1($.ifElseCmd))
-                    $.CONSUME(toks.Outdent)
-                }
-            },
-        ])
-    })
-    $.RULE("ifElseCmd", ()=> {
-        $.OR([
-            {ALT: ()=> $.SUBRULE($.tellCmd)},
-            // {ALT: ()=> $.SUBRULE($.sceneCmd)},
-            // {ALT: ()=> $.SUBRULE($.setCmd)},
-            {ALT: ()=> $.SUBRULE($.delayCmd)},
-            // {ALT: ()=> $.SUBRULE($.completeCmd)},
-            // {ALT: ()=> $.SUBRULE($.failCmd)},
-            // {ALT: ()=> $.SUBRULE($.showCmd)},
-            // {ALT: ()=> $.SUBRULE($.askCmd)}
-        ])
-    })
-
-
+    
 }

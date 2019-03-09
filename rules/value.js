@@ -24,7 +24,11 @@ module.exports = ($) => {
     })
 
     $.RULE("objectItem", () => {
-        $.CONSUME(toks.StringLiteral)
+        $.OR([
+            {ALT: ()=> $.CONSUME(toks.StringLiteral)},
+            {ALT: ()=> $.CONSUME(toks.Identifier)}
+        ])
+        
         $.CONSUME(toks.Colon)
         $.SUBRULE($.value)
     })

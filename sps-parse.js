@@ -9,6 +9,7 @@ const scriptRules = require('./rules/script');
 const sceneRules = require('./rules/scene');
 const valueRules = require('./rules/value');
 const cmdRules = require('./rules/commands');
+const conRules = require('./rules/conditions');
 const stateRules = require('./rules/states');
 const objectiveRules = require('./rules/objectives');
 const interactionRules = require('./rules/interactions');
@@ -21,8 +22,10 @@ class SpsParser extends Parser {
         roleRules(this);
         castRules(this);
         cmdRules(this);
+        conRules(this);
         stateRules(this);
         objectiveRules(this);
+        
         interactionRules(this);
         sceneRules(this);
         // maybe this should be yaml
