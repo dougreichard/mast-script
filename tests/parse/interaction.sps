@@ -41,7 +41,7 @@ scenes:
                     `Rifle`
                     `Knife`
                 submit  `Select`:
-                    if a.b.c: 
+                    if @a.b.c: 
                         tell 's'
                     always:
                         tell "if weapon is `Rifle` and  @to.roles has #medic:"
@@ -53,9 +53,9 @@ scenes:
                     `Rifle`
                     `Knife`
                 submit  `Select`: 
-                    if (weapon == `Rifle`) and  (to.roles has-role #medic):
+                    if (?C.weapon == `Rifle`) and  (?C.roles has-role #medic):
                         tell @to `Medics cannot have a rifle`
-                    else if (weapon == `Knife`) and  (to.roles has-role #security):
+                    else if (?C.weapon == `Knife`) and  (?C.roles has-role #security):
                         tell @to `Security cannot have a rifle`
                     else:
                         complete *A
@@ -72,9 +72,9 @@ scenes:
             ?F #human `sss` media !room:
                 click 123,456,12,50:
                     tell 'g'
-                    set a.c = 2
-                    set a.c %= 2
-                    set a.c += 2
-                    set a.c *= 2
-                    set a.c -= 2
+                    set @a.c = 2
+                    set #a.c %= 2
+                    set *a.c += 2
+                    set ?a.c *= 2
+                    set $a.c -= 2
                     

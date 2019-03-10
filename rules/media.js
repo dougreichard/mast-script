@@ -7,8 +7,9 @@ module.exports = ($) => {
     //     : MEDIA_ID  alias-string
     //     ;
     $.RULE('mediaDef', () => {
-        $.CONSUME(toks.MediaId);
-        $.SUBRULE($.aliasString);
+        let id = $.CONSUME(toks.MediaId).image;
+        let uri = $.SUBRULE($.aliasString).image;
+        $.addMedia({id, uri})
     })
     // media-definition-block
     //     : MEDIA_STATEMENT COLON INDENT media-definition* DEDENT

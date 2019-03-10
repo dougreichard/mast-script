@@ -1,0 +1,3264 @@
+
+<!-- This is a generated file -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    background-color: hsl(30, 20%, 95%)
+  }
+</style>
+
+
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@3.6.1/diagrams/diagrams.css'>
+
+<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/main.js'></script>
+
+<div id="diagrams" align="center"></div>    
+
+<script>
+    window.serializedGrammar = [
+  {
+    "type": "Rule",
+    "name": "roleIdList",
+    "orgText": "() => {\r\n        let roles = []\r\n        $.OR([\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                       roles.push($.CONSUME(toks.RoleId).image)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            },\r\n            { ALT: () => roles.push($.CONSUME2(toks.RoleId).image) },\r\n        ])\r\n        return roles;\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "RoleId",
+                    "label": "RoleId",
+                    "idx": 0,
+                    "pattern": "#\\w+"
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "RBracket",
+                "label": "RBracket",
+                "idx": 0,
+                "pattern": "\\]"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "RoleId",
+                "label": "RoleId",
+                "idx": 2,
+                "pattern": "#\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roleCastIdList",
+    "orgText": "() => {\r\n        let list = []\r\n        $.OR([\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        list.push($.SUBRULE($.roleCastId))\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            },\r\n            { ALT: () => list.push($.SUBRULE1($.roleCastId)) },\r\n        ])\r\n        return list\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "roleCastId",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "RBracket",
+                "label": "RBracket",
+                "idx": 0,
+                "pattern": "\\]"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastId",
+                "idx": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roleCastId",
+    "orgText": "() => {\r\n        let id \r\n        $.OR([\r\n            { ALT: () => id  = $.CONSUME(toks.RoleId).image },\r\n            { ALT: () => id = $.CONSUME(toks.CastId).image }\r\n        ])\r\n        return id\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "RoleId",
+                "label": "RoleId",
+                "idx": 0,
+                "pattern": "#\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "CastId",
+                "label": "CastId",
+                "idx": 0,
+                "pattern": "@\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "ObjectiveIdList",
+    "orgText": "() => {\r\n        let list = []\r\n        $.OR([\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        list.push($.CONSUME(toks.ObjectiveId).image)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            },\r\n            { ALT: () => list.push($.CONSUME2(toks.ObjectiveId).image) },\r\n        ])\r\n        return list\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "ObjectiveId",
+                    "label": "ObjectiveId",
+                    "idx": 0,
+                    "pattern": "\\*\\w+"
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "RBracket",
+                "label": "RBracket",
+                "idx": 0,
+                "pattern": "\\]"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ObjectiveId",
+                "label": "ObjectiveId",
+                "idx": 2,
+                "pattern": "\\*\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "mTime",
+    "orgText": "() => {\r\n        $.CONSUME(toks.MinuteLiteral)\r\n        $.OPTION(()=> $.CONSUME(toks.SecondLiteral))\r\n        $.OPTION1(()=> $.CONSUME(toks.MillisecondLiteral))\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MinuteLiteral",
+        "label": "MinuteLiteral",
+        "idx": 0,
+        "pattern": "(\\d+)(m)"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "SecondLiteral",
+            "label": "SecondLiteral",
+            "idx": 0,
+            "pattern": "(\\d+)(s)"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "MillisecondLiteral",
+            "label": "MillisecondLiteral",
+            "idx": 0,
+            "pattern": "(\\d+)(ms)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sTime",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SecondLiteral)\r\n        $.OPTION(()=> $.CONSUME(toks.MillisecondLiteral))\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SecondLiteral",
+        "label": "SecondLiteral",
+        "idx": 0,
+        "pattern": "(\\d+)(s)"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "MillisecondLiteral",
+            "label": "MillisecondLiteral",
+            "idx": 0,
+            "pattern": "(\\d+)(ms)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "msTime",
+    "orgText": "() => {\r\n        $.CONSUME(toks.MillisecondLiteral)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MillisecondLiteral",
+        "label": "MillisecondLiteral",
+        "idx": 0,
+        "pattern": "(\\d+)(ms)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "timeUnits",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.mTime) },\r\n            { ALT: () => $.SUBRULE($.sTime) },\r\n            { ALT: () => $.SUBRULE($.msTime) }\r\n        ])\r\n\r\n\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "mTime",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sTime",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "msTime",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "mediaDef",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.MediaId).image;\r\n        let uri = $.SUBRULE($.aliasString).image;\r\n        $.addMedia({id, uri})\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MediaId",
+        "label": "MediaId",
+        "idx": 0,
+        "pattern": "!\\w+"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "aliasString",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "media",
+    "orgText": "() => {\r\n        $.CONSUME(toks.MediaSec);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE($.mediaDef)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MediaSec",
+        "label": "MediaSec",
+        "idx": 0,
+        "pattern": "media"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "mediaDef",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "aliasString",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LParen);\r\n        let alias = $.CONSUME(toks.StringLiteral).image\r\n        $.CONSUME(toks.RParen);\r\n        return alias\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "Terminal",
+        "name": "StringLiteral",
+        "label": "StringLiteral",
+        "idx": 0,
+        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roles",
+    "orgText": "() => {\r\n        $.CONSUME(toks.RoleSec);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE($.roleDef)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "RoleSec",
+        "label": "RoleSec",
+        "idx": 0,
+        "pattern": "roles"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "roleDef",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roleDef",
+    "orgText": "() => {\r\n        let id\r\n        let alias \r\n        let desc\r\n        id = $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.RoleId).image},\r\n            {ALT: ()=> '#'+ $.CONSUME(toks.Identifier).image}\r\n        ]);\r\n        $.OPTION(() => {\r\n            alias = $.SUBRULE($.aliasString)\r\n        })\r\n        $.OPTION2(() => {\r\n            desc = $.CONSUME(toks.StringLiteral).image\r\n        })\r\n        $.addRole({id, alias, desc})\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "RoleId",
+                "label": "RoleId",
+                "idx": 0,
+                "pattern": "#\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "aliasString",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "cast",
+    "orgText": "() => {\r\n        $.CONSUME(toks.CastSec);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE($.castDef)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CastSec",
+        "label": "CastSec",
+        "idx": 0,
+        "pattern": "cast"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "castDef",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "castDef",
+    "orgText": "() => {\r\n        let id = $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.CastId).image},\r\n            {ALT: ()=> '@'+$.CONSUME(toks.Identifier).image}\r\n        ]);\r\n        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))\r\n        let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))\r\n        let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)\r\n\r\n        $.addCast({id, alias, roles, desc})\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "CastId",
+                "label": "CastId",
+                "idx": 0,
+                "pattern": "@\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "aliasString",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "roleIdList",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 3,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 2,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "tellCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.TellCmd)\r\n        let tell = {type: TellTypes.Story}\r\n        $.OPTION(() => {\r\n            $.OR([\r\n                {ALT: () => {\r\n                    tell.type = TellTypes.RoleCast\r\n                    tell.who = $.SUBRULE($.roleCastIdList)\r\n                }},\r\n                {ALT: () => $.CONSUME(toks.StorySec)},\r\n                {ALT: () => {\r\n                    tell.type = TellTypes.Scene\r\n                    tell.who = $.CONSUME(toks.SceneId)\r\n                }}\r\n            ])\r\n        })\r\n        $.CONSUME(toks.StringLiteral)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "TellCmd",
+        "label": "TellCmd",
+        "idx": 0,
+        "pattern": "tell"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "roleCastIdList",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "StorySec",
+                    "label": "StorySec",
+                    "idx": 0,
+                    "pattern": "story"
+                  }
+                ]
+              },
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "SceneId",
+                    "label": "SceneId",
+                    "idx": 0,
+                    "pattern": "\\$\\w+"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "StringLiteral",
+        "label": "StringLiteral",
+        "idx": 0,
+        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sceneCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SceneCmd)\r\n        $.CONSUME(toks.SceneId)\r\n        $.OPTION(() => {\r\n            $.SUBRULE($.roleCastIdList);\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SceneCmd",
+        "label": "SceneCmd",
+        "idx": 0,
+        "pattern": "scene"
+      },
+      {
+        "type": "Terminal",
+        "name": "SceneId",
+        "label": "SceneId",
+        "idx": 0,
+        "pattern": "\\$\\w+"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "roleCastIdList",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "showCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ShowCmd)\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.ObjectiveId) },\r\n            { ALT: () => $.CONSUME(toks.InteractionId) }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ShowCmd",
+        "label": "ShowCmd",
+        "idx": 0,
+        "pattern": "show"
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ObjectiveId",
+                "label": "ObjectiveId",
+                "idx": 0,
+                "pattern": "\\*\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "InteractionId",
+                "label": "InteractionId",
+                "idx": 0,
+                "pattern": "\\?\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "hideCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.HideCmd)\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.ObjectiveId) },\r\n            { ALT: () => $.CONSUME(toks.InteractionId) }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "HideCmd",
+        "label": "HideCmd",
+        "idx": 0,
+        "pattern": "hide"
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ObjectiveId",
+                "label": "ObjectiveId",
+                "idx": 0,
+                "pattern": "\\*\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "InteractionId",
+                "label": "InteractionId",
+                "idx": 0,
+                "pattern": "\\?\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "askCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.AskCmd)\r\n        $.CONSUME(toks.InteractionId)\r\n        $.OPTION(() => {\r\n            $.SUBRULE($.roleCastIdList);\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "AskCmd",
+        "label": "AskCmd",
+        "idx": 0,
+        "pattern": "ask"
+      },
+      {
+        "type": "Terminal",
+        "name": "InteractionId",
+        "label": "InteractionId",
+        "idx": 0,
+        "pattern": "\\?\\w+"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "roleCastIdList",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "completeCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.CompleteCmd)\r\n        $.SUBRULE($.ObjectiveIdList)\r\n        $.SUBRULE1($.ifElseValidCmd)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CompleteCmd",
+        "label": "CompleteCmd",
+        "idx": 0,
+        "pattern": "complete"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "ObjectiveIdList",
+        "idx": 0
+      },
+      {
+        "type": "NonTerminal",
+        "name": "ifElseValidCmd",
+        "idx": 1
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "failCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.FailCmd)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "FailCmd",
+        "label": "FailCmd",
+        "idx": 0,
+        "pattern": "fail"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "setCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SetCmd)\r\n        $.SUBRULE($.roleCastLHS)\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Colon) },\r\n            { ALT: () => $.CONSUME(toks.Assign) },\r\n            { ALT: () => $.CONSUME(toks.AssignPercent) },\r\n            { ALT: () => $.CONSUME(toks.AssignAdd) },\r\n            { ALT: () => $.CONSUME(toks.AssignSub) },\r\n            { ALT: () => $.CONSUME(toks.AssignMul) }\r\n        ])\r\n\r\n        $.OR1([\r\n            { ALT: () => $.SUBRULE($.value) },\r\n            { ALT: () => $.SUBRULE1($.roleCastExpression) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SetCmd",
+        "label": "SetCmd",
+        "idx": 0,
+        "pattern": "set"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "roleCastLHS",
+        "idx": 0
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Colon",
+                "label": "Colon",
+                "idx": 0,
+                "pattern": ":"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Assign",
+                "label": "Assign",
+                "idx": 0,
+                "pattern": "="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AssignPercent",
+                "label": "AssignPercent",
+                "idx": 0,
+                "pattern": "\\%="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AssignAdd",
+                "label": "AssignAdd",
+                "idx": 0,
+                "pattern": "\\+="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AssignSub",
+                "label": "AssignSub",
+                "idx": 0,
+                "pattern": "-="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AssignMul",
+                "label": "AssignMul",
+                "idx": 0,
+                "pattern": "\\*="
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Alternation",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "value",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastExpression",
+                "idx": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "delayCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.DelayCmd)\r\n        $.SUBRULE($.timeUnits);\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "DelayCmd",
+        "label": "DelayCmd",
+        "idx": 0,
+        "pattern": "delay"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "timeUnits",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "Condition",
+    "orgText": "() => {\r\n        $.SUBRULE($.Expression)\r\n        $.OPTION(() => {\r\n            $.SUBRULE1($.Operator)\r\n            $.SUBRULE2($.Expression)\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "Expression",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "Operator",
+            "idx": 1
+          },
+          {
+            "type": "NonTerminal",
+            "name": "Expression",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "Operator",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Equals) },\r\n            { ALT: () => $.CONSUME(toks.NotEquals) },\r\n            { ALT: () => $.CONSUME(toks.IsOp) },\r\n            { ALT: () => $.CONSUME(toks.GT_Op) },\r\n            { ALT: () => $.CONSUME(toks.LT_Op) },\r\n            { ALT: () => $.CONSUME(toks.GE_Op) },\r\n            { ALT: () => $.CONSUME(toks.AndCond) },\r\n            { ALT: () => $.CONSUME(toks.OrCond) },\r\n            { ALT: () => $.CONSUME(toks.HasRoleCond) },\r\n\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Equals",
+                "label": "Equals",
+                "idx": 0,
+                "pattern": "=="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NotEquals",
+                "label": "NotEquals",
+                "idx": 0,
+                "pattern": "!="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "IsOp",
+                "label": "IsOp",
+                "idx": 0,
+                "pattern": "is"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "GT_Op",
+                "label": "GT_Op",
+                "idx": 0,
+                "pattern": ">"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LT_Op",
+                "label": "LT_Op",
+                "idx": 0,
+                "pattern": "<"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "GE_Op",
+                "label": "GE_Op",
+                "idx": 0,
+                "pattern": ">="
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AndCond",
+                "label": "AndCond",
+                "idx": 0,
+                "pattern": "and"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "OrCond",
+                "label": "OrCond",
+                "idx": 0,
+                "pattern": "or"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "HasRoleCond",
+                "label": "HasRoleCond",
+                "idx": 0,
+                "pattern": "has-role"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roleCastLHS",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Identifier) },\r\n            { ALT: () => $.SUBRULE($.roleCastIdList) },\r\n            //{ ALT: () => $.CONSUME(toks.CastId) }\r\n        ])\r\n        $.OPTION(()=>{\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastIdList",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Repetition",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "DataId",
+                "label": "DataId",
+                "idx": 0,
+                "pattern": "\\.\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "roleCastExpression",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Identifier) },\r\n            { ALT: () => $.SUBRULE($.roleCastId) },\r\n            //{ ALT: () => $.CONSUME(toks.CastId) }\r\n        ])\r\n        $.OPTION(()=>{\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastId",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Repetition",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "DataId",
+                "label": "DataId",
+                "idx": 0,
+                "pattern": "\\.\\w+"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "Expression",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.roleCastExpression) },\r\n            { ALT: () => $.CONSUME(toks.StringLiteral) },\r\n            { ALT: () => $.CONSUME(toks.IntegerLiteral) },\r\n            { ALT: () => $.CONSUME(toks.NumberLiteral) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null) },\r\n            { ALT: () => $.SUBRULE($.parenthesisExpression) },\r\n\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "IntegerLiteral",
+                "label": "IntegerLiteral",
+                "idx": 0,
+                "pattern": "\\d+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NumberLiteral",
+                "label": "NumberLiteral",
+                "idx": 0,
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "booleanValue",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Null",
+                "label": "Null",
+                "idx": 0,
+                "pattern": "null"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "parenthesisExpression",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "parenthesisExpression",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LParen)\r\n        $.SUBRULE($.Condition)\r\n        $.CONSUME(toks.RParen)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "Condition",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "startup",
+    "orgText": "() => {\r\n        $.CONSUME(toks.StartupBlock)\r\n        $.SUBRULE($.stateCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "StartupBlock",
+        "label": "StartupBlock",
+        "idx": 0,
+        "pattern": "startup"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "stateCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "enter",
+    "orgText": "() => {\r\n        $.CONSUME(toks.EnterBlock)\r\n        $.SUBRULE($.stateCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "EnterBlock",
+        "label": "EnterBlock",
+        "idx": 0,
+        "pattern": "enter"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "stateCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "leave",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LeaveBlock)\r\n        $.SUBRULE($.stateCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LeaveBlock",
+        "label": "LeaveBlock",
+        "idx": 0,
+        "pattern": "leave"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "stateCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "stateCmdBlock",
+    "orgText": "() => {\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE2($.stateCommand)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "stateCommand",
+            "idx": 2
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "stateCommand",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.setCmd) },\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "tellCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "setCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "delayCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sceneCmd",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "objectives",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ObjectiveSec);\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.MANY(() => {\r\n            $.SUBRULE1($.objective)\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ObjectiveSec",
+        "label": "ObjectiveSec",
+        "idx": 0,
+        "pattern": "objectives"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "objective",
+            "idx": 1
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "objective",
+    "orgText": "() => {\r\n        let id\r\n        let target\r\n        let desc\r\n        $.OR([\r\n            { ALT: () => id = $.CONSUME(toks.ObjectiveId).image },\r\n            { ALT: () => id = '*' + $.CONSUME(toks.Identifier).image }\r\n        ])\r\n        target = $.SUBRULE($.roleCastIdList);\r\n        desc = $.CONSUME(toks.StringLiteral).image;\r\n        $.addObjective({ id, target, desc })\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ObjectiveId",
+                "label": "ObjectiveId",
+                "idx": 0,
+                "pattern": "\\*\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "roleCastIdList",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "StringLiteral",
+        "label": "StringLiteral",
+        "idx": 0,
+        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "submitFormElement",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SubmitElement)\r\n        $.OPTION(() => $.CONSUME(toks.StringLiteral))\r\n        $.OPTION1(() => $.SUBRULE($.submitIfElseBlock))\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SubmitElement",
+        "label": "SubmitElement",
+        "idx": 0,
+        "pattern": "submit"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "submitIfElseBlock",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "submitIfElseBlock",
+    "orgText": "() => {\r\n        // $.SUBRULE($.submitConditions)\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent)\r\n        $.OPTION(() => {\r\n            $.SUBRULE($.IfCmd)\r\n            $.OPTION1(() => $.MANY(() => $.SUBRULE1($.ElseCmd)))\r\n        })\r\n        $.OPTION2(() => $.SUBRULE2($.AlwaysCmd))\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "IfCmd",
+            "idx": 0
+          },
+          {
+            "type": "Option",
+            "idx": 1,
+            "definition": [
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "ElseCmd",
+                    "idx": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "AlwaysCmd",
+            "idx": 2
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "IfCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.If)\r\n        $.SUBRULE($.Condition)\r\n        $.SUBRULE1($.IfElseCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "If",
+        "label": "If",
+        "idx": 0,
+        "pattern": "if"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "Condition",
+        "idx": 0
+      },
+      {
+        "type": "NonTerminal",
+        "name": "IfElseCmdBlock",
+        "idx": 1
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "ElseCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.Else)\r\n        $.OR([\r\n            { ALT: () =>  $.SUBRULE($.IfCmd)},\r\n            { ALT: () => $.SUBRULE($.IfElseCmdBlock)}\r\n        ])\r\n\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Else",
+        "label": "Else",
+        "idx": 0,
+        "pattern": "else"
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "IfCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "IfElseCmdBlock",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "AlwaysCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.Always)\r\n        $.SUBRULE($.IfElseCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Always",
+        "label": "Always",
+        "idx": 0,
+        "pattern": "always"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "IfElseCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "IfElseCmdBlock",
+    "orgText": "() => {\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => $.SUBRULE($.ifElseValidCmd))\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "ifElseValidCmd",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "ifElseValidCmd",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n            {ALT: ()=> $.SUBRULE($.setCmd)},\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            {ALT: ()=> $.SUBRULE($.completeCmd)},\r\n            {ALT: ()=> $.SUBRULE($.showCmd)},\r\n            {ALT: ()=> $.SUBRULE($.hideCmd)},\r\n            {ALT: ()=> $.SUBRULE($.failCmd)},\r\n            // {ALT: ()=> $.SUBRULE($.askCmd)}\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "tellCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sceneCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "setCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "delayCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "completeCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "showCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "hideCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "failCmd",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "interactions",
+    "orgText": "() => {\r\n        $.CONSUME(toks.InteractionSec);\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.interaction) },\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.Colon);\r\n                    $.CONSUME(toks.Indent);\r\n                    $.MANY(() => {\r\n                        $.SUBRULE1($.interaction)\r\n                    })\r\n                    $.CONSUME(toks.Outdent);\r\n                }\r\n            }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "InteractionSec",
+        "label": "InteractionSec",
+        "idx": 0,
+        "pattern": "interactions"
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "interaction",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Colon",
+                "label": "Colon",
+                "idx": 0,
+                "pattern": ":"
+              },
+              {
+                "type": "Terminal",
+                "name": "Indent",
+                "label": "Indent",
+                "idx": 0
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "interaction",
+                    "idx": 1
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "Outdent",
+                "label": "Outdent",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "interaction",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.InteractionId).image;\r\n        let audience  = $.SUBRULE($.roleCastIdList)\r\n        let desc = $.CONSUME(toks.StringLiteral).image;\r\n        $.pushInteraction({id, audience, desc})\r\n        $.SUBRULE($.interactionBlockItem)\r\n        $.popInteraction(id)\r\n        \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "InteractionId",
+        "label": "InteractionId",
+        "idx": 0,
+        "pattern": "\\?\\w+"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "roleCastIdList",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "StringLiteral",
+        "label": "StringLiteral",
+        "idx": 0,
+        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "interactionBlockItem",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "interactionBlockItem",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.form) },\r\n            { ALT: () => $.SUBRULE($.searchCmd) },\r\n            { ALT: () => $.SUBRULE($.completeObjCmd) },\r\n            { ALT: () => $.SUBRULE($.KeysInteraction) },\r\n            { ALT: () => $.SUBRULE($.MediaInteraction) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "form",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "searchCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "completeObjCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "KeysInteraction",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "MediaInteraction",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "KeysInteraction",
+    "orgText": "() => {\r\n        $.CONSUME(toks.KeysBlock);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)                  \r\n        $.MANY(()=> {\r\n            $.CONSUME(toks.StringLiteral)\r\n            $.SUBRULE($.IfElseCmdBlock)\r\n         })\r\n         $.CONSUME(toks.Outdent)       \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "KeysBlock",
+        "label": "KeysBlock",
+        "idx": 0,
+        "pattern": "keys"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "IfElseCmdBlock",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "MediaInteraction",
+    "orgText": "() => {\r\n        $.CONSUME(toks.MediaSec);\r\n        $.CONSUME(toks.MediaId);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)                  \r\n        $.MANY(()=> {\r\n            $.SUBRULE($.ClickData)\r\n            $.SUBRULE($.IfElseCmdBlock)\r\n         })\r\n         $.CONSUME(toks.Outdent)       \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MediaSec",
+        "label": "MediaSec",
+        "idx": 0,
+        "pattern": "media"
+      },
+      {
+        "type": "Terminal",
+        "name": "MediaId",
+        "label": "MediaId",
+        "idx": 0,
+        "pattern": "!\\w+"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "ClickData",
+            "idx": 0
+          },
+          {
+            "type": "NonTerminal",
+            "name": "IfElseCmdBlock",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "ClickData",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ClickCmd);\r\n        $.CONSUME1(toks.IntegerLiteral);\r\n        $.CONSUME2(toks.Comma);\r\n        $.CONSUME3(toks.IntegerLiteral);\r\n        $.CONSUME4(toks.Comma);\r\n        $.CONSUME5(toks.IntegerLiteral);\r\n        $.CONSUME6(toks.Comma);\r\n        $.CONSUME7(toks.IntegerLiteral);\r\n        \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ClickCmd",
+        "label": "ClickCmd",
+        "idx": 0,
+        "pattern": "click"
+      },
+      {
+        "type": "Terminal",
+        "name": "IntegerLiteral",
+        "label": "IntegerLiteral",
+        "idx": 1,
+        "pattern": "\\d+"
+      },
+      {
+        "type": "Terminal",
+        "name": "Comma",
+        "label": "Comma",
+        "idx": 2,
+        "pattern": ","
+      },
+      {
+        "type": "Terminal",
+        "name": "IntegerLiteral",
+        "label": "IntegerLiteral",
+        "idx": 3,
+        "pattern": "\\d+"
+      },
+      {
+        "type": "Terminal",
+        "name": "Comma",
+        "label": "Comma",
+        "idx": 4,
+        "pattern": ","
+      },
+      {
+        "type": "Terminal",
+        "name": "IntegerLiteral",
+        "label": "IntegerLiteral",
+        "idx": 5,
+        "pattern": "\\d+"
+      },
+      {
+        "type": "Terminal",
+        "name": "Comma",
+        "label": "Comma",
+        "idx": 6,
+        "pattern": ","
+      },
+      {
+        "type": "Terminal",
+        "name": "IntegerLiteral",
+        "label": "IntegerLiteral",
+        "idx": 7,
+        "pattern": "\\d+"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "completeObjCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.CompleteCmd);\r\n        $.SUBRULE($.ObjectiveIdList)\r\n        $.SUBRULE($.IfElseCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CompleteCmd",
+        "label": "CompleteCmd",
+        "idx": 0,
+        "pattern": "complete"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "ObjectiveIdList",
+        "idx": 0
+      },
+      {
+        "type": "NonTerminal",
+        "name": "IfElseCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "form",
+    "orgText": "() => {\r\n        $.CONSUME(toks.FormBlock);\r\n        $.SUBRULE($.formElementBlock)\r\n        //$.SUBRULE($.submitFormElement)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "FormBlock",
+        "label": "FormBlock",
+        "idx": 0,
+        "pattern": "form"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "formElementBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "formElementBlock",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.formElement) },\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.Colon)\r\n                    $.CONSUME(toks.Indent)\r\n                    $.MANY(()=>$.SUBRULE1($.formElement))\r\n                    $.CONSUME(toks.Outdent)\r\n                }\r\n            }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "formElement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Colon",
+                "label": "Colon",
+                "idx": 0,
+                "pattern": ":"
+              },
+              {
+                "type": "Terminal",
+                "name": "Indent",
+                "label": "Indent",
+                "idx": 0
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "formElement",
+                    "idx": 1
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "Outdent",
+                "label": "Outdent",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "formElement",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.inputFormElement) },\r\n            { ALT: () => $.SUBRULE($.labelFormElement) },\r\n            { ALT: () => $.SUBRULE($.selectFormElement) },\r\n            { ALT: () => $.SUBRULE($.submitFormElement) }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "inputFormElement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "labelFormElement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "selectFormElement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "submitFormElement",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "inputFormElement",
+    "orgText": "() => {\r\n        $.CONSUME(toks.InputElement)\r\n        $.CONSUME(toks.Identifier)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "InputElement",
+        "label": "InputElement",
+        "idx": 0,
+        "pattern": "input"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "labelFormElement",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LabelElement)\r\n        $.CONSUME(toks.StringLiteral);\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LabelElement",
+        "label": "LabelElement",
+        "idx": 0,
+        "pattern": "label"
+      },
+      {
+        "type": "Terminal",
+        "name": "StringLiteral",
+        "label": "StringLiteral",
+        "idx": 0,
+        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "selectFormElement",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SelectElement)\r\n        $.CONSUME(toks.Identifier)\r\n        $.SUBRULE($.selectChoiceList)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SelectElement",
+        "label": "SelectElement",
+        "idx": 0,
+        "pattern": "select"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "selectChoiceList",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "selectChoiceList",
+    "orgText": "() => {\r\n            $.CONSUME(toks.Colon);\r\n            $.CONSUME(toks.Indent)\r\n            $.MANY(()=> $.SUBRULE1($.selectChoice))\r\n            $.CONSUME(toks.Outdent)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "selectChoice",
+            "idx": 1
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "selectChoice",
+    "orgText": "()=> {\r\n        $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.RoleId)},\r\n            {ALT: ()=> $.CONSUME(toks.CastId)},\r\n            {ALT: ()=> $.CONSUME(toks.StringLiteral)}\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "RoleId",
+                "label": "RoleId",
+                "idx": 0,
+                "pattern": "#\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "CastId",
+                "label": "CastId",
+                "idx": 0,
+                "pattern": "@\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "searchCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SearchCmd)\r\n        $.SUBRULE($.roleCastIdList)\r\n       // $.SUBRULE($.seachConditionals)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SearchCmd",
+        "label": "SearchCmd",
+        "idx": 0,
+        "pattern": "search"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "roleCastIdList",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "story",
+    "orgText": "() => {\r\n        $.CONSUME(toks.StorySec);\r\n\r\n        let alias = $.OPTION(()=>{\r\n            $.SUBRULE($.aliasString);\r\n        })\r\n        let desc = $.OPTION1(()=>{\r\n            $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        let id = '$$story'\r\n        $.pushScene({id, alias, desc})\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "StorySec",
+        "label": "StorySec",
+        "idx": 0,
+        "pattern": "story"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "aliasString",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "sceneContent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "scene",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.SceneId).image;\r\n        let alias\r\n        let desc\r\n\r\n        $.OPTION(()=>{\r\n            alias = $.SUBRULE($.aliasString);\r\n        })\r\n        $.OPTION1(()=>{\r\n            desc = $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        $.pushScene({id,alias, desc})\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SceneId",
+        "label": "SceneId",
+        "idx": 0,
+        "pattern": "\\$\\w+"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "aliasString",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "sceneContent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sceneContent",
+    "orgText": "() => {\r\n       \r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.OPTION2(()=> {\r\n            $.SUBRULE($.objectives)\r\n        })\r\n        $.OPTION3(()=> {\r\n            $.SUBRULE($.interactions)\r\n        })\r\n        $.OPTION4(()=> {\r\n            $.SUBRULE($.startup)\r\n        })\r\n        $.OPTION5(()=> {\r\n            $.SUBRULE($.enter)\r\n        })\r\n        $.OPTION6(()=> {\r\n            $.SUBRULE($.leave)\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "objectives",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 3,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "interactions",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 4,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "startup",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 5,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "enter",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 6,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "leave",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "scenes",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SceneSec);\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.MANY(()=> {\r\n            $.SUBRULE($.scene);\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SceneSec",
+        "label": "SceneSec",
+        "idx": 0,
+        "pattern": "scenes"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "scene",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "objectValue",
+    "orgText": "() => {\r\n        $.OR([\r\n            // using ES6 Arrow functions to reduce verbosity.\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () => $.SUBRULE($.array) }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "object",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "array",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "object",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LBrace)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                $.SUBRULE2($.objectItem)\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBrace)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LBrace",
+        "label": "LBrace",
+        "idx": 0,
+        "pattern": "\\{"
+      },
+      {
+        "type": "RepetitionWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "objectItem",
+            "idx": 2
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "RBrace",
+        "label": "RBrace",
+        "idx": 0,
+        "pattern": "\\}"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "objectItem",
+    "orgText": "() => {\r\n        $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.StringLiteral)},\r\n            {ALT: ()=> $.CONSUME(toks.Identifier)}\r\n        ])\r\n        \r\n        $.CONSUME(toks.Colon)\r\n        $.SUBRULE($.value)\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "value",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "array",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LBracket)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                $.SUBRULE2($.value)\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBracket)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LBracket",
+        "label": "LBracket",
+        "idx": 0,
+        "pattern": "\\["
+      },
+      {
+        "type": "RepetitionWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 2
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "RBracket",
+        "label": "RBracket",
+        "idx": 0,
+        "pattern": "\\]"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "value",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.StringLiteral) },\r\n            { ALT: () => $.CONSUME(toks.IntegerLiteral) },\r\n            { ALT: () => $.CONSUME(toks.NumberLiteral) },\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () => $.SUBRULE($.array) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null) }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "IntegerLiteral",
+                "label": "IntegerLiteral",
+                "idx": 0,
+                "pattern": "\\d+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NumberLiteral",
+                "label": "NumberLiteral",
+                "idx": 0,
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "object",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "array",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "booleanValue",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Null",
+                "label": "Null",
+                "idx": 0,
+                "pattern": "null"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "booleanValue",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.True) },\r\n            { ALT: () => $.CONSUME(toks.False) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "True",
+                "label": "True",
+                "idx": 0,
+                "pattern": "true"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "False",
+                "label": "False",
+                "idx": 0,
+                "pattern": "false"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "script",
+    "orgText": "() => {\r\n        let script = $.OPTION(() => $.SUBRULE($.scriptData))\r\n        $.pushScript(script)\r\n        $.OPTION1(() => $.SUBRULE($.media))\r\n        $.OPTION2(() => $.SUBRULE($.roles))\r\n        $.OPTION3(() => $.SUBRULE($.cast))\r\n        $.OPTION4(() => $.SUBRULE($.story))\r\n        $.OPTION5(() => $.SUBRULE($.scenes))\r\n        $.popScript()\r\n    }",
+    "definition": [
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "scriptData",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "media",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "roles",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 3,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "cast",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 4,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "story",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 5,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "scenes",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "scriptData",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.ScriptSec).image\r\n        let alias = $.OPTION(() => $.SUBRULE($.aliasString))\r\n        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)\r\n        $.addScript({id, alias, desc})\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ScriptSec",
+        "label": "ScriptSec",
+        "idx": 0,
+        "pattern": "script"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "aliasString",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      }
+    ]
+  }
+];
+</script>
+
+<script>
+    var diagramsDiv = document.getElementById("diagrams");
+    main.drawDiagramsFromSerializedGrammar(serializedGrammar, diagramsDiv);
+</script>

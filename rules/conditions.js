@@ -24,25 +24,42 @@ module.exports = ($) => {
 
         ])
     })
-    $.RULE("roleCastLHS", () => {
+    $.RULE("identifierLHSList", () => {
         $.OR([
-            { ALT: () => $.CONSUME(toks.Identifier) },
-            { ALT: () => $.SUBRULE($.roleCastIdList) },
+            { ALT: () => $.SUBRULE($.identifierLHS) },
+            {
+                ALT: () => {
+                    $.CONSUME(toks.LBracket);
+                    $.MANY(() => {
+                        $.SUBRULE1($.identifierLHS)
+                    })
+                    $.CONSUME(toks.RBracket);
+                }
+            }
+        ])
+    })
+    $.RULE("identifierLHS", () => {
+        $.OR([
+            { ALT: () => $.CONSUME(toks.StorySec) },
+            { ALT: () => $.CONSUME(toks.SceneId) },
+            { ALT: () => $.CONSUME(toks.InteractionId) },
+            { ALT: () => $.CONSUME(toks.ObjectiveId) },
+            { ALT: () => $.SUBRULE($.roleCastId) },
             //{ ALT: () => $.CONSUME(toks.CastId) }
         ])
-        $.OPTION(()=>{
+    })
+
+    $.RULE("setLHS", () => {
+        $.SUBRULE($.identifierLHSList)
+        $.OPTION(() => {
             $.MANY(() => {
                 $.CONSUME(toks.DataId)
             })
         })
     })
-    $.RULE("roleCastExpression", () => {
-        $.OR([
-            { ALT: () => $.CONSUME(toks.Identifier) },
-            { ALT: () => $.SUBRULE($.roleCastId) },
-            //{ ALT: () => $.CONSUME(toks.CastId) }
-        ])
-        $.OPTION(()=>{
+    $.RULE("identifierExpression", () => {
+        $.SUBRULE($.identifierLHS) 
+        $.OPTION(() => {
             $.MANY(() => {
                 $.CONSUME(toks.DataId)
             })
@@ -50,7 +67,7 @@ module.exports = ($) => {
     })
     $.RULE("Expression", () => {
         $.OR([
-            { ALT: () => $.SUBRULE($.roleCastExpression) },
+            { ALT: () => $.SUBRULE($.identifierExpression) },
             { ALT: () => $.CONSUME(toks.StringLiteral) },
             { ALT: () => $.CONSUME(toks.IntegerLiteral) },
             { ALT: () => $.CONSUME(toks.NumberLiteral) },
@@ -60,7 +77,7 @@ module.exports = ($) => {
 
         ])
     })
-   
+
     $.RULE("parenthesisExpression", () => {
         $.CONSUME(toks.LParen)
         $.SUBRULE($.Condition)

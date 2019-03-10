@@ -10,5 +10,6 @@ scenes:
     $hello `test`:
         startup:
             tell @cast1 `hello`
-            tell #all `hello to all`
+            tell story `hello to all`
+            tell $hello `hello to all`
             tell [@cast1 @cast2] `test group`

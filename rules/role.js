@@ -8,8 +8,9 @@ module.exports = ($) => {
     // ;
     $.RULE('aliasString', () => {
         $.CONSUME(toks.LParen);
-        $.CONSUME(toks.StringLiteral)
+        let alias = $.CONSUME(toks.StringLiteral).image
         $.CONSUME(toks.RParen);
+        return alias
     })
     //  role-definition-block
     // : ROLES_STATEMENT COLON INDENT role-definition* DEDENT
@@ -28,15 +29,19 @@ module.exports = ($) => {
     // | ID (alias-string)? string?
     // ;
     $.RULE("roleDef", () => {
-        $.OR([
-            {ALT: ()=> $.CONSUME(toks.RoleId)},
-            {ALT: ()=> $.CONSUME(toks.Identifier)}
+        let id
+        let alias 
+        let desc
+        id = $.OR([
+            {ALT: ()=> $.CONSUME(toks.RoleId).image},
+            {ALT: ()=> '#'+ $.CONSUME(toks.Identifier).image}
         ]);
         $.OPTION(() => {
-            $.SUBRULE($.aliasString)
+            alias = $.SUBRULE($.aliasString)
         })
         $.OPTION2(() => {
-            $.CONSUME(toks.StringLiteral)
+            desc = $.CONSUME(toks.StringLiteral).image
         })
+        $.addRole({id, alias, desc})
     })
 }

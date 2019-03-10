@@ -169,6 +169,7 @@ tok("MillisecondLiteral", /(\d+)(ms)/);
 
 tok("SingleLineComment", /[/]+.*/, { group: Lexer.SKIPPED })
 tok("BlockComment", /\/[*]([^*]|([*][^/]))*[*]\//, { group: Lexer.SKIPPED })
+tok("LineContinue", /_[^/]\s+/, { group: Lexer.SKIPPED })
 //tok("DoubleStringLiteral", /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/);
 //tok("TickStringLiteral", /`(:?[^\\`]|\\(:?[bfnrtv`\\/]|u[0-9a-fA-F]{4}))*`/);
 //tok("SingleStringLiteral", /'(:?[^\\']|\\(:?[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/)

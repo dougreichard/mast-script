@@ -2,9 +2,9 @@ roles:
     #role `Symboltest `
 
 cast:
-    @cast2 _
+    @cast2 _    
                 ('LIne Continue') _
-#role  _ 
+#role  _
 `this is a test
 of line continue`
 

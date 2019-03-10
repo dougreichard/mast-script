@@ -28,10 +28,13 @@ module.exports = ($) => {
     //     | INTERACTION_STATEMENT INTERACTION_ID? role-cast-list? string?  SEARCH
     //     ;
     $.RULE('interaction', () => {
-        $.CONSUME(toks.InteractionId);
-        $.SUBRULE($.roleCastIdList)
-        $.CONSUME(toks.StringLiteral);
+        let id = $.CONSUME(toks.InteractionId).image;
+        let audience  = $.SUBRULE($.roleCastIdList)
+        let desc = $.CONSUME(toks.StringLiteral).image;
+        $.pushInteraction({id, audience, desc})
         $.SUBRULE($.interactionBlockItem)
+        $.popInteraction(id)
+        
     })
 
 

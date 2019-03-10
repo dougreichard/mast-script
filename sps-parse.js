@@ -13,10 +13,13 @@ const conRules = require('./rules/conditions');
 const stateRules = require('./rules/states');
 const objectiveRules = require('./rules/objectives');
 const interactionRules = require('./rules/interactions');
+const {SymbolTypes, TellTypes} = require('./sps-type')
+
+
 
 class SpsParser extends Parser {
     constructor(input) {
-        super(input, Object.values(spsLexer.tokens))
+        super(input, Object.values(spsLexer.tokens), { outputCst: false })
         expressionsRules(this);
         mediaRules(this);
         roleRules(this);
@@ -32,10 +35,55 @@ class SpsParser extends Parser {
         valueRules(this);
         scriptRules(this);
 
+        this.symTable = {}
+
         this.performSelfAnalysis()
     }
-     
+
+    addMedia(media) {
+        this.addSymbol(SymbolTypes.Media, media);
+    }
+    addCast(cast) {
+        this.addSymbol(SymbolTypes.Cast, cast);
+    }
+    addRole(role) {
+        this.addSymbol(SymbolTypes.Role, role);
+    }
+    addObjective(obj) {
+        this.addSymbol(SymbolTypes.Objective, obj);
+    }
+    pushInteraction(interaction) {
+        this.addSymbol(SymbolTypes.Interaction, interaction);
+    }
+    popInteraction(id) {
+        
+    }
+    addScript(script) {
+        console.log(script.id)
+    }
+    pushScript() {
+        this.symTable = {}
+    }
+    popScript() {
+        console.log('--end--')
+    }
+    pushScene(scene) {
+        this.addSymbol(SymbolTypes.Scene, scene);
+    }
+    popScene(id) {
+        console.log(`--end ${id}--`)
+    }
+    addSymbol(type, data) {
+        if (this.symTable[data.id] === undefined) {
+            data.type = type;
+            this.symTable[data.id] = data;
+        } else {
+            console.log(`warning: duplicate symbol ${data.id}`)
+        }
+    }
 }
+
+
 
 // reuse the same parser instance.
 const parser = new SpsParser([])

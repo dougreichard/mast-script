@@ -1,4 +1,5 @@
 const spsLexer = require('../sps-lex')
+const { TellTypes} = require('../sps-type')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -8,9 +9,32 @@ module.exports = ($) => {
     // ;
     $.RULE('tellCmd', () => {
         $.CONSUME(toks.TellCmd)
-        $.OPTION(() => $.SUBRULE($.roleCastIdList))
+        $.OPTION(() =>  $.SUBRULE($.identifierTellList))
         $.CONSUME(toks.StringLiteral)
     })
+
+    $.RULE("identifierTellList", () => {
+        $.OR([
+            { ALT: () => $.SUBRULE($.identifierTell) },
+            {
+                ALT: () => {
+                    $.CONSUME(toks.LBracket);
+                    $.MANY(() => {
+                        $.SUBRULE1($.identifierTell)
+                    })
+                    $.CONSUME(toks.RBracket);
+                }
+            }
+        ])
+    })
+    $.RULE("identifierTell", () => {
+        $.OR([
+            { ALT: () => $.CONSUME(toks.StorySec) },
+            { ALT: () => $.CONSUME(toks.SceneId) },
+            { ALT: () => $.SUBRULE($.roleCastId) },
+        ])
+    })
+
     // scene-command
     // : SCENE_STATEMENT SCENE_ID role-cast-list?
     // ;
@@ -59,7 +83,7 @@ module.exports = ($) => {
     })
     $.RULE('setCmd', () => {
         $.CONSUME(toks.SetCmd)
-        $.SUBRULE($.roleCastLHS)
+        $.SUBRULE($.setLHS)
         $.OR([
             { ALT: () => $.CONSUME(toks.Colon) },
             { ALT: () => $.CONSUME(toks.Assign) },
@@ -71,7 +95,7 @@ module.exports = ($) => {
 
         $.OR1([
             { ALT: () => $.SUBRULE($.value) },
-            { ALT: () => $.SUBRULE1($.roleCastExpression) },
+            { ALT: () => $.SUBRULE1($.identifierExpression) },
         ])
     })
     // delay-command
@@ -80,27 +104,6 @@ module.exports = ($) => {
     $.RULE('delayCmd', () => {
         $.CONSUME(toks.DelayCmd)
         $.SUBRULE($.timeUnits);
-        $.SUBRULE($.delayCmdBlock)
     })
 
-    $.RULE("delayCmdBlock", () => {
-        $.CONSUME(toks.Colon);
-        $.CONSUME(toks.Indent)
-        $.MANY(() => $.SUBRULE1($.delayValidCmd))
-        $.CONSUME(toks.Outdent)
-    })
-
-    $.RULE("delayValidCmd", () => {
-        $.OR([
-            { ALT: () => $.SUBRULE($.tellCmd) },
-            { ALT: () => $.SUBRULE($.sceneCmd) },
-            { ALT: () => $.SUBRULE($.setCmd) },
-            { ALT: () => $.SUBRULE($.delayCmd) },
-            { ALT: () => $.SUBRULE($.completeCmd) },
-            // {ALT: ()=> $.SUBRULE($.failCmd)},
-            { ALT: () => $.SUBRULE($.showCmd) },
-            { ALT: () => $.SUBRULE($.hideCmd) },
-            // {ALT: ()=> $.SUBRULE($.askCmd)}
-        ])
-    })
 }

@@ -8,57 +8,65 @@ module.exports = ($) => {
     // | LBRACKET ROLE_ID* RBRACKET
     // ;
     $.RULE("roleIdList", () => {
+        let roles = []
         $.OR([
             {
                 ALT: () => {
                     $.CONSUME(toks.LBracket);
                     $.MANY(() => {
-                        $.CONSUME(toks.RoleId)
+                       roles.push($.CONSUME(toks.RoleId).image)
                     })
                     $.CONSUME(toks.RBracket);
                 }
             },
-            { ALT: () => $.CONSUME2(toks.RoleId) },
+            { ALT: () => roles.push($.CONSUME2(toks.RoleId).image) },
         ])
+        return roles;
     })
     // role-list
     // : ROLE_ID 
     // | LBRACKET ROLE_ID* RBRACKET
     // ;
     $.RULE("roleCastIdList", () => {
+        let list = []
         $.OR([
             {
                 ALT: () => {
                     $.CONSUME(toks.LBracket);
                     $.MANY(() => {
-                        $.SUBRULE($.roleCastId)
+                        list.push($.SUBRULE($.roleCastId))
                     })
                     $.CONSUME(toks.RBracket);
                 }
             },
-            { ALT: () => $.SUBRULE1($.roleCastId) },
+            { ALT: () => list.push($.SUBRULE1($.roleCastId)) },
         ])
+        return list
     })
     $.RULE("roleCastId", () => {
+        let id 
         $.OR([
-            { ALT: () => $.CONSUME(toks.RoleId) },
-            { ALT: () => $.CONSUME(toks.CastId) }
+            { ALT: () => id  = $.CONSUME(toks.RoleId).image },
+            { ALT: () => id = $.CONSUME(toks.CastId).image }
         ])
+        return id
     })
     
     $.RULE("ObjectiveIdList", () => {
+        let list = []
         $.OR([
             {
                 ALT: () => {
                     $.CONSUME(toks.LBracket);
                     $.MANY(() => {
-                        $.CONSUME(toks.ObjectiveId)
+                        list.push($.CONSUME(toks.ObjectiveId).image)
                     })
                     $.CONSUME(toks.RBracket);
                 }
             },
-            { ALT: () => $.CONSUME2(toks.ObjectiveId) },
+            { ALT: () => list.push($.CONSUME1(toks.ObjectiveId).image) },
         ])
+        return list
     })
 
 

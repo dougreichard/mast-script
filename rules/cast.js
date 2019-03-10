@@ -20,19 +20,15 @@ module.exports = ($) => {
     // |  ID (alias-string)? (role-list)? string? 
     // ;
     $.RULE("castDef", () => {
-        $.OR([
-            {ALT: ()=> $.CONSUME(toks.CastId)},
-            {ALT: ()=> $.CONSUME(toks.Identifier)}
+        let id = $.OR([
+            {ALT: ()=> $.CONSUME(toks.CastId).image},
+            {ALT: ()=> '@'+$.CONSUME(toks.Identifier).image}
         ]);
-        $.OPTION(() => {
-            $.SUBRULE($.aliasString)
-        })
-        $.OPTION2(() => {
-            $.SUBRULE($.roleIdList)
-        })
-        $.OPTION3(() => {
-            $.CONSUME2(toks.StringLiteral)
-        })
+        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
+        let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))
+        let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)
+
+        $.addCast({id, alias, roles, desc})
     })
    
 }

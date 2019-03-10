@@ -10,15 +10,36 @@ module.exports = ($) => {
     // ;
     $.RULE('story', () => {
         $.CONSUME(toks.StorySec);
+
+        let alias = $.OPTION(()=>{
+            $.SUBRULE($.aliasString);
+        })
+        let desc = $.OPTION1(()=>{
+            $.CONSUME(toks.StringLiteral).image;
+        })
+        let id = '$$story'
+        $.pushScene({id, alias, desc})
         $.SUBRULE($.sceneContent);
+        $.popScene(id)
     })
     // scene-definition 
     // :  SCENE_ID 
     // ;
  
     $.RULE('scene', () => {
-        $.CONSUME(toks.SceneId);
+        let id = $.CONSUME(toks.SceneId).image;
+        let alias
+        let desc
+
+        $.OPTION(()=>{
+            alias = $.SUBRULE($.aliasString);
+        })
+        $.OPTION1(()=>{
+            desc = $.CONSUME(toks.StringLiteral).image;
+        })
+        $.pushScene({id,alias, desc})
         $.SUBRULE($.sceneContent);
+        $.popScene(id)
     })
     // Common for story and Scene 
     // Story is the main scene
@@ -31,12 +52,7 @@ module.exports = ($) => {
     //   enter-section?\[enter] 
     //   leave-section?\[leave] 
     $.RULE('sceneContent', () => {
-        $.OPTION(()=>{
-            $.SUBRULE($.aliasString);
-        })
-        $.OPTION1(()=>{
-            $.CONSUME(toks.StringLiteral);
-        })
+       
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
         $.OPTION2(()=> {
