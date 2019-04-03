@@ -65,6 +65,7 @@ class SpsParser extends Parser {
         }
         catch(e) {
             console.log(e.message)
+            throw e
         }
         finally {
             SpsParser.defaultPaths.pop();

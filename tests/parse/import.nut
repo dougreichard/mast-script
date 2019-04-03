@@ -1,5 +1,5 @@
 imports:
-    'cast.sps'
+    'cast.nut'
 
 cast:
     @addon (``)

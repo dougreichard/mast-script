@@ -116,7 +116,7 @@ leave:
 })
 function parseFile (folder, fn) {
     it(`Simple Parse  ${fn}`, ()=> {
-        let out = spsParse.parser.parseFile(`./tests/${folder}/${fn}.sps`);
+        let out = spsParse.parser.parseFile(`./tests/${folder}/${fn}.nut`);
         expect(out.lexErrors.length).to.be.equal(0, 
             'Error '+fn + dumpTokenErrors(out.lexErrors))
         expect(out.parseErrors.length).to.be.equal(0, 
