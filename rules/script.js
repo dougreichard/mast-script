@@ -13,11 +13,12 @@ module.exports = ($) => {
     $.RULE('script', () => {
         let script = $.OPTION(() => $.SUBRULE($.scriptData))
         $.pushScript(script)
-        $.OPTION1(() => $.SUBRULE($.media))
-        $.OPTION2(() => $.SUBRULE($.roles))
-        $.OPTION3(() => $.SUBRULE($.cast))
-        $.OPTION4(() => $.SUBRULE($.story))
-        $.OPTION5(() => $.SUBRULE($.scenes))
+        $.OPTION1(() => $.SUBRULE($.imports))
+        $.OPTION2(() => $.SUBRULE($.media))
+        $.OPTION3(() => $.SUBRULE($.roles))
+        $.OPTION4(() => $.SUBRULE($.cast))
+        $.OPTION5(() => $.SUBRULE($.story))
+        $.OPTION6(() => $.SUBRULE($.scenes))
         $.popScript()
     })
     // script-data
@@ -26,7 +27,8 @@ module.exports = ($) => {
     $.RULE('scriptData', () => {
         let id = $.CONSUME(toks.ScriptSec).image
         let alias = $.OPTION(() => $.SUBRULE($.aliasString))
-        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)
-        $.addScript({id, alias, desc})
+        let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)
+        let main = $.OPTION2(() => $.CONSUME(toks.SceneId).image)
+        $.addScript({id, alias, desc, main})
     })
 }

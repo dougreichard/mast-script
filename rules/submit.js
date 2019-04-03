@@ -53,6 +53,7 @@ module.exports = ($) => {
 
     $.RULE("ifElseValidCmd", () => {
         $.OR([
+            { ALT: () => $.SUBRULE($.asCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.sceneCmd) },
             {ALT: ()=> $.SUBRULE($.setCmd)},

@@ -162,32 +162,39 @@ const matchOutdent = _.partialRight(matchIndentBase, "outdent")
 
 
 tok("NumberLiteral", /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/);
-tok("IntegerLiteral", /\d+/);
+tok("IntegerLiteral", /-?\d+/);
 tok("MinuteLiteral", /(\d+)(m)/);
 tok("SecondLiteral", /(\d+)(s)/);
 tok("MillisecondLiteral", /(\d+)(ms)/);
 
 tok("SingleLineComment", /[/]+.*/, { group: Lexer.SKIPPED })
 tok("BlockComment", /\/[*]([^*]|([*][^/]))*[*]\//, { group: Lexer.SKIPPED })
-tok("LineContinue", /_[^/]\s+/, { group: Lexer.SKIPPED })
+
 //tok("DoubleStringLiteral", /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/);
 //tok("TickStringLiteral", /`(:?[^\\`]|\\(:?[bfnrtv`\\/]|u[0-9a-fA-F]{4}))*`/);
 //tok("SingleStringLiteral", /'(:?[^\\']|\\(:?[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/)
 
 tok("StringLiteral", /"(:?[^\\"]|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"|'(:?[^\\']|\\(:?[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\(:?[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*`/);
-const Identifier = tok("Identifier", /[a-zA-Z]\w*/);
-
+const Identifier = tok("Identifier", /[a-zA-Z_]+\w*/);
+tok("LineContinue", /_\s+/, {line_breaks: false, group: Lexer.SKIPPED, longer_alt: Identifier  })
 //
 
 //tok("Minutes", /minutes/, { longer_alt: Identifier });
 //tok("Seconds", /s/, { longer_alt: Identifier });
 //tok("MilliSeconds", /ms/, { longer_alt: Identifier });
-
+tok("InOp", /in/, { longer_alt: Identifier });
+tok("RangeOp", /range/, { longer_alt: Identifier });
 tok("HasOp", /has/, { longer_alt: Identifier });
+tok("TogetherOp", /together/, { longer_alt: Identifier });
+
+tok("DoCmd", /do/, { longer_alt: Identifier });
+tok("AsCmd", /as/, { longer_alt: Identifier });
 tok("TellCmd", /tell/, { longer_alt: Identifier });
 tok("SceneCmd", /scene/, { longer_alt: Identifier });
 tok("SetCmd", /set/, { longer_alt: Identifier });
 tok("DelayCmd", /delay/, { longer_alt: Identifier });
+tok("ForCmd", /for/, { longer_alt: Identifier });
+
 
 
 tok("True", /true/, { longer_alt: Identifier });
@@ -218,6 +225,7 @@ tok("RoleSec", /roles/, { longer_alt: Identifier });
 tok("CastSec", /cast/, { longer_alt: Identifier });
 tok("SceneSec", /scenes/, { longer_alt: Identifier });
 tok("StorySec", /story/, { longer_alt: Identifier });
+tok("ImportSec", /imports/, { longer_alt: Identifier });
 // 
 tok("SearchCmd", /search/, { longer_alt: Identifier });
 // 
@@ -305,10 +313,6 @@ module.exports = {
             )
             indentStack.pop()
         }
-
-        if (lexResult.errors.length > 0) {
-            throw new Error("sad sad panda lexing errors detected")
-        }
-        return lexResult
+         return lexResult
     }
 }

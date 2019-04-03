@@ -11,33 +11,36 @@ module.exports = ($) => {
     $.RULE('story', () => {
         $.CONSUME(toks.StorySec);
 
-        let alias = $.OPTION(()=>{
+        let alias = $.OPTION(() => {
             $.SUBRULE($.aliasString);
         })
-        let desc = $.OPTION1(()=>{
+        let desc = $.OPTION1(() => {
             $.CONSUME(toks.StringLiteral).image;
         })
         let id = '$$story'
-        $.pushScene({id, alias, desc})
+        $.pushScene({ id, alias, desc })
         $.SUBRULE($.sceneContent);
         $.popScene(id)
     })
     // scene-definition 
     // :  SCENE_ID 
     // ;
- 
+
     $.RULE('scene', () => {
-        let id = $.CONSUME(toks.SceneId).image;
+        let id = $.anonymousID('$') 
         let alias
         let desc
 
-        $.OPTION(()=>{
+        $.OPTION(() => {
+            id = $.CONSUME(toks.SceneId).image;
+        })
+        $.OPTION1(() => {
             alias = $.SUBRULE($.aliasString);
         })
-        $.OPTION1(()=>{
+        $.OPTION2(() => {
             desc = $.CONSUME(toks.StringLiteral).image;
         })
-        $.pushScene({id,alias, desc})
+        $.pushScene({ id, alias, desc })
         $.SUBRULE($.sceneContent);
         $.popScene(id)
     })
@@ -52,23 +55,28 @@ module.exports = ($) => {
     //   enter-section?\[enter] 
     //   leave-section?\[leave] 
     $.RULE('sceneContent', () => {
-       
+
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
-        $.OPTION2(()=> {
+        $.OPTION2(() => {
             $.SUBRULE($.objectives)
         })
-        $.OPTION3(()=> {
+        $.OPTION3(() => {
             $.SUBRULE($.interactions)
         })
-        $.OPTION4(()=> {
+        $.OPTION4(() => {
             $.SUBRULE($.startup)
         })
-        $.OPTION5(()=> {
+        $.OPTION5(() => {
             $.SUBRULE($.enter)
         })
-        $.OPTION6(()=> {
+        $.OPTION6(() => {
             $.SUBRULE($.leave)
+        })
+        $.OPTION7(() => {
+            $.MANY(() => {
+                $.SUBRULE($.shot);
+            })
         })
         $.CONSUME(toks.Outdent);
 
@@ -85,7 +93,7 @@ module.exports = ($) => {
         $.CONSUME(toks.SceneSec);
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
-        $.MANY(()=> {
+        $.MANY(() => {
             $.SUBRULE($.scene);
         })
         $.CONSUME(toks.Outdent);

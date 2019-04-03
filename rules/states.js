@@ -25,11 +25,27 @@ module.exports = ($) => {
         $.SUBRULE($.stateCmdBlock)
     })
 
+    $.RULE('shot', () => {
+        $.OR([{
+            ALT: () => {
+                $.CONSUME(toks.Identifier)
+                $.OPTION(()=> $.SUBRULE($.aliasString))
+
+            }
+        }, {
+            ALT: () => {
+                $.SUBRULE1($.aliasString)
+            }
+        }])
+        $.SUBRULE($.stateCmdBlock)
+
+    })
+
     $.RULE('stateCmdBlock', () => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            $.SUBRULE2($.stateCommand)
+            $.SUBRULE($.stateCommand)
         })
         $.CONSUME(toks.Outdent)
     })
@@ -42,12 +58,15 @@ module.exports = ($) => {
     //     ;
     $.RULE('stateCommand', () => {
         $.OR([
+            { ALT: () => $.SUBRULE($.asCmd) },
+            { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.setCmd) },
             { ALT: () => $.SUBRULE($.delayCmd) },
             { ALT: () => $.SUBRULE($.sceneCmd) },
+            { ALT: () => $.SUBRULE($.forCmd) },
         ])
-    }) 
+    })
 
 
 }

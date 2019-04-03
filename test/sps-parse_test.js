@@ -2,20 +2,9 @@
 const spsLexer = require('../sps-lex')
 const expect = require("chai").expect
 const spsParse = require("../sps-parse")
-const fs = require("fs")
 
 function parseFragment(input, fragment) {
-    const lexResult = spsLexer.tokenize(input)
-    // setting a new input will RESET the parser instance's state.
-    spsParse.parser.input = lexResult.tokens
-    // any top level rule may be used as an entry point
-    const value = spsParse.parser[fragment]()
-    return {
-        value: value, // this is a pure grammar, the value will always be <undefined>
-        lexErrors: lexResult.errors,
-        parseErrors: spsParse.parser.errors
-    }
-
+    return spsParse.parser.parseFragment(input, fragment)
 }
 
 describe("Parse json", () => {
@@ -127,12 +116,20 @@ leave:
 })
 function parseFile (folder, fn) {
     it(`Simple Parse  ${fn}`, ()=> {
-        let input = fs.readFileSync(`./tests/${folder}/${fn}.sps`, 'utf8');
-        let out = parseFragment(input, 'script');
+        let out = spsParse.parser.parseFile(`./tests/${folder}/${fn}.sps`);
+        expect(out.lexErrors.length).to.be.equal(0, 
+            'Error '+fn + dumpTokenErrors(out.lexErrors))
         expect(out.parseErrors.length).to.be.equal(0, 
             'Error '+fn + dumpErrors(out.parseErrors))
     })
 }
+describe("Sample files", () => {
+    for(let fn of [
+        "groundcontrol"
+    ])  {
+        parseFile('sample', fn)        
+    }
+})
 
 describe("Parse files", () => {
     for(let fn of [
@@ -151,7 +148,9 @@ describe("Parse files", () => {
         "set",
         "startup-enter-leave",
         "tell",
-        "story"
+        "story",
+        "import",
+        "for"
     ])  {
         parseFile('parse', fn)        
     }
@@ -160,9 +159,17 @@ describe("Parse files", () => {
 
 
 function dumpErrors(errs) {
-    let s='';
+    let s='\n';
     for (let err of errs) {
-        s+= `Line (${err.token.startLine}-${err.token.startColumn}: ${err.message}`
+        s+= `Line (${err.token.startLine}-${err.token.startColumn}: ${err.message}\n`
+    }
+    return s;
+}
+
+function dumpTokenErrors(errs) {
+    let s='\n';
+    for (let err of errs) {
+        s+= `Line (${err.line}-${err.column}: ${err.message}\n`
     }
     return s;
 }
