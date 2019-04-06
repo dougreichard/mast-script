@@ -75,7 +75,10 @@ module.exports = ($) => {
         })
         $.OPTION7(() => {
             $.MANY(() => {
-                $.SUBRULE($.shot);
+                $.OR([
+                    {ALT: ()=> $.SUBRULE($.interaction)},
+                    {ALT: ()=> $.SUBRULE($.shot)}
+                ])
             })
         })
         $.CONSUME(toks.Outdent);

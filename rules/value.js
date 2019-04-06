@@ -4,61 +4,75 @@ const toks = spsLexer.tokens
 
 module.exports = ($) => {
     $.RULE("objectValue", () => {
-        $.OR([
+        let value
+        value = $.OR([
             // using ES6 Arrow functions to reduce verbosity.
             { ALT: () => $.SUBRULE($.object) },
             { ALT: () => $.SUBRULE($.array) }
         ])
+        return value
     })
 
     // the parsing methods
     $.RULE("object", () => {
+        let obj = {}
         $.CONSUME(toks.LBrace)
+        $.OPTION(()=>$.CONSUME(toks.Indent))
         $.MANY_SEP({
             SEP: toks.Comma,
             DEF: () => {
-                $.SUBRULE2($.objectItem)
+                let {key, value} = $.SUBRULE2($.objectItem)
+                obj[key] = value
             }
         })
+        $.OPTION1(()=>$.CONSUME(toks.Outdent))
         $.CONSUME(toks.RBrace)
+        return obj
     })
 
     $.RULE("objectItem", () => {
+        let key
         $.OR([
-            {ALT: ()=> $.CONSUME(toks.StringLiteral)},
-            {ALT: ()=> $.CONSUME(toks.Identifier)}
+            {ALT: ()=> key = $.trimString($.CONSUME(toks.StringLiteral).image)},
+            {ALT: ()=> key = $.CONSUME(toks.Identifier).image}
         ])
         
         $.CONSUME(toks.Colon)
-        $.SUBRULE($.value)
+        let value = $.SUBRULE($.value)
+        return {key, value}
     })
 
     $.RULE("array", () => {
+        let arr = []
         $.CONSUME(toks.LBracket)
         $.MANY_SEP({
             SEP: toks.Comma,
             DEF: () => {
-                $.SUBRULE2($.value)
+                arr.push($.SUBRULE2($.value))
             }
         })
         $.CONSUME(toks.RBracket)
+        return arr
     })
 
     $.RULE("value", () => {
-        $.OR([
-            { ALT: () => $.CONSUME(toks.StringLiteral) },
-            { ALT: () => $.CONSUME(toks.IntegerLiteral) },
-            { ALT: () => $.CONSUME(toks.NumberLiteral) },
+        let value 
+        value = $.OR([
+            { ALT: () => $.trimString($.CONSUME(toks.StringLiteral).image) },
+            { ALT: () => Number($.CONSUME(toks.IntegerLiteral).image) },
+            { ALT: () => Number($.CONSUME(toks.NumberLiteral).image) },
             { ALT: () => $.SUBRULE($.object) },
-            { ALT: () => $.SUBRULE($.array) },
+            { ALT: () =>  $.SUBRULE($.array) },
             { ALT: () => $.SUBRULE($.booleanValue) },
-            { ALT: () => $.CONSUME(toks.Null) }
+            { ALT: () => $.CONSUME(toks.Null).image? null:undefined }
         ])
+        return value
     })
     $.RULE("booleanValue", () => {
-        $.OR([
-            { ALT: () => $.CONSUME(toks.True) },
-            { ALT: () => $.CONSUME(toks.False) },
+        
+        return $.OR([
+            { ALT: () => $.CONSUME(toks.True).image? true: false  },
+            { ALT: () => $.CONSUME(toks.False).image? false:true },
         ])
     })
 }

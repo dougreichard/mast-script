@@ -9,12 +9,12 @@
 </style>
 
 
-<link rel='stylesheet' href='https://unpkg.com/chevrotain@3.6.1/diagrams/diagrams.css'>
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@4.3.0/diagrams/diagrams.css'>
 
-<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/vendor/railroad-diagrams.js'></script>
-<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/diagrams_builder.js'></script>
-<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/diagrams_behavior.js'></script>
-<script src='https://unpkg.com/chevrotain@3.6.1/diagrams/src/main.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/main.js'></script>
 
 <div id="diagrams" align="center"></div>    
 
@@ -170,7 +170,7 @@
   {
     "type": "Rule",
     "name": "ObjectiveIdList",
-    "orgText": "() => {\r\n        let list = []\r\n        $.OR([\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        list.push($.CONSUME(toks.ObjectiveId).image)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            },\r\n            { ALT: () => list.push($.CONSUME2(toks.ObjectiveId).image) },\r\n        ])\r\n        return list\r\n    }",
+    "orgText": "() => {\r\n        let list = []\r\n        $.OR([\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        list.push($.CONSUME(toks.ObjectiveId).image)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            },\r\n            { ALT: () => list.push($.CONSUME1(toks.ObjectiveId).image) },\r\n        ])\r\n        return list\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -215,7 +215,7 @@
                 "type": "Terminal",
                 "name": "ObjectiveId",
                 "label": "ObjectiveId",
-                "idx": 2,
+                "idx": 1,
                 "pattern": "\\*\\w+"
               }
             ]
@@ -512,7 +512,7 @@
                 "name": "Identifier",
                 "label": "Identifier",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "[a-zA-Z_]+\\w*"
               }
             ]
           }
@@ -591,7 +591,7 @@
   {
     "type": "Rule",
     "name": "castDef",
-    "orgText": "() => {\r\n        let id = $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.CastId).image},\r\n            {ALT: ()=> '@'+$.CONSUME(toks.Identifier).image}\r\n        ]);\r\n        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))\r\n        let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))\r\n        let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)\r\n\r\n        $.addCast({id, alias, roles, desc})\r\n    }",
+    "orgText": "() => {\r\n        let id = $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.CastId).image},\r\n            {ALT: ()=> '@'+$.CONSUME(toks.Identifier).image}\r\n        ]);\r\n        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))\r\n        let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))\r\n        let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)\r\n        let value = $.OPTION4(() =>  $.SUBRULE($.objectValue))\r\n\r\n        $.addCast({id, alias, roles, desc, value})\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -617,7 +617,7 @@
                 "name": "Identifier",
                 "label": "Identifier",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "[a-zA-Z_]+\\w*"
               }
             ]
           }
@@ -657,73 +657,343 @@
             "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
           }
         ]
+      },
+      {
+        "type": "Option",
+        "idx": 4,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "objectValue",
+            "idx": 0
+          }
+        ]
       }
     ]
   },
   {
     "type": "Rule",
-    "name": "tellCmd",
-    "orgText": "() => {\r\n        $.CONSUME(toks.TellCmd)\r\n        let tell = {type: TellTypes.Story}\r\n        $.OPTION(() => {\r\n            $.OR([\r\n                {ALT: () => {\r\n                    tell.type = TellTypes.RoleCast\r\n                    tell.who = $.SUBRULE($.roleCastIdList)\r\n                }},\r\n                {ALT: () => $.CONSUME(toks.StorySec)},\r\n                {ALT: () => {\r\n                    tell.type = TellTypes.Scene\r\n                    tell.who = $.CONSUME(toks.SceneId)\r\n                }}\r\n            ])\r\n        })\r\n        $.CONSUME(toks.StringLiteral)\r\n    }",
+    "name": "doCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.DoCmd)\r\n        $.OPTION(() => $.CONSUME(toks.TogetherOp))\r\n        $.OPTION1(() => $.SUBRULE($.shotList))\r\n    }",
     "definition": [
       {
         "type": "Terminal",
-        "name": "TellCmd",
-        "label": "TellCmd",
+        "name": "DoCmd",
+        "label": "DoCmd",
         "idx": 0,
-        "pattern": "tell"
+        "pattern": "do"
       },
       {
         "type": "Option",
         "idx": 0,
         "definition": [
           {
-            "type": "Alternation",
+            "type": "Terminal",
+            "name": "TogetherOp",
+            "label": "TogetherOp",
             "idx": 0,
+            "pattern": "together"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "shotList",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "shotList",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Identifier) },\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        $.CONSUME1(toks.Identifier)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
             "definition": [
               {
-                "type": "Flat",
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z_]+\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 1,
+                    "pattern": "[a-zA-Z_]+\\w*"
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "RBracket",
+                "label": "RBracket",
+                "idx": 0,
+                "pattern": "\\]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "tellCmd",
+    "orgText": "() => {\r\n        $.OR([{\r\n            ALT: () => {\r\n                $.CONSUME(toks.TellCmd)\r\n                $.OPTION1(() => $.SUBRULE($.identifierTellList))\r\n                $.CONSUME(toks.StringLiteral)\r\n            }}, {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.CastId)\r\n                    $.CONSUME1(toks.StringLiteral)\r\n                }\r\n            }\r\n        ])\r\n\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "TellCmd",
+                "label": "TellCmd",
+                "idx": 0,
+                "pattern": "tell"
+              },
+              {
+                "type": "Option",
+                "idx": 1,
                 "definition": [
                   {
                     "type": "NonTerminal",
-                    "name": "roleCastIdList",
+                    "name": "identifierTellList",
                     "idx": 0
                   }
                 ]
               },
               {
-                "type": "Flat",
-                "definition": [
-                  {
-                    "type": "Terminal",
-                    "name": "StorySec",
-                    "label": "StorySec",
-                    "idx": 0,
-                    "pattern": "story"
-                  }
-                ]
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 0,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "CastId",
+                "label": "CastId",
+                "idx": 0,
+                "pattern": "@\\w+"
               },
               {
-                "type": "Flat",
-                "definition": [
-                  {
-                    "type": "Terminal",
-                    "name": "SceneId",
-                    "label": "SceneId",
-                    "idx": 0,
-                    "pattern": "\\$\\w+"
-                  }
-                ]
+                "type": "Terminal",
+                "name": "StringLiteral",
+                "label": "StringLiteral",
+                "idx": 1,
+                "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
               }
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "asCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.AsCmd)\r\n        $.CONSUME(toks.CastId)\r\n        $.SUBRULE($.aliasCmd)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "AsCmd",
+        "label": "AsCmd",
+        "idx": 0,
+        "pattern": "as"
       },
       {
         "type": "Terminal",
-        "name": "StringLiteral",
-        "label": "StringLiteral",
+        "name": "CastId",
+        "label": "CastId",
         "idx": 0,
-        "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+        "pattern": "@\\w+"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "aliasCmd",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "aliasCmd",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.setCmd) },\r\n            { ALT: () => $.SUBRULE($.askCmd) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "tellCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "setCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "askCmd",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identifierTellList",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.identifierTell) },\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        $.SUBRULE1($.identifierTell)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            }\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "identifierTell",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "identifierTell",
+                    "idx": 1
+                  }
+                ]
+              },
+              {
+                "type": "Terminal",
+                "name": "RBracket",
+                "label": "RBracket",
+                "idx": 0,
+                "pattern": "\\]"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identifierTell",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.StorySec) },\r\n            { ALT: () => $.CONSUME(toks.SceneId) },\r\n            { ALT: () => $.SUBRULE($.roleCastId) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StorySec",
+                "label": "StorySec",
+                "idx": 0,
+                "pattern": "story"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "SceneId",
+                "label": "SceneId",
+                "idx": 0,
+                "pattern": "\\$\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastId",
+                "idx": 0
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -920,7 +1190,7 @@
   {
     "type": "Rule",
     "name": "setCmd",
-    "orgText": "() => {\r\n        $.CONSUME(toks.SetCmd)\r\n        $.SUBRULE($.roleCastLHS)\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Colon) },\r\n            { ALT: () => $.CONSUME(toks.Assign) },\r\n            { ALT: () => $.CONSUME(toks.AssignPercent) },\r\n            { ALT: () => $.CONSUME(toks.AssignAdd) },\r\n            { ALT: () => $.CONSUME(toks.AssignSub) },\r\n            { ALT: () => $.CONSUME(toks.AssignMul) }\r\n        ])\r\n\r\n        $.OR1([\r\n            { ALT: () => $.SUBRULE($.value) },\r\n            { ALT: () => $.SUBRULE1($.roleCastExpression) },\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SetCmd)\r\n        $.SUBRULE($.setLHS)\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Colon) },\r\n            { ALT: () => $.CONSUME(toks.Assign) },\r\n            { ALT: () => $.CONSUME(toks.AssignPercent) },\r\n            { ALT: () => $.CONSUME(toks.AssignAdd) },\r\n            { ALT: () => $.CONSUME(toks.AssignSub) },\r\n            { ALT: () => $.CONSUME(toks.AssignMul) }\r\n        ])\r\n\r\n        $.OR1([\r\n            { ALT: () => $.SUBRULE($.value) },\r\n            { ALT: () => $.SUBRULE1($.identifierExpression) },\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -931,7 +1201,7 @@
       },
       {
         "type": "NonTerminal",
-        "name": "roleCastLHS",
+        "name": "setLHS",
         "idx": 0
       },
       {
@@ -1031,7 +1301,7 @@
             "definition": [
               {
                 "type": "NonTerminal",
-                "name": "roleCastExpression",
+                "name": "identifierExpression",
                 "idx": 1
               }
             ]
@@ -1056,6 +1326,265 @@
         "type": "NonTerminal",
         "name": "timeUnits",
         "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "forCmd",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ForCmd)\r\n        $.OPTION(()=> {\r\n            $.CONSUME(toks.Identifier)\r\n            $.CONSUME(toks.InOp);\r\n        })\r\n        \r\n        $.SUBRULE($.range)\r\n        $.SUBRULE($.IfElseCmdBlock)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ForCmd",
+        "label": "ForCmd",
+        "idx": 0,
+        "pattern": "for"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 0,
+            "pattern": "[a-zA-Z_]+\\w*"
+          },
+          {
+            "type": "Terminal",
+            "name": "InOp",
+            "label": "InOp",
+            "idx": 0,
+            "pattern": "in"
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "range",
+        "idx": 0
+      },
+      {
+        "type": "NonTerminal",
+        "name": "IfElseCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "range",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE2($.rangeArray) },\r\n            { ALT: () => $.SUBRULE2($.rangeInt) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "rangeArray",
+                "idx": 2
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "rangeInt",
+                "idx": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "rangeInt",
+    "orgText": "() => {\r\n        $.CONSUME(toks.RangeOp)\r\n        $.CONSUME(toks.LParen)\r\n        $.CONSUME(toks.IntegerLiteral)\r\n\r\n        $.OPTION(() => { $.CONSUME(toks.Comma); $.CONSUME1(toks.IntegerLiteral) })\r\n        $.OPTION1(() => { $.CONSUME1(toks.Comma); $.CONSUME2(toks.IntegerLiteral) })\r\n        $.CONSUME(toks.RParen)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "RangeOp",
+        "label": "RangeOp",
+        "idx": 0,
+        "pattern": "range"
+      },
+      {
+        "type": "Terminal",
+        "name": "LParen",
+        "label": "LParen",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "Terminal",
+        "name": "IntegerLiteral",
+        "label": "IntegerLiteral",
+        "idx": 0,
+        "pattern": "-?\\d+"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Comma",
+            "label": "Comma",
+            "idx": 0,
+            "pattern": ","
+          },
+          {
+            "type": "Terminal",
+            "name": "IntegerLiteral",
+            "label": "IntegerLiteral",
+            "idx": 1,
+            "pattern": "-?\\d+"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Comma",
+            "label": "Comma",
+            "idx": 1,
+            "pattern": ","
+          },
+          {
+            "type": "Terminal",
+            "name": "IntegerLiteral",
+            "label": "IntegerLiteral",
+            "idx": 2,
+            "pattern": "-?\\d+"
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "RParen",
+        "label": "RParen",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "rangeArray",
+    "orgText": "() => {\r\n        $.CONSUME(toks.LBracket)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                $.OR([\r\n                    { ALT: () => $.SUBRULE2($.value) },\r\n                    { ALT: () => $.SUBRULE2($.identifierRange) },\r\n                ])\r\n\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBracket)\r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LBracket",
+        "label": "LBracket",
+        "idx": 0,
+        "pattern": "\\["
+      },
+      {
+        "type": "RepetitionWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "value",
+                    "idx": 2
+                  }
+                ]
+              },
+              {
+                "type": "Flat",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "identifierRange",
+                    "idx": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "RBracket",
+        "label": "RBracket",
+        "idx": 0,
+        "pattern": "\\]"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identifierRange",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.StorySec) },\r\n            { ALT: () => $.CONSUME(toks.SceneId) },\r\n            { ALT: () => $.SUBRULE($.roleCastId) },\r\n        ])\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "StorySec",
+                "label": "StorySec",
+                "idx": 0,
+                "pattern": "story"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "SceneId",
+                "label": "SceneId",
+                "idx": 0,
+                "pattern": "\\$\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastId",
+                "idx": 0
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -1210,8 +1739,8 @@
   },
   {
     "type": "Rule",
-    "name": "roleCastLHS",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Identifier) },\r\n            { ALT: () => $.SUBRULE($.roleCastIdList) },\r\n            //{ ALT: () => $.CONSUME(toks.CastId) }\r\n        ])\r\n        $.OPTION(()=>{\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "name": "identifierLHSList",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.identifierLHS) },\r\n            {\r\n                ALT: () => {\r\n                    $.CONSUME(toks.LBracket);\r\n                    $.MANY(() => {\r\n                        $.SUBRULE1($.identifierLHS)\r\n                    })\r\n                    $.CONSUME(toks.RBracket);\r\n                }\r\n            }\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -1221,11 +1750,9 @@
             "type": "Flat",
             "definition": [
               {
-                "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
-                "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "type": "NonTerminal",
+                "name": "identifierLHS",
+                "idx": 0
               }
             ]
           },
@@ -1233,28 +1760,29 @@
             "type": "Flat",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "roleCastIdList",
-                "idx": 0
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Repetition",
-            "idx": 0,
-            "definition": [
+                "type": "Terminal",
+                "name": "LBracket",
+                "label": "LBracket",
+                "idx": 0,
+                "pattern": "\\["
+              },
+              {
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "identifierLHS",
+                    "idx": 1
+                  }
+                ]
+              },
               {
                 "type": "Terminal",
-                "name": "DataId",
-                "label": "DataId",
+                "name": "RBracket",
+                "label": "RBracket",
                 "idx": 0,
-                "pattern": "\\.\\w+"
+                "pattern": "\\]"
               }
             ]
           }
@@ -1264,8 +1792,8 @@
   },
   {
     "type": "Rule",
-    "name": "roleCastExpression",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.Identifier) },\r\n            { ALT: () => $.SUBRULE($.roleCastId) },\r\n            //{ ALT: () => $.CONSUME(toks.CastId) }\r\n        ])\r\n        $.OPTION(()=>{\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "name": "identifierLHS",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.StorySec) },\r\n            { ALT: () => $.CONSUME(toks.SceneId) },\r\n            { ALT: () => $.CONSUME(toks.InteractionId) },\r\n            { ALT: () => $.CONSUME(toks.ObjectiveId) },\r\n            { ALT: () => $.SUBRULE($.roleCastId) },\r\n            //{ ALT: () => $.CONSUME(toks.CastId) }\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -1276,10 +1804,46 @@
             "definition": [
               {
                 "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
+                "name": "StorySec",
+                "label": "StorySec",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "story"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "SceneId",
+                "label": "SceneId",
+                "idx": 0,
+                "pattern": "\\$\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "InteractionId",
+                "label": "InteractionId",
+                "idx": 0,
+                "pattern": "\\?\\w+"
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ObjectiveId",
+                "label": "ObjectiveId",
+                "idx": 0,
+                "pattern": "\\*\\w+"
               }
             ]
           },
@@ -1294,6 +1858,18 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "setLHS",
+    "orgText": "() => {\r\n        $.SUBRULE($.identifierLHSList)\r\n        $.OPTION(() => {\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "identifierLHSList",
+        "idx": 0
       },
       {
         "type": "Option",
@@ -1308,7 +1884,38 @@
                 "name": "DataId",
                 "label": "DataId",
                 "idx": 0,
-                "pattern": "\\.\\w+"
+                "pattern": "\\.\\w*"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identifierExpression",
+    "orgText": "() => {\r\n        $.SUBRULE($.identifierLHS) \r\n        $.OPTION(() => {\r\n            $.MANY(() => {\r\n                $.CONSUME(toks.DataId)\r\n            })\r\n        })\r\n    }",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "identifierLHS",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Repetition",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "DataId",
+                "label": "DataId",
+                "idx": 0,
+                "pattern": "\\.\\w*"
               }
             ]
           }
@@ -1319,7 +1926,7 @@
   {
     "type": "Rule",
     "name": "Expression",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.roleCastExpression) },\r\n            { ALT: () => $.CONSUME(toks.StringLiteral) },\r\n            { ALT: () => $.CONSUME(toks.IntegerLiteral) },\r\n            { ALT: () => $.CONSUME(toks.NumberLiteral) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null) },\r\n            { ALT: () => $.SUBRULE($.parenthesisExpression) },\r\n\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.identifierExpression) },\r\n            { ALT: () => $.CONSUME(toks.StringLiteral) },\r\n            { ALT: () => $.CONSUME(toks.IntegerLiteral) },\r\n            { ALT: () => $.CONSUME(toks.NumberLiteral) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null) },\r\n            { ALT: () => $.SUBRULE($.parenthesisExpression) },\r\n\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -1330,7 +1937,7 @@
             "definition": [
               {
                 "type": "NonTerminal",
-                "name": "roleCastExpression",
+                "name": "identifierExpression",
                 "idx": 0
               }
             ]
@@ -1355,7 +1962,7 @@
                 "name": "IntegerLiteral",
                 "label": "IntegerLiteral",
                 "idx": 0,
-                "pattern": "\\d+"
+                "pattern": "-?\\d+"
               }
             ]
           },
@@ -1367,7 +1974,7 @@
                 "name": "NumberLiteral",
                 "label": "NumberLiteral",
                 "idx": 0,
-                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)+([eE][+-]?\\d+)?"
               }
             ]
           },
@@ -1435,6 +2042,52 @@
   },
   {
     "type": "Rule",
+    "name": "imports",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ImportSec).image\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)  \r\n        $.pushImport()\r\n        $.MANY(() => {\r\n            let script = $.trimString($.CONSUME(toks.StringLiteral).image)\r\n            $.importScript(script)\r\n        })\r\n        $.popImport()\r\n        $.CONSUME(toks.Outdent)  \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ImportSec",
+        "label": "ImportSec",
+        "idx": 0,
+        "pattern": "imports"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "startup",
     "orgText": "() => {\r\n        $.CONSUME(toks.StartupBlock)\r\n        $.SUBRULE($.stateCmdBlock)\r\n    }",
     "definition": [
@@ -1492,8 +2145,59 @@
   },
   {
     "type": "Rule",
+    "name": "shot",
+    "orgText": "() => {\r\n        $.OR([{\r\n            ALT: () => {\r\n                $.CONSUME(toks.Identifier)\r\n                $.OPTION(()=> $.SUBRULE($.aliasString))\r\n\r\n            }\r\n        }, {\r\n            ALT: () => {\r\n                $.SUBRULE1($.aliasString)\r\n            }\r\n        }])\r\n        $.SUBRULE($.stateCmdBlock)\r\n\r\n    }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z_]+\\w*"
+              },
+              {
+                "type": "Option",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "aliasString",
+                    "idx": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "aliasString",
+                "idx": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "stateCmdBlock",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "stateCmdBlock",
-    "orgText": "() => {\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE2($.stateCommand)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
+    "orgText": "() => {\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        $.MANY(() => {\r\n            $.SUBRULE($.stateCommand)\r\n        })\r\n        $.CONSUME(toks.Outdent)\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -1515,7 +2219,7 @@
           {
             "type": "NonTerminal",
             "name": "stateCommand",
-            "idx": 2
+            "idx": 0
           }
         ]
       },
@@ -1530,12 +2234,32 @@
   {
     "type": "Rule",
     "name": "stateCommand",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.setCmd) },\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.asCmd) },\r\n            { ALT: () => $.SUBRULE($.doCmd) },\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.setCmd) },\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n            { ALT: () => $.SUBRULE($.forCmd) },\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
         "idx": 0,
         "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "asCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "doCmd",
+                "idx": 0
+              }
+            ]
+          },
           {
             "type": "Flat",
             "definition": [
@@ -1572,6 +2296,16 @@
               {
                 "type": "NonTerminal",
                 "name": "sceneCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "forCmd",
                 "idx": 0
               }
             ]
@@ -1653,7 +2387,7 @@
                 "name": "Identifier",
                 "label": "Identifier",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "[a-zA-Z_]+\\w*"
               }
             ]
           }
@@ -1899,12 +2633,22 @@
   {
     "type": "Rule",
     "name": "ifElseValidCmd",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n            {ALT: ()=> $.SUBRULE($.setCmd)},\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            {ALT: ()=> $.SUBRULE($.completeCmd)},\r\n            {ALT: ()=> $.SUBRULE($.showCmd)},\r\n            {ALT: ()=> $.SUBRULE($.hideCmd)},\r\n            {ALT: ()=> $.SUBRULE($.failCmd)},\r\n            // {ALT: ()=> $.SUBRULE($.askCmd)}\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.asCmd) },\r\n            { ALT: () => $.SUBRULE($.tellCmd) },\r\n            { ALT: () => $.SUBRULE($.sceneCmd) },\r\n            {ALT: ()=> $.SUBRULE($.setCmd)},\r\n            { ALT: () => $.SUBRULE($.delayCmd) },\r\n            {ALT: ()=> $.SUBRULE($.completeCmd)},\r\n            {ALT: ()=> $.SUBRULE($.showCmd)},\r\n            {ALT: ()=> $.SUBRULE($.hideCmd)},\r\n            {ALT: ()=> $.SUBRULE($.failCmd)},\r\n            // {ALT: ()=> $.SUBRULE($.askCmd)}\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
         "idx": 0,
         "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "asCmd",
+                "idx": 0
+              }
+            ]
+          },
           {
             "type": "Flat",
             "definition": [
@@ -2057,7 +2801,7 @@
   {
     "type": "Rule",
     "name": "interaction",
-    "orgText": "() => {\r\n        let id = $.CONSUME(toks.InteractionId).image;\r\n        let audience  = $.SUBRULE($.roleCastIdList)\r\n        let desc = $.CONSUME(toks.StringLiteral).image;\r\n        $.pushInteraction({id, audience, desc})\r\n        $.SUBRULE($.interactionBlockItem)\r\n        $.popInteraction(id)\r\n        \r\n    }",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.InteractionId).image;\r\n        let audience  = $.SUBRULE($.roleCastIdList)\r\n        let desc = $.CONSUME(toks.StringLiteral).image;\r\n        $.pushInteraction({id, audience, desc})\r\n        $.SUBRULE($.interactionBlockItem)\r\n        $.popInteraction(id)\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -2088,7 +2832,7 @@
   {
     "type": "Rule",
     "name": "interactionBlockItem",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.form) },\r\n            { ALT: () => $.SUBRULE($.searchCmd) },\r\n            { ALT: () => $.SUBRULE($.completeObjCmd) },\r\n            { ALT: () => $.SUBRULE($.KeysInteraction) },\r\n            { ALT: () => $.SUBRULE($.MediaInteraction) },\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.SUBRULE($.form) },\r\n            { ALT: () => $.SUBRULE($.choiceInteraction) },\r\n            { ALT: () => $.SUBRULE($.searchCmd) },\r\n            { ALT: () => $.SUBRULE($.completeObjCmd) },\r\n            { ALT: () => $.SUBRULE($.KeysInteraction) },\r\n            { ALT: () => $.SUBRULE($.MediaInteraction) },\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -2100,6 +2844,16 @@
               {
                 "type": "NonTerminal",
                 "name": "form",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "choiceInteraction",
                 "idx": 0
               }
             ]
@@ -2145,6 +2899,68 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "choiceInteraction",
+    "orgText": "() => {\r\n        $.CONSUME(toks.ChoiceBlock);\r\n        $.CONSUME(toks.Colon)\r\n        $.CONSUME(toks.Indent)\r\n        \r\n        $.MANY(()=> {\r\n            $.OPTION(()=> $.SUBRULE($.roleCastIdList))\r\n            $.CONSUME(toks.StringLiteral)\r\n            $.SUBRULE($.IfElseCmdBlock)\r\n         })\r\n         $.CONSUME(toks.Outdent) \r\n    }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ChoiceBlock",
+        "label": "ChoiceBlock",
+        "idx": 0,
+        "pattern": "choice"
+      },
+      {
+        "type": "Terminal",
+        "name": "Colon",
+        "label": "Colon",
+        "idx": 0,
+        "pattern": ":"
+      },
+      {
+        "type": "Terminal",
+        "name": "Indent",
+        "label": "Indent",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Option",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "roleCastIdList",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Terminal",
+            "name": "StringLiteral",
+            "label": "StringLiteral",
+            "idx": 0,
+            "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "IfElseCmdBlock",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Outdent",
+        "label": "Outdent",
+        "idx": 0
       }
     ]
   },
@@ -2272,7 +3088,7 @@
         "name": "IntegerLiteral",
         "label": "IntegerLiteral",
         "idx": 1,
-        "pattern": "\\d+"
+        "pattern": "-?\\d+"
       },
       {
         "type": "Terminal",
@@ -2286,7 +3102,7 @@
         "name": "IntegerLiteral",
         "label": "IntegerLiteral",
         "idx": 3,
-        "pattern": "\\d+"
+        "pattern": "-?\\d+"
       },
       {
         "type": "Terminal",
@@ -2300,7 +3116,7 @@
         "name": "IntegerLiteral",
         "label": "IntegerLiteral",
         "idx": 5,
-        "pattern": "\\d+"
+        "pattern": "-?\\d+"
       },
       {
         "type": "Terminal",
@@ -2314,7 +3130,7 @@
         "name": "IntegerLiteral",
         "label": "IntegerLiteral",
         "idx": 7,
-        "pattern": "\\d+"
+        "pattern": "-?\\d+"
       }
     ]
   },
@@ -2489,7 +3305,7 @@
         "name": "Identifier",
         "label": "Identifier",
         "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
+        "pattern": "[a-zA-Z_]+\\w*"
       }
     ]
   },
@@ -2531,7 +3347,7 @@
         "name": "Identifier",
         "label": "Identifier",
         "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
+        "pattern": "[a-zA-Z_]+\\w*"
       },
       {
         "type": "NonTerminal",
@@ -2648,7 +3464,7 @@
   {
     "type": "Rule",
     "name": "story",
-    "orgText": "() => {\r\n        $.CONSUME(toks.StorySec);\r\n\r\n        let alias = $.OPTION(()=>{\r\n            $.SUBRULE($.aliasString);\r\n        })\r\n        let desc = $.OPTION1(()=>{\r\n            $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        let id = '$$story'\r\n        $.pushScene({id, alias, desc})\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
+    "orgText": "() => {\r\n        $.CONSUME(toks.StorySec);\r\n\r\n        let alias = $.OPTION(() => {\r\n            $.SUBRULE($.aliasString);\r\n        })\r\n        let desc = $.OPTION1(() => {\r\n            $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        let id = '$$story'\r\n        $.pushScene({ id, alias, desc })\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -2691,18 +3507,24 @@
   {
     "type": "Rule",
     "name": "scene",
-    "orgText": "() => {\r\n        let id = $.CONSUME(toks.SceneId).image;\r\n        let alias\r\n        let desc\r\n\r\n        $.OPTION(()=>{\r\n            alias = $.SUBRULE($.aliasString);\r\n        })\r\n        $.OPTION1(()=>{\r\n            desc = $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        $.pushScene({id,alias, desc})\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
+    "orgText": "() => {\r\n        let id = $.anonymousID('$') \r\n        let alias\r\n        let desc\r\n\r\n        $.OPTION(() => {\r\n            id = $.CONSUME(toks.SceneId).image;\r\n        })\r\n        $.OPTION1(() => {\r\n            alias = $.SUBRULE($.aliasString);\r\n        })\r\n        $.OPTION2(() => {\r\n            desc = $.CONSUME(toks.StringLiteral).image;\r\n        })\r\n        $.pushScene({ id, alias, desc })\r\n        $.SUBRULE($.sceneContent);\r\n        $.popScene(id)\r\n    }",
     "definition": [
-      {
-        "type": "Terminal",
-        "name": "SceneId",
-        "label": "SceneId",
-        "idx": 0,
-        "pattern": "\\$\\w+"
-      },
       {
         "type": "Option",
         "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "SceneId",
+            "label": "SceneId",
+            "idx": 0,
+            "pattern": "\\$\\w+"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
         "definition": [
           {
             "type": "NonTerminal",
@@ -2713,7 +3535,7 @@
       },
       {
         "type": "Option",
-        "idx": 1,
+        "idx": 2,
         "definition": [
           {
             "type": "Terminal",
@@ -2734,7 +3556,7 @@
   {
     "type": "Rule",
     "name": "sceneContent",
-    "orgText": "() => {\r\n       \r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.OPTION2(()=> {\r\n            $.SUBRULE($.objectives)\r\n        })\r\n        $.OPTION3(()=> {\r\n            $.SUBRULE($.interactions)\r\n        })\r\n        $.OPTION4(()=> {\r\n            $.SUBRULE($.startup)\r\n        })\r\n        $.OPTION5(()=> {\r\n            $.SUBRULE($.enter)\r\n        })\r\n        $.OPTION6(()=> {\r\n            $.SUBRULE($.leave)\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n\r\n    }",
+    "orgText": "() => {\r\n\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.OPTION2(() => {\r\n            $.SUBRULE($.objectives)\r\n        })\r\n        $.OPTION3(() => {\r\n            $.SUBRULE($.interactions)\r\n        })\r\n        $.OPTION4(() => {\r\n            $.SUBRULE($.startup)\r\n        })\r\n        $.OPTION5(() => {\r\n            $.SUBRULE($.enter)\r\n        })\r\n        $.OPTION6(() => {\r\n            $.SUBRULE($.leave)\r\n        })\r\n        $.OPTION7(() => {\r\n            $.MANY(() => {\r\n                $.OR([\r\n                    {ALT: ()=> $.SUBRULE($.interaction)},\r\n                    {ALT: ()=> $.SUBRULE($.shot)}\r\n                ])\r\n            })\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -2805,6 +3627,44 @@
         ]
       },
       {
+        "type": "Option",
+        "idx": 7,
+        "definition": [
+          {
+            "type": "Repetition",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternation",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "Flat",
+                    "definition": [
+                      {
+                        "type": "NonTerminal",
+                        "name": "interaction",
+                        "idx": 0
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Flat",
+                    "definition": [
+                      {
+                        "type": "NonTerminal",
+                        "name": "shot",
+                        "idx": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "type": "Terminal",
         "name": "Outdent",
         "label": "Outdent",
@@ -2815,7 +3675,7 @@
   {
     "type": "Rule",
     "name": "scenes",
-    "orgText": "() => {\r\n        $.CONSUME(toks.SceneSec);\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.MANY(()=> {\r\n            $.SUBRULE($.scene);\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n    }",
+    "orgText": "() => {\r\n        $.CONSUME(toks.SceneSec);\r\n        $.CONSUME(toks.Colon);\r\n        $.CONSUME(toks.Indent);\r\n        $.MANY(() => {\r\n            $.SUBRULE($.scene);\r\n        })\r\n        $.CONSUME(toks.Outdent);\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -2859,7 +3719,7 @@
   {
     "type": "Rule",
     "name": "objectValue",
-    "orgText": "() => {\r\n        $.OR([\r\n            // using ES6 Arrow functions to reduce verbosity.\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () => $.SUBRULE($.array) }\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        let value\r\n        value = $.OR([\r\n            // using ES6 Arrow functions to reduce verbosity.\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () => $.SUBRULE($.array) }\r\n        ])\r\n        return value\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -2892,7 +3752,7 @@
   {
     "type": "Rule",
     "name": "object",
-    "orgText": "() => {\r\n        $.CONSUME(toks.LBrace)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                $.SUBRULE2($.objectItem)\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBrace)\r\n    }",
+    "orgText": "() => {\r\n        let obj = {}\r\n        $.CONSUME(toks.LBrace)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                let {key, value} = $.SUBRULE2($.objectItem)\r\n                obj[key] = value\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBrace)\r\n        return obj\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -2931,7 +3791,7 @@
   {
     "type": "Rule",
     "name": "objectItem",
-    "orgText": "() => {\r\n        $.OR([\r\n            {ALT: ()=> $.CONSUME(toks.StringLiteral)},\r\n            {ALT: ()=> $.CONSUME(toks.Identifier)}\r\n        ])\r\n        \r\n        $.CONSUME(toks.Colon)\r\n        $.SUBRULE($.value)\r\n    }",
+    "orgText": "() => {\r\n        let key\r\n        $.OR([\r\n            {ALT: ()=> key = $.trimString($.CONSUME(toks.StringLiteral).image)},\r\n            {ALT: ()=> key = $.CONSUME(toks.Identifier).image}\r\n        ])\r\n        \r\n        $.CONSUME(toks.Colon)\r\n        let value = $.SUBRULE($.value)\r\n        return {key, value}\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -2957,7 +3817,7 @@
                 "name": "Identifier",
                 "label": "Identifier",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "[a-zA-Z_]+\\w*"
               }
             ]
           }
@@ -2980,7 +3840,7 @@
   {
     "type": "Rule",
     "name": "array",
-    "orgText": "() => {\r\n        $.CONSUME(toks.LBracket)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                $.SUBRULE2($.value)\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBracket)\r\n    }",
+    "orgText": "() => {\r\n        let arr = []\r\n        $.CONSUME(toks.LBracket)\r\n        $.MANY_SEP({\r\n            SEP: toks.Comma,\r\n            DEF: () => {\r\n                arr.push($.SUBRULE2($.value))\r\n            }\r\n        })\r\n        $.CONSUME(toks.RBracket)\r\n        return arr\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -3019,7 +3879,7 @@
   {
     "type": "Rule",
     "name": "value",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.StringLiteral) },\r\n            { ALT: () => $.CONSUME(toks.IntegerLiteral) },\r\n            { ALT: () => $.CONSUME(toks.NumberLiteral) },\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () => $.SUBRULE($.array) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null) }\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        let value \r\n        value = $.OR([\r\n            { ALT: () => $.trimString($.CONSUME(toks.StringLiteral).image) },\r\n            { ALT: () => Number($.CONSUME(toks.IntegerLiteral).image) },\r\n            { ALT: () => Number($.CONSUME(toks.NumberLiteral).image) },\r\n            { ALT: () => $.SUBRULE($.object) },\r\n            { ALT: () =>  $.SUBRULE($.array) },\r\n            { ALT: () => $.SUBRULE($.booleanValue) },\r\n            { ALT: () => $.CONSUME(toks.Null).image? null:undefined }\r\n        ])\r\n        return value\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -3045,7 +3905,7 @@
                 "name": "IntegerLiteral",
                 "label": "IntegerLiteral",
                 "idx": 0,
-                "pattern": "\\d+"
+                "pattern": "-?\\d+"
               }
             ]
           },
@@ -3057,7 +3917,7 @@
                 "name": "NumberLiteral",
                 "label": "NumberLiteral",
                 "idx": 0,
-                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)?([eE][+-]?\\d+)?"
+                "pattern": "-?(0|[1-9]\\d*)(\\.\\d+)+([eE][+-]?\\d+)?"
               }
             ]
           },
@@ -3110,7 +3970,7 @@
   {
     "type": "Rule",
     "name": "booleanValue",
-    "orgText": "() => {\r\n        $.OR([\r\n            { ALT: () => $.CONSUME(toks.True) },\r\n            { ALT: () => $.CONSUME(toks.False) },\r\n        ])\r\n    }",
+    "orgText": "() => {\r\n        \r\n        return $.OR([\r\n            { ALT: () => $.CONSUME(toks.True).image? true: false  },\r\n            { ALT: () => $.CONSUME(toks.False).image? false:true },\r\n        ])\r\n    }",
     "definition": [
       {
         "type": "Alternation",
@@ -3147,7 +4007,7 @@
   {
     "type": "Rule",
     "name": "script",
-    "orgText": "() => {\r\n        let script = $.OPTION(() => $.SUBRULE($.scriptData))\r\n        $.pushScript(script)\r\n        $.OPTION1(() => $.SUBRULE($.media))\r\n        $.OPTION2(() => $.SUBRULE($.roles))\r\n        $.OPTION3(() => $.SUBRULE($.cast))\r\n        $.OPTION4(() => $.SUBRULE($.story))\r\n        $.OPTION5(() => $.SUBRULE($.scenes))\r\n        $.popScript()\r\n    }",
+    "orgText": "() => {\r\n        let script = $.OPTION(() => $.SUBRULE($.scriptData))\r\n        $.pushScript(script)\r\n        $.OPTION1(() => $.SUBRULE($.imports))\r\n        $.OPTION2(() => $.SUBRULE($.media))\r\n        $.OPTION3(() => $.SUBRULE($.roles))\r\n        $.OPTION4(() => $.SUBRULE($.cast))\r\n        $.OPTION5(() => $.SUBRULE($.story))\r\n        $.OPTION6(() => $.SUBRULE($.scenes))\r\n        $.popScript()\r\n    }",
     "definition": [
       {
         "type": "Option",
@@ -3166,7 +4026,7 @@
         "definition": [
           {
             "type": "NonTerminal",
-            "name": "media",
+            "name": "imports",
             "idx": 0
           }
         ]
@@ -3177,7 +4037,7 @@
         "definition": [
           {
             "type": "NonTerminal",
-            "name": "roles",
+            "name": "media",
             "idx": 0
           }
         ]
@@ -3188,7 +4048,7 @@
         "definition": [
           {
             "type": "NonTerminal",
-            "name": "cast",
+            "name": "roles",
             "idx": 0
           }
         ]
@@ -3199,7 +4059,7 @@
         "definition": [
           {
             "type": "NonTerminal",
-            "name": "story",
+            "name": "cast",
             "idx": 0
           }
         ]
@@ -3207,6 +4067,17 @@
       {
         "type": "Option",
         "idx": 5,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "story",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 6,
         "definition": [
           {
             "type": "NonTerminal",
@@ -3220,7 +4091,7 @@
   {
     "type": "Rule",
     "name": "scriptData",
-    "orgText": "() => {\r\n        let id = $.CONSUME(toks.ScriptSec).image\r\n        let alias = $.OPTION(() => $.SUBRULE($.aliasString))\r\n        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)\r\n        $.addScript({id, alias, desc})\r\n    }",
+    "orgText": "() => {\r\n        let id = $.CONSUME(toks.ScriptSec).image\r\n        let alias = $.OPTION(() => $.SUBRULE($.aliasString))\r\n        let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)\r\n        let main = $.OPTION2(() => $.CONSUME(toks.SceneId).image)\r\n        $.addScript({id, alias, desc, main})\r\n    }",
     "definition": [
       {
         "type": "Terminal",
@@ -3242,7 +4113,7 @@
       },
       {
         "type": "Option",
-        "idx": 2,
+        "idx": 1,
         "definition": [
           {
             "type": "Terminal",
@@ -3250,6 +4121,19 @@
             "label": "StringLiteral",
             "idx": 0,
             "pattern": "\"(:?[^\\\\\"]|\\\\(:?[bfnrtv\"\\\\\\/]|u[0-9a-fA-F]{4}))*\"|'(:?[^\\\\']|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*'|`(:?[^`]|\\\\(:?[bfnrtv'\\\\\\/]|u[0-9a-fA-F]{4}))*`"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "SceneId",
+            "label": "SceneId",
+            "idx": 0,
+            "pattern": "\\$\\w+"
           }
         ]
       }

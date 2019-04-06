@@ -8,10 +8,27 @@ function parseFragment(input, fragment) {
 }
 
 describe("Parse json", () => {
-    it("Test Parser", () => {
+    it("Test Parse JSON", () => {
         let input = `{ "k" : 1,   "k2":"Hello, World" }`
         let out = parseFragment(input, 'objectValue');
         expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+    })
+    it("Test JSON values", ()=> {
+        let v = {
+            i: 3, 
+            d: 1.2,
+            b: true,
+            bf: false,
+            a: [2,4,5],
+            s: "Hello, World",
+            n: null,
+            o: {a: 45, b: false, s:"Yo"}
+        }
+        let input = JSON.stringify(v);
+        let out = parseFragment(input, 'objectValue');
+        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+      //  expect(out.value).to.not.be.undefined("Test")
+        expect(out.value).to.deep.equals(v, "Value does not equal")
     })
 })
 
@@ -26,7 +43,16 @@ describe("Parse roles", () => {
 this is  a lon g line
 going further'
 
-    role2 'This is a role'`
+    role2 'This is a role'
+    #roleV1 {a: 1,b: 2 }
+    #roleV {
+        a: 1,
+        b: 2
+    }
+    #roleV2 {a: 1,b: 2}
+    `
+
+    
         let out = parseFragment(input, 'roles');
         expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
     })
@@ -36,7 +62,15 @@ describe("Parse cast", () => {
     it("Test Parser", () => {
         let input =
             `cast:
-    @cast1 ('test') 'This is a cast'
+    @cast1 ('test') 'This is a cast' {
+        d: 1, 
+        s: "hello", 
+        o: { 
+            a: 1,
+            b: 3
+        },
+        i: 3
+    }
     @castr1 ('test') #role 'This is a cast'
     @castr2 ('test') [#role #role2] 'This is a cast'
     @castr3 #role1 'This is a cast'

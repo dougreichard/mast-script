@@ -58,7 +58,7 @@ module.exports = ($) => {
     //     ;
     $.RULE('stateCommand', () => {
         $.OR([
-            { ALT: () => $.SUBRULE($.asCmd) },
+            { ALT: () => $.SUBRULE($.asWithCmd) },
             { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.setCmd) },

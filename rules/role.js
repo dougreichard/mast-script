@@ -29,19 +29,13 @@ module.exports = ($) => {
     // | ID (alias-string)? string?
     // ;
     $.RULE("roleDef", () => {
-        let id
-        let alias 
-        let desc
-        id = $.OR([
+        let id = $.OR([
             {ALT: ()=> $.CONSUME(toks.RoleId).image},
             {ALT: ()=> '#'+ $.CONSUME(toks.Identifier).image}
         ]);
-        $.OPTION(() => {
-            alias = $.SUBRULE($.aliasString)
-        })
-        $.OPTION2(() => {
-            desc = $.CONSUME(toks.StringLiteral).image
-        })
-        $.addRole({id, alias, desc})
+        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
+        let desc = $.OPTION2(() =>  $.CONSUME(toks.StringLiteral).image)
+        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
+        $.addRole({id, alias, desc, value})
     })
 }

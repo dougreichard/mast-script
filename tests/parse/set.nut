@@ -15,6 +15,10 @@ scenes:
 
             // Sets value on both
             set [@dawn @son].XP: 100
+            set @dawn.o: {
+                a: 1,
+                b: 2
+            }
 
             
             // Assign

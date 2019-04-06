@@ -19,7 +19,7 @@ scenes:
             do callsign
             delay 1s
             do together [countdown launch_comms]
-            scene $launch
+            {cut: "FADEOUT"} scene $launch
 
         callsign:
             as @groundControl tell  @majorTom 'Ground Control to Major Tom'
@@ -31,7 +31,7 @@ scenes:
             as @counter tell `liftoff`
         
         launch_comms:
-            as @groundControl tell @majorTom `Ground Control to Major Tom`
+            as @groundControl  tell @majorTom `Ground Control to Major Tom`
             delay 4s
             as @majorTom tell @groundControl `Commencing countdown, engines on `
             delay 3s
@@ -69,7 +69,9 @@ And the papers want to know whose shirts you wear`
             @majorTom "I'm stepping through the door"
 
         ('EXT. Tom is in space suit stepping out open door but the ship flies on'):
-            @majorTom `And I'm floating in a most peculiar way`
+            @majorTom 
+            {x:1} 
+            `And I'm floating in a most peculiar way`
 
         (`EXT. Closeup tom's visor filled with stars`):
             @majorTom `And the stars look very different today`
@@ -107,6 +109,9 @@ And I think my spaceship knows which way to go
             @majorTom `Planet Earth is blue`
             @majorTom `And there's nothing I can do`
 
+         ?D #human `sss` complete [*A *B]:
+                tell `jgjj`
 
+        
 
 

@@ -77,4 +77,17 @@ scenes:
                     set *a.c += 2
                     set ?a.c *= 2
                     set $a.c -= 2
+
+            ?A @majorTom "How will you handle this?" choice:
+                'Try to talk them out of it':
+                    tell 'They cannot be dissuaded.'
+                    scene $story
+                'Force then to relent':
+                    tell 'They cannot be dissuaded.'
+                    scene $story
+                #president 'Abuse my presidential powers to silence them':
+                    tell 'This works; you will never hear from them again.'
+                    scene $story
+
+
                     

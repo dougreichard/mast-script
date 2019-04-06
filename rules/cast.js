@@ -27,8 +27,9 @@ module.exports = ($) => {
         let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
         let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))
         let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)
+        let value = $.OPTION4(() =>  $.SUBRULE($.objectValue))
 
-        $.addCast({id, alias, roles, desc})
+        $.addCast({id, alias, roles, desc, value})
     })
    
 }

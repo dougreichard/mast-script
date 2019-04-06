@@ -35,19 +35,36 @@ module.exports = ($) => {
                 $.CONSUME(toks.StringLiteral)
             }}, {
                 ALT: () => {
-                    $.CONSUME(toks.CastId)
                     $.CONSUME1(toks.StringLiteral)
                 }
             }
         ])
 
     })
-    $.RULE('asCmd', () => {
-        $.CONSUME(toks.AsCmd)
-        $.CONSUME(toks.CastId)
-        $.SUBRULE($.aliasCmd)
+
+    $.RULE('asWithCmd', () => {
+        $.OR([
+            {ALT: ()=> {
+                $.SUBRULE($.asCmd)
+                $.OPTION(()=> $.SUBRULE($.withCmd))
+            }},
+            {ALT: ()=> {
+                $.SUBRULE1($.withCmd)
+            }}
+        ])
+        
     })
 
+    $.RULE('asCmd', () => {
+        $.OPTION(()=>$.CONSUME(toks.AsCmd))
+        $.CONSUME(toks.CastId)
+    })
+
+    $.RULE('withCmd', () => {
+        $.OPTION(()=>$.CONSUME(toks.WithCmd))
+        $.SUBRULE($.objectValue)
+    })
+    
     $.RULE("aliasCmd", () => {
         $.OR([
             { ALT: () => $.SUBRULE($.tellCmd) },

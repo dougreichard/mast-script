@@ -21,8 +21,8 @@ const {SymbolTypes, TellTypes} = require('./sps-type')
 
 
 class SpsParser extends Parser {
-    constructor(input, listener) {
-        super(input, Object.values(spsLexer.tokens), { outputCst: false })
+    constructor(listener) {
+        super(Object.values(spsLexer.tokens), { outputCst: false })
         this.listener = listener
         expressionsRules(this);
         mediaRules(this);
@@ -117,7 +117,7 @@ SpsParser.defaultPaths = [__dirname]
 class MyListener {
     constructor() {
         this.symTable = {}
-        this.import = new SpsParser([], this)
+        this.import = new SpsParser( this)
     }
     addMedia(media) {
         this.addSymbol(SymbolTypes.Media, media);
@@ -176,7 +176,7 @@ class MyListener {
 
 
 // reuse the same parser instance.
-const parser = new SpsParser([], new MyListener())
+const parser = new SpsParser(new MyListener())
 
 module.exports = {
     parser: parser,

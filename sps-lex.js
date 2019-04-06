@@ -161,8 +161,9 @@ const matchOutdent = _.partialRight(matchIndentBase, "outdent")
 //tok("BlankLines", /\s*$/, { group: Lexer.SKIPPED })
 
 
-tok("NumberLiteral", /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/);
+
 tok("IntegerLiteral", /-?\d+/);
+tok("NumberLiteral", /-?(0|[1-9]\d*)(\.\d+)+([eE][+-]?\d+)?/);
 tok("MinuteLiteral", /(\d+)(m)/);
 tok("SecondLiteral", /(\d+)(s)/);
 tok("MillisecondLiteral", /(\d+)(ms)/);
@@ -189,6 +190,7 @@ tok("TogetherOp", /together/, { longer_alt: Identifier });
 
 tok("DoCmd", /do/, { longer_alt: Identifier });
 tok("AsCmd", /as/, { longer_alt: Identifier });
+tok("WithCmd", /with/, { longer_alt: Identifier });
 tok("TellCmd", /tell/, { longer_alt: Identifier });
 tok("SceneCmd", /scene/, { longer_alt: Identifier });
 tok("SetCmd", /set/, { longer_alt: Identifier });
@@ -217,7 +219,7 @@ tok("SceneId", /\$\w+/);
 tok("RoleId", /#\w+/);
 tok("InteractionId", /\?\w+/);
 tok("ObjectiveId", /\*\w+/);
-tok("DataId", /\.\w+/);
+tok("DataId", /\.\w*/);
 // Sections
 tok("ScriptSec", /script/, { longer_alt: Identifier });
 tok("MediaSec", /media/, { longer_alt: Identifier });
@@ -255,6 +257,7 @@ tok("InteractionBlock", /interaction/, { longer_alt: Identifier });
 tok("InteractionSec", /interactions/, { longer_alt: Identifier });
 
 tok("FormBlock", /form/, { longer_alt: Identifier });
+tok("ChoiceBlock", /choice/, { longer_alt: Identifier });
 tok("KeysBlock", /keys/, { longer_alt: Identifier });
 // form elements
 tok("InputElement", /input/, { longer_alt: Identifier });

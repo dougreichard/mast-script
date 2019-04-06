@@ -34,18 +34,30 @@ module.exports = ($) => {
         $.pushInteraction({id, audience, desc})
         $.SUBRULE($.interactionBlockItem)
         $.popInteraction(id)
-        
     })
-
 
     $.RULE('interactionBlockItem', () => {
         $.OR([
             { ALT: () => $.SUBRULE($.form) },
+            { ALT: () => $.SUBRULE($.choiceInteraction) },
             { ALT: () => $.SUBRULE($.searchCmd) },
             { ALT: () => $.SUBRULE($.completeObjCmd) },
             { ALT: () => $.SUBRULE($.KeysInteraction) },
             { ALT: () => $.SUBRULE($.MediaInteraction) },
         ])
+    })
+
+    $.RULE('choiceInteraction', () => {
+        $.CONSUME(toks.ChoiceBlock);
+        $.CONSUME(toks.Colon)
+        $.CONSUME(toks.Indent)
+        
+        $.MANY(()=> {
+            $.OPTION(()=> $.SUBRULE($.roleCastIdList))
+            $.CONSUME(toks.StringLiteral)
+            $.SUBRULE($.IfElseCmdBlock)
+         })
+         $.CONSUME(toks.Outdent) 
     })
 
     $.RULE('KeysInteraction', () => {
