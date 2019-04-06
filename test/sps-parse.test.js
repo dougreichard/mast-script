@@ -1,6 +1,6 @@
 "use strict"
 const spsLexer = require('../sps-lex')
-const expect = require("chai").expect
+//const expect = require("chai").expect
 const spsParse = require("../sps-parse")
 
 function parseFragment(input, fragment) {
@@ -11,7 +11,7 @@ describe("Parse json", () => {
     it("Test Parse JSON", () => {
         let input = `{ "k" : 1,   "k2":"Hello, World" }`
         let out = parseFragment(input, 'objectValue');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
     it("Test JSON values", ()=> {
         let v = {
@@ -26,9 +26,9 @@ describe("Parse json", () => {
         }
         let input = JSON.stringify(v);
         let out = parseFragment(input, 'objectValue');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
       //  expect(out.value).to.not.be.undefined("Test")
-        expect(out.value).to.deep.equals(v, "Value does not equal")
+        expect(out.value).toEqual(v, "Value does not equal")
     })
 })
 
@@ -54,7 +54,7 @@ going further'
 
     
         let out = parseFragment(input, 'roles');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
 })
 
@@ -79,7 +79,7 @@ describe("Parse cast", () => {
 this is  a lon g line
 going further'`
         let out = parseFragment(input, 'cast');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
 })
 
@@ -94,7 +94,7 @@ cast:
 
 `
         let out = parseFragment(input, 'script');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
 })
 
@@ -108,7 +108,7 @@ describe("Parse media", () => {
     !image3 ('test')
 `
         let out = parseFragment(input, 'media');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
 })
 
@@ -123,7 +123,7 @@ startup:
 
 `
         let out = parseFragment(input, 'startup');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
     it("Test enter", () => {
         let input =
@@ -134,7 +134,7 @@ enter:
     tell "World"
 `
         let out = parseFragment(input, 'enter');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
     it("Test leave", () => {
         let input =
@@ -145,15 +145,15 @@ leave:
     tell "world"
 `
         let out = parseFragment(input, 'leave');
-        expect(out.parseErrors.length).to.be.equal(0, 'Expected no errors')
+        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
     })
 })
 function parseFile (folder, fn) {
     it(`Simple Parse  ${fn}`, ()=> {
         let out = spsParse.parser.parseFile(`./tests/${folder}/${fn}.nut`);
-        expect(out.lexErrors.length).to.be.equal(0, 
+        expect(out.lexErrors.length).toEqual(0, 
             'Error '+fn + dumpTokenErrors(out.lexErrors))
-        expect(out.parseErrors.length).to.be.equal(0, 
+        expect(out.parseErrors.length).toEqual(0, 
             'Error '+fn + dumpErrors(out.parseErrors))
     })
 }
