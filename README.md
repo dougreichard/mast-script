@@ -1,4 +1,4 @@
-# Mast - Multi-actor storytelling
+# Mast - Multi-Audience storytelling
 
 Mast is the "fruit of forest trees"
 https://en.wikipedia.org/wiki/Mast_(botany)

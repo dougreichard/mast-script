@@ -1,6 +1,6 @@
 theme: jekyll-theme-architect
 title: Mast
-description: Multi-Actor storytelling
+description: Multi-Audience storytelling
 plugins:
   - jekyll-relative-links
 relative_links:

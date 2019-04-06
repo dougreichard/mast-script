@@ -1,4 +1,4 @@
 # Mast
-Multi-Actor storytelling
+Multi-Audience storytelling
 
 
