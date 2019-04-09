@@ -1,8 +1,8 @@
-const spsLexer = require('./sps-lex')
+const NutLexer = require('./nut-lex')
 const { Parser } = require("chevrotain")
 const fs = require('fs')
 const path = require('path')
-const toks = spsLexer.tokens
+
 const expressionsRules = require('./rules/expressions');
 const mediaRules = require('./rules/media');
 const roleRules = require('./rules/role');
@@ -16,13 +16,12 @@ const stateRules = require('./rules/states');
 const objectiveRules = require('./rules/objectives');
 const interactionRules = require('./rules/interactions');
 const importRules = require('./rules/import');
-const {SymbolTypes, TellTypes} = require('./sps-type')
 
 
 
-class SpsParser extends Parser {
+class NutParser extends Parser {
     constructor(listener) {
-        super(Object.values(spsLexer.tokens), { outputCst: false })
+        super(Object.values(NutLexer.tokens), { outputCst: false })
         this.listener = listener
         expressionsRules(this);
         mediaRules(this);
@@ -54,8 +53,8 @@ class SpsParser extends Parser {
     }
 
     parseFile(fileName) {
-        let baseDir = SpsParser.defaultPaths[SpsParser.defaultPaths.length-1]
-        SpsParser.defaultPaths.push(path.dirname(fileName))
+        let baseDir = NutParser.defaultPaths[NutParser.defaultPaths.length-1]
+        NutParser.defaultPaths.push(path.dirname(fileName))
         try {
             fileName = path.resolve(baseDir, fileName)
             let input = fs.readFileSync(fileName, 'utf8');
@@ -68,7 +67,7 @@ class SpsParser extends Parser {
             throw e
         }
         finally {
-            SpsParser.defaultPaths.pop();
+            NutParser.defaultPaths.pop();
         }
         return {
             value:0, // this is a pure grammar, the value will always be <undefined>
@@ -77,7 +76,7 @@ class SpsParser extends Parser {
         }
     }
     parseFragment(input, fragment) {
-        const lexResult = spsLexer.tokenize(input)
+        const lexResult = NutLexer.tokenize(input)
         if (lexResult.errors.length > 0) {
             return {
                 value: undefined, // this is a pure grammar, the value will always be <undefined>
@@ -112,72 +111,5 @@ class SpsParser extends Parser {
     popImport() {if (this.listener) this.listener.popImport();}
     importScript(id) {if (this.listener) this.listener.importScript(id);}
 }
-SpsParser.defaultPaths = [__dirname]
-
-class MyListener {
-    constructor() {
-        this.symTable = {}
-        this.import = new SpsParser( this)
-    }
-    addMedia(media) {
-        this.addSymbol(SymbolTypes.Media, media);
-    }
-    addCast(cast) {
-        this.addSymbol(SymbolTypes.Cast, cast);
-    }
-    addRole(role) {
-        this.addSymbol(SymbolTypes.Role, role);
-    }
-    addObjective(obj) {
-        this.addSymbol(SymbolTypes.Objective, obj);
-    }
-    pushInteraction(interaction) {
-        this.addSymbol(SymbolTypes.Interaction, interaction);
-    }
-    popInteraction(id) {
-        
-    }
-    addScript(script) {
-        console.log(script.id)
-    }
-    
-    pushScript() {
-        this.symTable = {}
-    }
-    popScript() {
-        console.log('--end--')
-    }
-    pushScene(scene) {
-        this.addSymbol(SymbolTypes.Scene, scene);
-    }
-    popScene(id) {
-        console.log(`--end ${id}--`)
-    }
-    pushImport() {
-        // create token array
-    }
-    importScript(id) {
-        // add to token array
-        this.import.parseFile(id);
-    }
-    popImport() {
-        // parse token
-    }
-    addSymbol(type, data) {
-        if (this.symTable[data.id] === undefined) {
-            data.type = type;
-            this.symTable[data.id] = data;
-        } else {
-            console.log(`warning: duplicate symbol ${data.id}`)
-        }
-    }
-
-}
-
-
-// reuse the same parser instance.
-const parser = new SpsParser(new MyListener())
-
-module.exports = {
-    parser: parser,
-}
+NutParser.defaultPaths = [__dirname]
+module.exports = NutParser

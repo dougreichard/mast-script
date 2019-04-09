@@ -1,5 +1,5 @@
 "use strict"
-const indentationExample = require("../sps-lex")
+const indentationExample = require("../nut-lex")
 const { tokenMatcher } = require("chevrotain")
 const tokenize = indentationExample.tokenize
 

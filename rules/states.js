@@ -1,4 +1,4 @@
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -26,17 +26,20 @@ module.exports = ($) => {
     })
 
     $.RULE('shot', () => {
+        let id
+        let alias
         $.OR([{
             ALT: () => {
-                $.CONSUME(toks.Identifier)
-                $.OPTION(()=> $.SUBRULE($.aliasString))
+                id = $.CONSUME(toks.Identifier)
+                alias = $.OPTION(()=> $.SUBRULE($.aliasString))
 
             }
         }, {
             ALT: () => {
-                $.SUBRULE1($.aliasString)
+                alias = $.SUBRULE1($.aliasString)
             }
         }])
+        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
         $.SUBRULE($.stateCmdBlock)
 
     })

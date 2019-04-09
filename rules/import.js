@@ -1,4 +1,4 @@
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 

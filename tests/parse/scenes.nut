@@ -2,9 +2,7 @@ cast:
     @a ``
     @b ``
 
-story:
-    startup:
-        tell @a ` `
+
 
 scenes:
     $hello `test`:

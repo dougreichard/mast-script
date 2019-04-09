@@ -189,6 +189,7 @@ tok("HasOp", /has/, { longer_alt: Identifier });
 tok("TogetherOp", /together/, { longer_alt: Identifier });
 
 tok("DoCmd", /do/, { longer_alt: Identifier });
+tok("PassCmd", /pass/, { longer_alt: Identifier });
 tok("AsCmd", /as/, { longer_alt: Identifier });
 tok("WithCmd", /with/, { longer_alt: Identifier });
 tok("TellCmd", /tell/, { longer_alt: Identifier });

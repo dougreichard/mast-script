@@ -51,11 +51,6 @@ And the papers want to know whose shirts you wear`
 
 
     $spacewalk:
-        // this one will do shots in definition order
-        // but leave always execute at the end
-        leave: 
-            scene $floating
-        
         // Also the shots don't need label since they are not referenced
         // The Alias text is not 'shown'
         ('EXT. Tom is in space suit looking out the window we see him through the window' ):
@@ -76,6 +71,14 @@ And the papers want to know whose shirts you wear`
         (`EXT. Closeup tom's visor filled with stars`):
             @majorTom `And the stars look very different today`
 
+        // It would goto '$floating anyway, but this
+        // shows you overriding behavior
+        leave: 
+            delay 500ms
+            scene $floating
+
+
+    $floating: 
         (`EXT. Long shot Tom above the earth tethered and dragged by ship`):
             @majorTom `
 For here
@@ -105,13 +108,16 @@ And I think my spaceship knows which way to go
             @majorTom `Here am I floating 'round my tin can`
             @majorTom  `Far above the moon`
 
-        (`EXT. Earth rises beind them moon and tom`):
+        (`EXT. Earth rises beind them moon and tom`) {
+            r: 2,
+            x: "hello"
+        }:
             @majorTom `Planet Earth is blue`
             @majorTom `And there's nothing I can do`
 
          ?D #human `sss` complete [*A *B]:
                 tell `jgjj`
-
+        
         
 
 

@@ -1,4 +1,4 @@
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -10,15 +10,11 @@ module.exports = ($) => {
     // ;
     $.RULE('story', () => {
         $.CONSUME(toks.StorySec);
-
-        let alias = $.OPTION(() => {
-            $.SUBRULE($.aliasString);
-        })
-        let desc = $.OPTION1(() => {
-            $.CONSUME(toks.StringLiteral).image;
-        })
+        let alias = $.OPTION(() => $.SUBRULE($.aliasString))
+        let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)
+        let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
         let id = '$$story'
-        $.pushScene({ id, alias, desc })
+        $.pushScene({ id, alias, desc, value })
         $.SUBRULE($.sceneContent);
         $.popScene(id)
     })
@@ -27,20 +23,14 @@ module.exports = ($) => {
     // ;
 
     $.RULE('scene', () => {
-        let id = $.anonymousID('$') 
-        let alias
-        let desc
 
-        $.OPTION(() => {
-            id = $.CONSUME(toks.SceneId).image;
-        })
-        $.OPTION1(() => {
-            alias = $.SUBRULE($.aliasString);
-        })
-        $.OPTION2(() => {
-            desc = $.CONSUME(toks.StringLiteral).image;
-        })
-        $.pushScene({ id, alias, desc })
+        let id = $.OPTION(() => $.CONSUME(toks.SceneId).image) 
+        id = id ? id : $.anonymousID('$') 
+        let alias = $.OPTION1(() => $.SUBRULE($.aliasString))
+        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)
+        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
+
+        $.pushScene({ id, alias, desc, value })
         $.SUBRULE($.sceneContent);
         $.popScene(id)
     })
@@ -71,9 +61,6 @@ module.exports = ($) => {
             $.SUBRULE($.enter)
         })
         $.OPTION6(() => {
-            $.SUBRULE($.leave)
-        })
-        $.OPTION7(() => {
             $.MANY(() => {
                 $.OR([
                     {ALT: ()=> $.SUBRULE($.interaction)},
@@ -81,6 +68,10 @@ module.exports = ($) => {
                 ])
             })
         })
+        $.OPTION7(() => {
+            $.SUBRULE($.leave)
+        })
+
         $.CONSUME(toks.Outdent);
 
     })

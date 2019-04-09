@@ -1,4 +1,4 @@
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 const { TellTypes } = require('../sps-type')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
@@ -96,15 +96,13 @@ module.exports = ($) => {
         ])
     })
 
-    // scene-command
-    // : SCENE_STATEMENT SCENE_ID role-cast-list?
-    // ;
+   
     $.RULE('sceneCmd', () => {
         $.CONSUME(toks.SceneCmd)
-        $.CONSUME(toks.SceneId)
-        $.OPTION(() => {
-            $.SUBRULE($.roleCastIdList);
-        })
+        $.OR([
+            {ALT: ()=> $.CONSUME(toks.SceneId)},
+            {ALT: ()=> $.CONSUME(toks.StorySec)}
+        ]);
     })
     // show-command
     // : SHOW_STATEMENT OBJECTIVE_ID boolean-value

@@ -1,4 +1,4 @@
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -47,13 +47,19 @@ module.exports = ($) => {
     $.RULE("IfElseCmdBlock", () => {
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent)
-        $.MANY(() => $.SUBRULE($.ifElseValidCmd))
+        $.OR([
+            {ALT: ()=> $.CONSUME(toks.PassCmd)},
+            {ALT: ()=> $.MANY(() => $.SUBRULE($.ifElseValidCmd))}
+        ])
+        
         $.CONSUME(toks.Outdent)
     })
 
     $.RULE("ifElseValidCmd", () => {
         $.OR([
             { ALT: () => $.SUBRULE($.asCmd) },
+            { ALT: () => $.SUBRULE($.withCmd) },
+            { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.sceneCmd) },
             {ALT: ()=> $.SUBRULE($.setCmd)},

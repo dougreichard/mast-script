@@ -1,10 +1,26 @@
 "use strict"
-const spsLexer = require('../sps-lex')
+const spsLexer = require('../nut-lex')
 //const expect = require("chai").expect
-const spsParse = require("../sps-parse")
+const NutParser = require("../nut-parser")
+const NutListener = require("../nut-listener")
+
+// reuse the same parser instance.
+const parser = new NutParser(new NutListener())
+
+
+function log (...args) {
+    console.log(...args)
+}
 
 function parseFragment(input, fragment) {
-    return spsParse.parser.parseFragment(input, fragment)
+    let out = parser.parseFragment(input, fragment)
+    for (let le of out.lexErrors) {
+        log(`${le.line}:${le.offset} - ${le.message}`)
+    }
+    for (let pe of out.parseErrors) {
+        log(`${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
+    }
+    return out;
 }
 
 describe("Parse json", () => {
@@ -44,7 +60,7 @@ this is  a lon g line
 going further'
 
     role2 'This is a role'
-    #roleV1 {a: 1,b: 2 }
+    #roleV1 ('this') ' Desc' {a: 1,b: 2 }  
     #roleV {
         a: 1,
         b: 2
@@ -150,7 +166,13 @@ leave:
 })
 function parseFile (folder, fn) {
     it(`Simple Parse  ${fn}`, ()=> {
-        let out = spsParse.parser.parseFile(`./tests/${folder}/${fn}.nut`);
+        let out = parser.parseFile(`./tests/${folder}/${fn}.nut`);
+        for (let le of out.lexErrors) {
+            log(`${fn} TOKEN ERROR ${le.line}:${le.offset} - ${le.message}`)
+        }
+        for (let pe of out.parseErrors) {
+            log(`${fn} PARSE ERROR ${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
+        }
         expect(out.lexErrors.length).toEqual(0, 
             'Error '+fn + dumpTokenErrors(out.lexErrors))
         expect(out.parseErrors.length).toEqual(0, 
@@ -159,6 +181,7 @@ function parseFile (folder, fn) {
 }
 describe("Sample files", () => {
     for(let fn of [
+        "hello",
         "groundcontrol"
     ])  {
         parseFile('sample', fn)        
