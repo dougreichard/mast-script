@@ -1,7 +1,8 @@
 {
-  "name": "search-party-script",
+  "name": "mast-script",
   "version": "1.0.0",
   "dependencies": {
+    "ascii-art": "^1.5.1",
     "chalk": "^2.4.2",
     "chevrotain": "^4.3.2",
     "figlet": "^1.2.1",

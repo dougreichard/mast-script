@@ -14,25 +14,30 @@ module.exports = ($) => {
         let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)
         let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
         let id = '$$story'
-        $.pushScene({ id, alias, desc, value })
-        $.SUBRULE($.sceneContent);
-        $.popScene(id)
+        let scene = { id, alias, desc, value}
+        $.pushStory(scene)
+        let content = $.SUBRULE($.sceneContent);
+        scene.content = content
+        $.popStory(scene)
+        return scene
     })
     // scene-definition 
     // :  SCENE_ID 
     // ;
 
     $.RULE('scene', () => {
-
         let id = $.OPTION(() => $.CONSUME(toks.SceneId).image) 
         id = id ? id : $.anonymousID('$') 
         let alias = $.OPTION1(() => $.SUBRULE($.aliasString))
         let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)
         let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
 
-        $.pushScene({ id, alias, desc, value })
-        $.SUBRULE($.sceneContent);
-        $.popScene(id)
+        let scene = { id, alias, desc, value}
+        $.pushScene(scene)
+        let content = $.SUBRULE($.sceneContent);
+        scene.content = content
+        $.popScene(scene)
+        return scene
     })
     // Common for story and Scene 
     // Story is the main scene
@@ -45,6 +50,7 @@ module.exports = ($) => {
     //   enter-section?\[enter] 
     //   leave-section?\[leave] 
     $.RULE('sceneContent', () => {
+        let content = {}
 
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
@@ -55,25 +61,31 @@ module.exports = ($) => {
             $.SUBRULE($.interactions)
         })
         $.OPTION4(() => {
-            $.SUBRULE($.startup)
+            content.startup = $.SUBRULE($.startup)
         })
         $.OPTION5(() => {
-            $.SUBRULE($.enter)
+            content.enter = $.SUBRULE($.enter)
         })
+
         $.OPTION6(() => {
+            let shots = []
             $.MANY(() => {
-                $.OR([
+                let shot = $.OR([
                     {ALT: ()=> $.SUBRULE($.interaction)},
                     {ALT: ()=> $.SUBRULE($.shot)}
                 ])
+                shots.push(shot)
             })
+            if (shots.length) {
+                content.shots = shots
+            }
         })
         $.OPTION7(() => {
-            $.SUBRULE($.leave)
+            content.leave = $.SUBRULE($.leave)
         })
 
         $.CONSUME(toks.Outdent);
-
+        return content;
     })
 
 

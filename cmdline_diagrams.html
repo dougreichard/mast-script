@@ -1,0 +1,121 @@
+
+<!-- This is a generated file -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    background-color: hsl(30, 20%, 95%)
+  }
+</style>
+
+
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@4.3.0/diagrams/diagrams.css'>
+
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@4.3.0/diagrams/src/main.js'></script>
+
+<div id="diagrams" align="center"></div>    
+
+<script>
+    window.serializedGrammar = [
+  {
+    "type": "Rule",
+    "name": "commands",
+    "orgText": "()=> {\r\n            return $.OR([\r\n                {ALT: ()=> $.SUBRULE($.loadCmd)},\r\n                {ALT: ()=> $.SUBRULE($.runCmd)},\r\n                {ALT: ()=> $.SUBRULE($.listCmd)}\r\n            ])\r\n        }",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "loadCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "runCmd",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Flat",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "listCmd",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "listCmd",
+    "orgText": "() => {\r\n            $.CONSUME(list)\r\n            for(let k of Object.keys(listener.symTable)) {\r\n                console.log(k)\r\n            }\r\n            return true;\r\n        }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "list",
+        "label": "list",
+        "idx": 0,
+        "pattern": "list"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "runCmd",
+    "orgText": "() => {\r\n            $.CONSUME(run)\r\n            // real early days hard coding to run story startup\r\n            let story = listener.symTable['$$story']\r\n            if (story && story.content && story.content.startup) {\r\n                runCommandList(story.content.startup)\r\n            }\r\n            return true;\r\n        }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "run",
+        "label": "run",
+        "idx": 0,
+        "pattern": "run"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "loadCmd",
+    "orgText": "() => {\r\n            $.CONSUME(load)\r\n            let fileName = $.CONSUME(file).image\r\n            try {\r\n                \r\n                let out = parser.parseFile(fileName)\r\n                console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors.length}`)\r\n                return true;      \r\n            } catch(e) {\r\n                console.log(e.message)\r\n            }\r\n        }",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "load",
+        "label": "load",
+        "idx": 0,
+        "pattern": "load"
+      },
+      {
+        "type": "Terminal",
+        "name": "file",
+        "label": "file",
+        "idx": 0,
+        "pattern": "[\\w+\\/\\.]+"
+      }
+    ]
+  }
+];
+</script>
+
+<script>
+    var diagramsDiv = document.getElementById("diagrams");
+    main.drawDiagramsFromSerializedGrammar(serializedGrammar, diagramsDiv);
+</script>

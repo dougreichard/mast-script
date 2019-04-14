@@ -72,16 +72,28 @@ module.exports = ($) => {
 
 
     $.RULE('mTime', () => {
-        $.CONSUME(toks.MinuteLiteral)
-        $.OPTION(()=> $.CONSUME(toks.SecondLiteral))
-        $.OPTION1(()=> $.CONSUME(toks.MillisecondLiteral))
+        let m = $.CONSUME(toks.MinuteLiteral).image
+        let s = $.OPTION(()=> $.CONSUME(toks.SecondLiteral).image)
+        let ms = $.OPTION1(()=> $.CONSUME(toks.MillisecondLiteral).image)
+        // calc time ine milliseconds
+        let total = 0
+        total += m? parseInt(m)*60000: 0
+        total += s? parseInt(s)*1000: 0
+        total += ms? parseInt(ms): 0
+        return total
+
     })
     $.RULE('sTime', () => {
-        $.CONSUME(toks.SecondLiteral)
-        $.OPTION(()=> $.CONSUME(toks.MillisecondLiteral))
+        let s = $.CONSUME(toks.SecondLiteral).image
+        let ms = $.OPTION(()=> $.CONSUME(toks.MillisecondLiteral).image)
+        let total = 0
+        total += s? parseInt(s)*1000: 0
+        total += ms? parseInt(ms): 0
+        return total
     })
     $.RULE('msTime', () => {
-        $.CONSUME(toks.MillisecondLiteral)
+        let ms = $.CONSUME(toks.MillisecondLiteral).image
+        return parseInt(ms)
     })
 
     // time-unit
@@ -93,12 +105,11 @@ module.exports = ($) => {
     // |  milliseconds
     // ;
     $.RULE('timeUnits', () => {
-        $.OR([
+        let ms = $.OR([
             { ALT: () => $.SUBRULE($.mTime) },
             { ALT: () => $.SUBRULE($.sTime) },
             { ALT: () => $.SUBRULE($.msTime) }
         ])
-
-
+        return ms
     })
 }

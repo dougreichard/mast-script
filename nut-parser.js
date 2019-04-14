@@ -105,8 +105,12 @@ class NutParser extends Parser {
     addScript(script) {if (this.listener) this.listener.addScript(script);}
     pushScript() {if (this.listener) this.listener.pushScript();}
     popScript() {if (this.listener) this.listener.popScript();}
+    pushStory(story) {if (this.listener) this.listener.pushStory(story);}
+    popStory(story) {if (this.listener) this.listener.popStory(story);}
     pushScene(scene) {if (this.listener) this.listener.pushScene(scene);}
-    popScene(id) {if (this.listener) this.listener.popScene(id);}
+    popScene(scene) {if (this.listener) this.listener.popScene(scene);}
+    pushShot(shot) {if (this.listener) this.listener.pushShot(shot);}
+    popShot(shot) {if (this.listener) this.listener.popScene(shot);}
     pushImport() {if (this.listener) this.listener.pushImport();}
     popImport() {if (this.listener) this.listener.popImport();}
     importScript(id) {if (this.listener) this.listener.importScript(id);}

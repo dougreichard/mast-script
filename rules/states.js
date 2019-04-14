@@ -8,49 +8,64 @@ module.exports = ($) => {
     //     ;
     $.RULE('startup', () => {
         $.CONSUME(toks.StartupBlock)
-        $.SUBRULE($.stateCmdBlock)
+        return $.SUBRULE($.stateCmdBlock)
     })
     // enter-section-block
     //     :  ENTER_STATEMENT COLON INDENT state-section-item* DEDENT
     //     ;
     $.RULE('enter', () => {
         $.CONSUME(toks.EnterBlock)
-        $.SUBRULE($.stateCmdBlock)
+        return $.SUBRULE($.stateCmdBlock)
     })
     // leave-section-block
     //     :  LEAVE_STATEMENT COLON INDENT state-section-item* DEDENT
     //     ;
     $.RULE('leave', () => {
         $.CONSUME(toks.LeaveBlock)
-        $.SUBRULE($.stateCmdBlock)
+        return $.SUBRULE($.stateCmdBlock)
     })
 
     $.RULE('shot', () => {
+        let id = $.OPTION(()=> $.CONSUME(toks.Identifier).image)
+        let alias = $.OPTION1(()=> $.SUBRULE($.aliasString).image)
+/* I may want thi stricter version
         let id
         let alias
         $.OR([{
             ALT: () => {
                 id = $.CONSUME(toks.Identifier)
                 alias = $.OPTION(()=> $.SUBRULE($.aliasString))
-
             }
         }, {
             ALT: () => {
                 alias = $.SUBRULE1($.aliasString)
             }
         }])
-        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
-        $.SUBRULE($.stateCmdBlock)
+        */
+        id = id ? id: $.anonymousID('shot') 
+
+        let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
+        let shot = { id, alias,  value}
+        $.pushShot(shot)
+        let content = $.SUBRULE($.stateCmdBlock);
+        shot.content = content
+        $.popShot(shot)
+        return shot
 
     })
 
     $.RULE('stateCmdBlock', () => {
+        let cmds = []
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            $.SUBRULE($.stateCommand)
+            let cmd = $.SUBRULE($.stateCommand)
+            if (cmd) {
+                cmds.push(cmd)
+            }
         })
         $.CONSUME(toks.Outdent)
+        return cmds;
     })
 
     // startup-section-item
@@ -60,7 +75,7 @@ module.exports = ($) => {
     //     | delay-command
     //     ;
     $.RULE('stateCommand', () => {
-        $.OR([
+       return  $.OR([
             { ALT: () => $.SUBRULE($.asWithCmd) },
             { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },

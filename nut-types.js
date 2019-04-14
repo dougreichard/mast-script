@@ -2,18 +2,22 @@ const SymbolTypes = {
     Media: 1,
     Cast: 2,
     Role: 3,
-    Scene: 4,
-    Objective: 5,
-    Interaction: 6
+    Story: 4,
+    Scene: 5,
+    Shot: 6,
+    Objective: 7,
+    Interaction: 8,
+
 }
 
-const Commands = {
-    Tell: 1,  
-    Show: 2,
-    Hide: 3,
-    MulAssign: 4,
-    PresentAssign: 4,
-
+let cmdId = 1
+const CommandTypes = {
+    Tell: cmdId++,  
+    Show: cmdId++,
+    Hide: cmdId++,
+    MulAssign: cmdId++,
+    PresentAssign: cmdId++,
+    Delay: cmdId++
 }
 
 const TellTypes = {
@@ -33,5 +37,6 @@ const SetOperations = {
 
 module.exports = {
     SymbolTypes,
-    TellTypes
+    TellTypes,
+    CommandTypes
 }

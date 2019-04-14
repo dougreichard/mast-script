@@ -1,5 +1,5 @@
 const spsLexer = require('../nut-lex')
-const { TellTypes } = require('../sps-type')
+const { TellTypes, CommandTypes } = require('../nut-types')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -28,17 +28,19 @@ module.exports = ($) => {
     // :  TELL_STATEMENT role-cast-list string
     // ;
     $.RULE('tellCmd', () => {
+        let desc;
         $.OR([{
             ALT: () => {
                 $.CONSUME(toks.TellCmd)
                 $.OPTION1(() => $.SUBRULE($.identifierTellList))
-                $.CONSUME(toks.StringLiteral)
+                desc = $.trimString($.CONSUME(toks.StringLiteral).image)
             }}, {
                 ALT: () => {
-                    $.CONSUME1(toks.StringLiteral)
+                    desc = $.trimString($.CONSUME1(toks.StringLiteral).image)
                 }
             }
         ])
+        return {type: CommandTypes.Tell, options: {desc}}
 
     })
 
@@ -162,7 +164,8 @@ module.exports = ($) => {
     // ;
     $.RULE('delayCmd', () => {
         $.CONSUME(toks.DelayCmd)
-        $.SUBRULE($.timeUnits);
+        let ms = $.SUBRULE($.timeUnits);
+        return {type: CommandTypes.Delay, options: {ms}}
     })
     // 
     $.RULE('forCmd', () => {

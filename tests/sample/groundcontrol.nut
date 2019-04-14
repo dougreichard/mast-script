@@ -19,7 +19,7 @@ scenes:
             do callsign
             delay 1s
             do together [countdown launch_comms]
-            {cut: "FADEOUT"} scene $launch
+            scene $liftoff
 
         callsign:
             as @groundControl tell  @majorTom 'Ground Control to Major Tom'

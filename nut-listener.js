@@ -1,9 +1,13 @@
 const NutParser = require('./nut-parser')
-const {SymbolTypes, TellTypes} = require('./sps-type')
+const {SymbolTypes, TellTypes} = require('./nut-types')
 
 class NutListener {
     constructor() {
         this.symTable = {}
+        this.firstScene = undefined
+        this.story = undefined
+        this.previousScene = undefined
+        this.previousShot= undefined
         this.import = new NutParser( this)
     }
     addMedia(media) {
@@ -34,10 +38,38 @@ class NutListener {
     popScript() {
      //   console.log('--end--')
     }
+    pushStory(story) {
+        this.story = story
+        this.addSymbol(SymbolTypes.Story, story);
+    }
+    popStory(story) {
+     
+    }
     pushScene(scene) {
+        this.previousShot = undefined
+        if (!this.firstScene) {
+            this.firstScene = scene
+        }
         this.addSymbol(SymbolTypes.Scene, scene);
+        if (this.previousScene) {
+            this.previousScene.next = scene.id;
+        }
+        this.previousScene = scene
+
+        
     }
     popScene(id) {
+     // console.log(`--end ${id}--`)
+    }
+    pushShot(shot) {
+        this.previousShot = undefined
+        // this.addSymbol(SymbolTypes.Shot, scene);
+        if (this.previousShot) {
+            this.previousShot.next = shot.id;
+        }
+        this.previousShot = shot
+    }
+    popShot(id) {
      // console.log(`--end ${id}--`)
     }
     pushImport() {
