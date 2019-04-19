@@ -23,12 +23,12 @@ line` :
             ?A @a "look for b" search @b
             ?B @b "look for a" search @a
 
-    $hello3 ('Alias') `test`: 
+    -$hello3 ('Alias') `test`: 
         interactions:
             ?A @a "look for b" search @b
             ?B @b "look for a" search @a
 
-    $hello4 ('Alias') `test`:
+    sub $hello4 ('Alias') `test`:
         interactions:
             ?A @a "look for b" search @b
             ?B @b "look for a" search @a

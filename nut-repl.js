@@ -114,7 +114,7 @@ class CommandParser extends Parser {
             let fileName = $.OPTION(()=> $.CONSUME(file).image)
             fileName = fileName ? fileName : 'tests/sample/hello.nut'
             try {
-                
+                listener.reset()
                 let out = parser.parseFile(fileName)
                 console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors.length}`)
                 for (let le of out.lexErrors) {

@@ -3,12 +3,15 @@ const {SymbolTypes, TellTypes} = require('./nut-types')
 
 class NutListener {
     constructor() {
+       this.reset()
+        this.import = new NutParser( this)
+    }
+    reset() {
         this.symTable = {}
         this.firstScene = undefined
         this.story = undefined
         this.previousScene = undefined
         this.previousShot= undefined
-        this.import = new NutParser( this)
     }
     addMedia(media) {
         this.addSymbol(SymbolTypes.Media, media);
@@ -49,12 +52,17 @@ class NutListener {
         this.previousShot = undefined
         if (!this.firstScene) {
             this.firstScene = scene
+            if (this.story) {
+                this.story.next = scene.id
+            }
         }
         this.addSymbol(SymbolTypes.Scene, scene);
-        if (this.previousScene) {
+        if (this.previousScene && !scene.sub) {
             this.previousScene.next = scene.id;
         }
-        this.previousScene = scene
+        if (!scene.sub) {
+            this.previousScene = scene
+        }
 
         
     }
@@ -62,12 +70,14 @@ class NutListener {
      // console.log(`--end ${id}--`)
     }
     pushShot(shot) {
-        this.previousShot = undefined
         // this.addSymbol(SymbolTypes.Shot, scene);
-        if (this.previousShot) {
+        if (this.previousShot && !shot.sub) {
             this.previousShot.next = shot.id;
         }
-        this.previousShot = shot
+        if (!shot.sub)  {
+            this.previousShot = shot
+        }
+        
     }
     popShot(id) {
      // console.log(`--end ${id}--`)

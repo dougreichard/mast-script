@@ -161,7 +161,7 @@ const matchOutdent = _.partialRight(matchIndentBase, "outdent")
 //tok("BlankLines", /\s*$/, { group: Lexer.SKIPPED })
 
 
-
+tok("Sub", /-/);
 tok("IntegerLiteral", /-?\d+/);
 tok("NumberLiteral", /-?(0|[1-9]\d*)(\.\d+)+([eE][+-]?\d+)?/);
 tok("MinuteLiteral", /(\d+)(m)/);
@@ -186,6 +186,7 @@ tok("LineContinue", /_\s+/, {line_breaks: false, group: Lexer.SKIPPED, longer_al
 tok("InOp", /in/, { longer_alt: Identifier });
 tok("RangeOp", /range/, { longer_alt: Identifier });
 tok("HasOp", /has/, { longer_alt: Identifier });
+tok("SubOp", /sub/, { longer_alt: Identifier });
 tok("TogetherOp", /together/, { longer_alt: Identifier });
 
 tok("DoCmd", /do/, { longer_alt: Identifier });
@@ -285,6 +286,7 @@ tok("AssignAdd", /\+=/);
 tok("AssignSub", /-=/);
 tok("AssignMul", /\*=/);
 tok("AssignPercent", /\%=/);
+
 
 /////////////////////////////////////
 // These rule must be first

@@ -6,6 +6,12 @@
     "configurations": [
         {
             "type": "node",
+            "request": "launch",
+            "name": "Story Run",
+            "program": "${workspaceFolder}/nut-run.js"
+        },
+        {
+            "type": "node",
             "request": "attach",
             "name": "Attach",
             "port": 9229

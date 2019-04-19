@@ -21,16 +21,16 @@ scenes:
             do together [countdown launch_comms]
             scene $liftoff
 
-        callsign:
+        - callsign:
             as @groundControl tell  @majorTom 'Ground Control to Major Tom'
 
-        countdown:
+        - countdown:
             for i in range(10,1,-1):
                 as @counter tell  '${i}'
                 delay 1s
             as @counter tell `liftoff`
         
-        launch_comms:
+        - launch_comms:
             as @groundControl  tell @majorTom `Ground Control to Major Tom`
             delay 4s
             as @majorTom tell @groundControl `Commencing countdown, engines on `

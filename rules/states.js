@@ -26,8 +26,9 @@ module.exports = ($) => {
     })
 
     $.RULE('shot', () => {
-        let id = $.OPTION(()=> $.CONSUME(toks.Identifier).image)
-        let alias = $.OPTION1(()=> $.SUBRULE($.aliasString).image)
+        let sub = $.OPTION(() => $.SUBRULE($.subOperator)) 
+        let id = $.OPTION1(()=> $.CONSUME(toks.Identifier).image)
+        let alias = $.OPTION2(()=> $.SUBRULE($.aliasString).image)
 /* I may want thi stricter version
         let id
         let alias
@@ -44,8 +45,8 @@ module.exports = ($) => {
         */
         id = id ? id: $.anonymousID('shot') 
 
-        let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
-        let shot = { id, alias,  value}
+        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
+        let shot = { id, alias,   value, sub}
         $.pushShot(shot)
         let content = $.SUBRULE($.stateCmdBlock);
         shot.content = content

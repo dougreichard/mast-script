@@ -17,7 +17,8 @@ const CommandTypes = {
     Hide: cmdId++,
     MulAssign: cmdId++,
     PresentAssign: cmdId++,
-    Delay: cmdId++
+    Delay: cmdId++,
+    Do: cmdId++
 }
 
 const TellTypes = {

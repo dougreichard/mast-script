@@ -182,6 +182,7 @@ function parseFile (folder, fn) {
 describe("Sample files", () => {
     for(let fn of [
         "hello",
+        "flow",
         "groundcontrol"
     ])  {
         parseFile('sample', fn)        

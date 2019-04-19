@@ -6,22 +6,26 @@ const toks = spsLexer.tokens
 module.exports = ($) => {
     $.RULE('doCmd', () => {
         $.CONSUME(toks.DoCmd)
-        $.OPTION(() => $.CONSUME(toks.TogetherOp))
-        $.OPTION1(() => $.SUBRULE($.shotList))
+        let together = $.OPTION(() => $.CONSUME(toks.TogetherOp).image?true:false)
+        let shots = $.OPTION1(() => $.SUBRULE($.shotList))
+        return {type: CommandTypes.Do, options: {together, shots}}
+
     })
     $.RULE("shotList", () => {
+        let shotList = []
         $.OR([
-            { ALT: () => $.CONSUME(toks.Identifier) },
+            { ALT: () => shotList.push($.CONSUME(toks.Identifier).image) },
             {
                 ALT: () => {
                     $.CONSUME(toks.LBracket);
                     $.MANY(() => {
-                        $.CONSUME1(toks.Identifier)
+                        shotList.push($.CONSUME1(toks.Identifier).image)
                     })
                     $.CONSUME(toks.RBracket);
                 }
             }
         ])
+        return shotList
     })
 
     // tell-command

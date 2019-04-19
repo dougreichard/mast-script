@@ -10,6 +10,13 @@ module.exports = ($) => {
             $.SUBRULE2($.Expression)
         })
     })
+    $.RULE("subOperator", () => {
+        $.OR([
+            { ALT: () => $.CONSUME(toks.Sub) },
+            { ALT: () => $.CONSUME(toks.SubOp) }
+        ])
+        return true
+    })
     $.RULE("Operator", () => {
         $.OR([
             { ALT: () => $.CONSUME(toks.Equals) },

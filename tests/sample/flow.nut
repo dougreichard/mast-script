@@ -30,6 +30,10 @@ scenes:
         leave:
             "scene1-leave"
 
+    sub $scene:
+        startup:
+            "do not get here"
+
     $scene2:
         startup:
             "scene2-startup"
@@ -38,6 +42,9 @@ scenes:
 
         shot1:
             "scene2-shot1"
+
+        -shotSkip:
+            "scene2-skip"
 
         shot2:
             "scene2-shot2"

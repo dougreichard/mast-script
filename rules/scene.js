@@ -26,13 +26,14 @@ module.exports = ($) => {
     // ;
 
     $.RULE('scene', () => {
-        let id = $.OPTION(() => $.CONSUME(toks.SceneId).image) 
+        let sub = $.OPTION(() => $.SUBRULE($.subOperator)?true:false) 
+        let id = $.OPTION1(() => $.CONSUME(toks.SceneId).image) 
         id = id ? id : $.anonymousID('$') 
-        let alias = $.OPTION1(() => $.SUBRULE($.aliasString))
-        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)
-        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
+        let alias = $.OPTION2(() => $.SUBRULE($.aliasString))
+        let desc = $.OPTION3(() => $.CONSUME(toks.StringLiteral).image)
+        let value = $.OPTION4(() =>  $.SUBRULE($.objectValue))
 
-        let scene = { id, alias, desc, value}
+        let scene = { id, alias, desc, value, sub}
         $.pushScene(scene)
         let content = $.SUBRULE($.sceneContent);
         scene.content = content
