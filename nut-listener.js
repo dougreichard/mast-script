@@ -1,13 +1,18 @@
 const NutParser = require('./nut-parser')
 const {SymbolTypes, TellTypes} = require('./nut-types')
+const Scopes = require('./nut-scopes-local')
 
 class NutListener {
     constructor() {
        this.reset()
         this.import = new NutParser( this)
+
     }
     reset() {
+        this.scopes = new Scopes()        
         this.symTable = {}
+        
+
         this.firstScene = undefined
         this.story = undefined
         this.previousScene = undefined
@@ -39,6 +44,7 @@ class NutListener {
         this.symTable = {}
     }
     popScript() {
+        this.scopes.push(this.symTable);
      //   console.log('--end--')
     }
     pushStory(story) {

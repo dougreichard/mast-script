@@ -18,7 +18,8 @@ const CommandTypes = {
     MulAssign: cmdId++,
     PresentAssign: cmdId++,
     Delay: cmdId++,
-    Do: cmdId++
+    Do: cmdId++,
+    For: cmdId++
 }
 
 const TellTypes = {
@@ -26,6 +27,12 @@ const TellTypes = {
     Scene: 2,   // tell everyone currently in a scene
     Story: 3  // tell everyone
 }
+
+const IteratorTypes = {
+    Set: 1,
+    Range: 2
+}
+
 
 const SetOperations = {
     Assign: 1,  
@@ -39,5 +46,7 @@ const SetOperations = {
 module.exports = {
     SymbolTypes,
     TellTypes,
-    CommandTypes
+    CommandTypes,
+    IteratorTypes,
+    SetOperations
 }

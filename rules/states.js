@@ -1,6 +1,7 @@
 const spsLexer = require('../nut-lex')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
+const {SymbolTypes} = require('../nut-types')
 
 module.exports = ($) => {
     // startup-section-block
@@ -46,7 +47,7 @@ module.exports = ($) => {
         id = id ? id: $.anonymousID('shot') 
 
         let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
-        let shot = { id, alias,   value, sub}
+        let shot = { type: SymbolTypes.Shot, id, alias,   value, sub}
         $.pushShot(shot)
         let content = $.SUBRULE($.stateCmdBlock);
         shot.content = content

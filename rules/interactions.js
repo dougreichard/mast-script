@@ -2,7 +2,7 @@ const spsLexer = require('../nut-lex')
 const submitRules = require('./submit');
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
-
+const {SymbolTypes} = require('../nut-types')
 
 module.exports = ($) => {
     submitRules($)
@@ -31,9 +31,16 @@ module.exports = ($) => {
         let id = $.CONSUME(toks.InteractionId).image;
         let audience  = $.SUBRULE($.roleCastIdList)
         let desc = $.CONSUME(toks.StringLiteral).image;
-        $.pushInteraction({id, audience, desc})
-        $.SUBRULE($.interactionBlockItem)
-        $.popInteraction(id)
+        //$.pushInteraction({id, audience, desc})
+        
+        let shot = { type: SymbolTypes.Interaction, id, audience, desc}
+        $.pushShot(shot)
+        shot.content = $.SUBRULE($.interactionBlockItem)
+        $.pushShot(id)
+        // $.popInteraction(id)
+        // probably need a sub
+        return shot
+        
     })
 
     $.RULE('interactionBlockItem', () => {

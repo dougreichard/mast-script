@@ -35,8 +35,8 @@ module.exports = ($) => {
     $.RULE("ElseCmd", () => {
         $.CONSUME(toks.Else)
         $.OR([
-            { ALT: () =>  $.SUBRULE($.IfCmd)},
-            { ALT: () => $.SUBRULE($.IfElseCmdBlock)}
+            { ALT: () => $.SUBRULE($.IfCmd) },
+            { ALT: () => $.SUBRULE($.IfElseCmdBlock) }
         ])
 
     })
@@ -45,29 +45,37 @@ module.exports = ($) => {
         $.SUBRULE($.IfElseCmdBlock)
     })
     $.RULE("IfElseCmdBlock", () => {
+        let cmds = []
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent)
         $.OR([
-            {ALT: ()=> $.CONSUME(toks.PassCmd)},
-            {ALT: ()=> $.MANY(() => $.SUBRULE($.ifElseValidCmd))}
+            { ALT: () => $.CONSUME(toks.PassCmd) },
+            {
+                ALT: () => $.MANY(() => {
+                    let cmd = $.SUBRULE($.ifElseValidCmd)
+                    if (cmd) {
+                        cmds.push(cmd)
+                    }
+                })
+            }
         ])
-        
         $.CONSUME(toks.Outdent)
+        return cmds
     })
 
     $.RULE("ifElseValidCmd", () => {
-        $.OR([
+        return $.OR([
             { ALT: () => $.SUBRULE($.asCmd) },
             { ALT: () => $.SUBRULE($.withCmd) },
             { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.sceneCmd) },
-            {ALT: ()=> $.SUBRULE($.setCmd)},
+            { ALT: () => $.SUBRULE($.setCmd) },
             { ALT: () => $.SUBRULE($.delayCmd) },
-            {ALT: ()=> $.SUBRULE($.completeCmd)},
-            {ALT: ()=> $.SUBRULE($.showCmd)},
-            {ALT: ()=> $.SUBRULE($.hideCmd)},
-            {ALT: ()=> $.SUBRULE($.failCmd)},
+            { ALT: () => $.SUBRULE($.completeCmd) },
+            { ALT: () => $.SUBRULE($.showCmd) },
+            { ALT: () => $.SUBRULE($.hideCmd) },
+            { ALT: () => $.SUBRULE($.failCmd) },
             // {ALT: ()=> $.SUBRULE($.askCmd)}
         ])
     })

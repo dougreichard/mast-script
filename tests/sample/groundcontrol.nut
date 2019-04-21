@@ -25,7 +25,7 @@ scenes:
             as @groundControl tell  @majorTom 'Ground Control to Major Tom'
 
         - countdown:
-            for i in range(10,1,-1):
+            for i in range(10,0,-1):
                 as @counter tell  '${i}'
                 delay 1s
             as @counter tell `liftoff`
@@ -102,7 +102,7 @@ And I think my spaceship knows which way to go
             for range(3):
                 as @groundControl tell @majorTom `Can you hear me, Major Tom?`
                 delay 500ms
-                @groundControl `Can you...`
+            @groundControl `Can you...`
 
         (`EXT. Tom is almost orbiting the ship being dragged above the moon`):
             @majorTom `Here am I floating 'round my tin can`
@@ -112,7 +112,7 @@ And I think my spaceship knows which way to go
             r: 2,
             x: "hello"
         }:
-            @majorTom `Planet Earth is blue`
+            @majorTom `Planet Earth is **blue**`
             @majorTom `And there's nothing I can do`
 
          ?D #human `sss` complete [*A *B]:

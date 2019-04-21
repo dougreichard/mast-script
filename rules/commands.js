@@ -1,5 +1,5 @@
 const spsLexer = require('../nut-lex')
-const { TellTypes, CommandTypes } = require('../nut-types')
+const {IteratorTypes, TellTypes, CommandTypes } = require('../nut-types')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
@@ -174,16 +174,24 @@ module.exports = ($) => {
     // 
     $.RULE('forCmd', () => {
         $.CONSUME(toks.ForCmd)
+        let id = 'for' // default id is 'for'
         $.OPTION(()=> {
-            $.CONSUME(toks.Identifier)
+            id = $.CONSUME(toks.Identifier).image
             $.CONSUME(toks.InOp);
         })
         
-        $.SUBRULE($.range)
-        $.SUBRULE($.IfElseCmdBlock)
+        let options = $.SUBRULE($.iterator)
+        options.id = id
+        options.content = $.SUBRULE($.IfElseCmdBlock)
+        return {type: CommandTypes.For, options}
+    })
+    $.RULE("iterator", () => {
+        return $.OR([
+            { ALT: () => $.SUBRULE2($.range) }
+        ])
     })
     $.RULE("range", () => {
-        $.OR([
+        return $.OR([
             { ALT: () => $.SUBRULE2($.rangeArray) },
             { ALT: () => $.SUBRULE2($.rangeInt) },
         ])
@@ -191,11 +199,20 @@ module.exports = ($) => {
     $.RULE("rangeInt", () => {
         $.CONSUME(toks.RangeOp)
         $.CONSUME(toks.LParen)
-        $.CONSUME(toks.IntegerLiteral)
-
-        $.OPTION(() => { $.CONSUME(toks.Comma); $.CONSUME1(toks.IntegerLiteral) })
-        $.OPTION1(() => { $.CONSUME1(toks.Comma); $.CONSUME2(toks.IntegerLiteral) })
+        let start = $.CONSUME(toks.IntegerLiteral).image
+        let end
+        let step = 1
+        $.OPTION(() => { $.CONSUME(toks.Comma); 
+            end = $.CONSUME1(toks.IntegerLiteral).image
+        })
+        $.OPTION1(() => { $.CONSUME1(toks.Comma); 
+            step = $.CONSUME2(toks.IntegerLiteral).image
+        })
+        
         $.CONSUME(toks.RParen)
+        if (!end) {end=parseInt(start); start=0}
+        else {start=parseInt(start);end=parseInt(end);step=parseInt(step)}
+        return {type: IteratorTypes.Range, start, end, step}
     });
     $.RULE("rangeArray", () => {
         $.CONSUME(toks.LBracket)
