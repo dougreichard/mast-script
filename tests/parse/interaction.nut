@@ -73,7 +73,7 @@ scenes:
                 click 123,456,12,50:
                     tell 'g'
                     set @a.c = 2
-                    set #a.c %= 2
+                    set #a.c %+ 2
                     set *a.c += 2
                     set ?a.c *= 2
                     set $a.c -= 2

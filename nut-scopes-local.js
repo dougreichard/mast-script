@@ -1,3 +1,4 @@
+const {SetOperations} = require('./nut-types')
 
 class Scopes {
     constructor() {
@@ -67,10 +68,39 @@ class Scopes {
         let {value} = this.getScopeValue(fqn)
         return value
     }
-    setValue(fqn, value) {
-        let {scope, key} = this.getScopeValue(fqn)
+    setValue(fqn, toValue, op) {
+        let {scope, key, value} = this.getScopeValue(fqn)
+        if (!op) {
+            op = SetOperations.Assign
+        }
         if (key && key in scope) {
-            scope[key] = value
+            switch(op) {
+                case SetOperations.AssignAdd:
+                    scope[key] += toValue
+                    break;
+
+                case SetOperations.AssignSub:
+                    scope[key] -= toValue
+                    break;
+
+                case SetOperations.AssignMul:
+                    scope[key] *= toValue
+                    break;
+
+                case SetOperations.AssignPercentAdd:
+                    scope[key] +=  value * (toValue/100)
+                    break;
+                
+                case SetOperations.AssignPercentSub:
+                    scope[key] -=  value * (toValue/100)
+                    break;
+
+                default:
+                    scope[key] = toValue
+                    break;
+                
+            }
+            
         }
     }
 }

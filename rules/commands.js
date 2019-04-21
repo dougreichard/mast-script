@@ -1,14 +1,14 @@
 const spsLexer = require('../nut-lex')
-const {IteratorTypes, TellTypes, CommandTypes } = require('../nut-types')
+const { IteratorTypes, SetOperations, TellTypes, CommandTypes } = require('../nut-types')
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
 module.exports = ($) => {
     $.RULE('doCmd', () => {
         $.CONSUME(toks.DoCmd)
-        let together = $.OPTION(() => $.CONSUME(toks.TogetherOp).image?true:false)
+        let together = $.OPTION(() => $.CONSUME(toks.TogetherOp).image ? true : false)
         let shots = $.OPTION1(() => $.SUBRULE($.shotList))
-        return {type: CommandTypes.Do, options: {together, shots}}
+        return { type: CommandTypes.Do, options: { together, shots } }
 
     })
     $.RULE("shotList", () => {
@@ -38,39 +38,44 @@ module.exports = ($) => {
                 $.CONSUME(toks.TellCmd)
                 $.OPTION1(() => $.SUBRULE($.identifierTellList))
                 desc = $.trimString($.CONSUME(toks.StringLiteral).image)
-            }}, {
-                ALT: () => {
-                    desc = $.trimString($.CONSUME1(toks.StringLiteral).image)
-                }
             }
+        }, {
+            ALT: () => {
+                desc = $.trimString($.CONSUME1(toks.StringLiteral).image)
+            }
+        }
         ])
-        return {type: CommandTypes.Tell, options: {desc}}
+        return { type: CommandTypes.Tell, options: { desc } }
 
     })
 
     $.RULE('asWithCmd', () => {
         $.OR([
-            {ALT: ()=> {
-                $.SUBRULE($.asCmd)
-                $.OPTION(()=> $.SUBRULE($.withCmd))
-            }},
-            {ALT: ()=> {
-                $.SUBRULE1($.withCmd)
-            }}
+            {
+                ALT: () => {
+                    $.SUBRULE($.asCmd)
+                    $.OPTION(() => $.SUBRULE($.withCmd))
+                }
+            },
+            {
+                ALT: () => {
+                    $.SUBRULE1($.withCmd)
+                }
+            }
         ])
-        
+
     })
 
     $.RULE('asCmd', () => {
-        $.OPTION(()=>$.CONSUME(toks.AsCmd))
+        $.OPTION(() => $.CONSUME(toks.AsCmd))
         $.CONSUME(toks.CastId)
     })
 
     $.RULE('withCmd', () => {
-        $.OPTION(()=>$.CONSUME(toks.WithCmd))
+        $.OPTION(() => $.CONSUME(toks.WithCmd))
         $.SUBRULE($.objectValue)
     })
-    
+
     $.RULE("aliasCmd", () => {
         $.OR([
             { ALT: () => $.SUBRULE($.tellCmd) },
@@ -102,12 +107,12 @@ module.exports = ($) => {
         ])
     })
 
-   
+
     $.RULE('sceneCmd', () => {
         $.CONSUME(toks.SceneCmd)
         $.OR([
-            {ALT: ()=> $.CONSUME(toks.SceneId)},
-            {ALT: ()=> $.CONSUME(toks.StorySec)}
+            { ALT: () => $.CONSUME(toks.SceneId) },
+            { ALT: () => $.CONSUME(toks.StorySec) }
         ]);
     })
     // show-command
@@ -146,22 +151,28 @@ module.exports = ($) => {
     $.RULE('failCmd', () => {
         $.CONSUME(toks.FailCmd)
     })
+
+
+
     $.RULE('setCmd', () => {
         $.CONSUME(toks.SetCmd)
-        $.SUBRULE($.setLHS)
-        $.OR([
-            { ALT: () => $.CONSUME(toks.Colon) },
-            { ALT: () => $.CONSUME(toks.Assign) },
-            { ALT: () => $.CONSUME(toks.AssignPercent) },
-            { ALT: () => $.CONSUME(toks.AssignAdd) },
-            { ALT: () => $.CONSUME(toks.AssignSub) },
-            { ALT: () => $.CONSUME(toks.AssignMul) }
+        let lhs = $.SUBRULE($.setLHS)
+        let op = $.OR([
+            { ALT: () => $.CONSUME(toks.Colon) ? SetOperations.Assign : undefined },
+            { ALT: () => $.CONSUME(toks.Assign) ? SetOperations.Assign : undefined },
+            { ALT: () => $.CONSUME(toks.AssignPercentAdd) ? SetOperations.AssignPercentAdd : undefined },
+            { ALT: () => $.CONSUME(toks.AssignPercentSub) ? SetOperations.AssignPercentSub : undefined },
+            { ALT: () => $.CONSUME(toks.AssignAdd) ? SetOperations.AssignAdd : undefined },
+            { ALT: () => $.CONSUME(toks.AssignSub) ? SetOperations.AssignSub : undefined },
+            { ALT: () => $.CONSUME(toks.AssignMul) ? SetOperations.AssignMul : undefined }
         ])
-
+        let exp
+        let value
         $.OR1([
-            { ALT: () => $.SUBRULE($.value) },
-            { ALT: () => $.SUBRULE1($.identifierExpression) },
+            { ALT: () => value = $.SUBRULE($.value) },
+            { ALT: () => exp = $.SUBRULE1($.identifierExpression) },
         ])
+        return { type: CommandTypes.Set, options: { lhs, op, exp, value } }
     })
     // delay-command
     // : DELAY_STATEMENT time-unit COLON when-command-block
@@ -169,71 +180,113 @@ module.exports = ($) => {
     $.RULE('delayCmd', () => {
         $.CONSUME(toks.DelayCmd)
         let ms = $.SUBRULE($.timeUnits);
-        return {type: CommandTypes.Delay, options: {ms}}
+        return { type: CommandTypes.Delay, options: { ms } }
     })
     // 
     $.RULE('forCmd', () => {
         $.CONSUME(toks.ForCmd)
-        let id = 'for' // default id is 'for'
-        $.OPTION(()=> {
-            id = $.CONSUME(toks.Identifier).image
-            $.CONSUME(toks.InOp);
-        })
-        
-        let options = $.SUBRULE($.iterator)
-        options.id = id
+        let options = $.OR([
+            {ALT: ()=> $.SUBRULE($.forRange)},
+            {ALT: ()=> $.SUBRULE($.forArray)},
+            {ALT: ()=> $.SUBRULE($.forCast)},
+            {ALT: ()=> $.SUBRULE($.forRoles)},
+            {ALT: ()=> $.SUBRULE($.forScenes)},
+            {ALT: ()=> $.SUBRULE($.forShots)},
+        ])
         options.content = $.SUBRULE($.IfElseCmdBlock)
-        return {type: CommandTypes.For, options}
+        
+        return { type: CommandTypes.For, options }      
     })
-    $.RULE("iterator", () => {
-        return $.OR([
-            { ALT: () => $.SUBRULE2($.range) }
-        ])
-    })
-    $.RULE("range", () => {
-        return $.OR([
-            { ALT: () => $.SUBRULE2($.rangeArray) },
-            { ALT: () => $.SUBRULE2($.rangeInt) },
-        ])
-    })
-    $.RULE("rangeInt", () => {
+
+    $.RULE("forRange", () => {
+        let id = $.CONSUME(toks.Identifier).image
+        $.CONSUME(toks.InOp);
         $.CONSUME(toks.RangeOp)
         $.CONSUME(toks.LParen)
         let start = $.CONSUME(toks.IntegerLiteral).image
         let end
         let step = 1
-        $.OPTION(() => { $.CONSUME(toks.Comma); 
+        $.OPTION(() => {
+            $.CONSUME(toks.Comma);
             end = $.CONSUME1(toks.IntegerLiteral).image
         })
-        $.OPTION1(() => { $.CONSUME1(toks.Comma); 
+        $.OPTION1(() => {
+            $.CONSUME1(toks.Comma);
             step = $.CONSUME2(toks.IntegerLiteral).image
         })
-        
-        $.CONSUME(toks.RParen)
-        if (!end) {end=parseInt(start); start=0}
-        else {start=parseInt(start);end=parseInt(end);step=parseInt(step)}
-        return {type: IteratorTypes.Range, start, end, step}
-    });
-    $.RULE("rangeArray", () => {
-        $.CONSUME(toks.LBracket)
-        $.MANY_SEP({
-            SEP: toks.Comma,
-            DEF: () => {
-                $.OR([
-                    { ALT: () => $.SUBRULE2($.value) },
-                    { ALT: () => $.SUBRULE2($.identifierRange) },
-                ])
 
-            }
+        $.CONSUME(toks.RParen)
+        if (!end) { end = parseInt(start); start = 0 }
+        else { start = parseInt(start); end = parseInt(end); step = parseInt(step) }
+        return { type: IteratorTypes.Range, id, start, end, step }
+    });
+
+    // $.RULE("rangeArray", () => {
+    //     let array = []
+    //     $.CONSUME(toks.LBracket)
+    //     $.OR([
+    //         {ALT: ()=> $.SUBRULE($.rangeSceneIDArray)},
+    //         {ALT: ()=> $.SUBRULE($.rangeCastIDArray)},
+    //         {ALT: ()=> $.SUBRULE($.rangeRoleIDArray)},
+    //         {ALT: ()=> $.SUBRULE($.rangeShotIDArray)},
+    //         {ALT: ()=>  $.SUBRULE($.rangeValueArray)}
+    //     ])
+    //     $.CONSUME(toks.RBracket)
+    //     return { type: IteratorTypes.Set, set: array }
+    // })
+
+    $.RULE("forArray", () => {
+        let id = $.CONSUME(toks.Identifier).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        
+        $.AT_LEAST_ONE_SEP({
+            SEP: toks.Comma,
+            DEF: () => $.SUBRULE2($.value)
         })
         $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Array, id, elements }
     })
-    $.RULE("identifierRange", () => {
-        $.OR([
-            { ALT: () => $.CONSUME(toks.StorySec) },
-            { ALT: () => $.CONSUME(toks.SceneId) },
-            { ALT: () => $.SUBRULE($.roleCastId) },
-        ])
+
+    $.RULE("forScenes", () => {
+        let id = $.CONSUME(toks.SceneId).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        $.AT_LEAST_ONE( () => $.CONSUME2(toks.SceneId).image)
+        $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Set, id, elements }
+    })
+
+    $.RULE("forCast", () => {
+        let id = $.CONSUME(toks.CastId).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        $.AT_LEAST_ONE( () => $.CONSUME2(toks.CastId).image)
+        $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Set, id, elements }
+    })
+
+    $.RULE("forRoles", () => {
+        let id = $.CONSUME(toks.RoleId).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        $.AT_LEAST_ONE( () => $.CONSUME2(toks.RoleId).image)
+        $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Set, id, elements }
+    })
+
+    $.RULE("forShots", () => {
+        let id = $.CONSUME(toks.Identifier).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        $.AT_LEAST_ONE( () => $.CONSUME2(toks.Identifier).image)
+        $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Set, id, elements }
     })
 
 }

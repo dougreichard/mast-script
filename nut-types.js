@@ -19,7 +19,8 @@ const CommandTypes = {
     PresentAssign: cmdId++,
     Delay: cmdId++,
     Do: cmdId++,
-    For: cmdId++
+    For: cmdId++,
+    Set: cmdId++
 }
 
 const TellTypes = {
@@ -36,10 +37,11 @@ const IteratorTypes = {
 
 const SetOperations = {
     Assign: 1,  
-    AddAssign: 2,
-    SubAssign: 3,
-    MulAssign: 4,
-    PresentAssign: 4,
+    AssignAdd: 2,
+    AssignSub: 3,
+    AssignMul: 4,
+    AssignPercentAdd: 5,
+    AssignPercentSub: 6
 
 }
 

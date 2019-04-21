@@ -16,7 +16,8 @@ const parser = new NutParser(listener)
 function run(fileName) {
     //fileName = fileName ? fileName : 'tests/sample/flow.nut'
     // fileName = fileName ? fileName : 'tests/sample/flow-do.nut'
-    fileName = fileName ? fileName : 'tests/sample/groundcontrol.nut'
+    //fileName = fileName ? fileName : 'tests/sample/groundcontrol.nut'
+    fileName = fileName ? fileName : 'tests/sample/sets.nut'
     try {
         listener.reset()
         let out = parser.parseFile(fileName)

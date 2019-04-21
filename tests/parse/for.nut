@@ -19,3 +19,15 @@ scenes:
             for i in range(1,10,2):
                 tell `${i.value}`
                 tell `${i.index}`
+
+            for @i in [@a @b @c]:
+                tell `${i.value}`
+                tell `${i.index}`
+            
+            for #i in [#a #b #c]:
+                tell `${i.value}`
+                tell `${i.index}`
+
+            for $i in [$a $b $c]:
+                tell `${i.value}`
+                tell `${i.index}`

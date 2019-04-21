@@ -3,9 +3,10 @@ class MastDown extends SlimDown {
     constructor(scopes) {
         super();
         this.scopes= scopes
-        this.addRule( /(\$\{)(.*)(\})/g, value)
+        ///\~\~(.*?)\~\~/g
+        this.addRule( /\$\{(.*?)\}/g, value)
     
-    function value(text, _, fqn) {
+    function value(text, fqn) {
         let value = scopes.getValue(fqn)
         return `${value}`;
     }

@@ -38,8 +38,8 @@ scenes:
             set [@dawn @son].XP *= 100
 
             // Percentage
-            set @cast1.data %= 5
-            set [@dawn @son].XP %= 100
+            set @cast1.data %+ 5
+            set [@dawn @son].XP %- 100
 
 
 

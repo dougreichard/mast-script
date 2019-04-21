@@ -32,45 +32,51 @@ module.exports = ($) => {
         ])
     })
     $.RULE("identifierLHSList", () => {
+        let lhs = []
         $.OR([
-            { ALT: () => $.SUBRULE($.identifierLHS) },
+            { ALT: () => lhs.push($.SUBRULE($.identifierLHS)) },
             {
                 ALT: () => {
                     $.CONSUME(toks.LBracket);
                     $.MANY(() => {
-                        $.SUBRULE1($.identifierLHS)
+                        lhs.push($.SUBRULE1($.identifierLHS)) 
                     })
                     $.CONSUME(toks.RBracket);
                 }
             }
         ])
+        return lhs
     })
     $.RULE("identifierLHS", () => {
-        $.OR([
-            { ALT: () => $.CONSUME(toks.StorySec) },
-            { ALT: () => $.CONSUME(toks.SceneId) },
-            { ALT: () => $.CONSUME(toks.InteractionId) },
-            { ALT: () => $.CONSUME(toks.ObjectiveId) },
+        return $.OR([
+            { ALT: () => $.CONSUME(toks.StorySec).image },
+            { ALT: () => $.CONSUME(toks.SceneId).image },
+            { ALT: () => $.CONSUME(toks.InteractionId).image },
+            { ALT: () => $.CONSUME(toks.ObjectiveId).image },
             { ALT: () => $.SUBRULE($.roleCastId) },
+            { ALT: () => $.CONSUME(toks.Identifier).image }
             //{ ALT: () => $.CONSUME(toks.CastId) }
         ])
     })
 
     $.RULE("setLHS", () => {
-        $.SUBRULE($.identifierLHSList)
+        let ids = $.SUBRULE($.identifierLHSList)
+        let elements = ""
         $.OPTION(() => {
             $.MANY(() => {
-                $.CONSUME(toks.DataId)
+                elements += $.CONSUME(toks.DataId).image
             })
         })
+        return {ids, elements}
     })
     $.RULE("identifierExpression", () => {
-        $.SUBRULE($.identifierLHS) 
+        let exp = $.SUBRULE($.identifierLHS) 
         $.OPTION(() => {
             $.MANY(() => {
-                $.CONSUME(toks.DataId)
+               exp += $.CONSUME(toks.DataId).image
             })
         })
+        return exp
     })
     $.RULE("Expression", () => {
         $.OR([

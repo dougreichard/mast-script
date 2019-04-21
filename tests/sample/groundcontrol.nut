@@ -99,7 +99,7 @@ And I think my spaceship knows which way to go
         (`INT. Control Center`):
             as @groundControl tell @majorTom `Ground Control to Major Tom`
             as @groundControl tell @majorTom `Your circuit's dead, there's something wrong`
-            for range(3):
+            for i in range(3):
                 as @groundControl tell @majorTom `Can you hear me, Major Tom?`
                 delay 500ms
             @groundControl `Can you...`

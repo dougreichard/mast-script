@@ -285,7 +285,9 @@ tok("LE_Op", /<=/);
 tok("AssignAdd", /\+=/);
 tok("AssignSub", /-=/);
 tok("AssignMul", /\*=/);
-tok("AssignPercent", /\%=/);
+tok("AssignPercentAdd", /\%\+/);
+tok("AssignPercentSub", /\%-/);
+
 
 
 /////////////////////////////////////

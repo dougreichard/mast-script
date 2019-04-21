@@ -13,7 +13,7 @@ module.exports = ($) => {
         let alias = $.OPTION(() => $.SUBRULE($.aliasString))
         let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)
         let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
-        let id = '$$story'
+        let id = 'story'
         let scene = { id, alias, desc, value}
         $.pushStory(scene)
         let content = $.SUBRULE($.sceneContent);
