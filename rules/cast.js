@@ -11,7 +11,11 @@ module.exports = ($) => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            $.SUBRULE($.castDef)
+            let annotations= $.SUBRULE($.annotationList)
+            let meta = $.SUBRULE($.castDef)
+            annotations.meta = meta
+            annotations.id = meta.id;
+            $.addCast(annotations)
         })
         $.CONSUME(toks.Outdent)
     })
@@ -27,9 +31,8 @@ module.exports = ($) => {
         let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
         let roles = $.OPTION2(() => $.SUBRULE($.roleIdList))
         let desc = $.OPTION3(() =>  $.CONSUME2(toks.StringLiteral).image)
-        let value = $.OPTION4(() =>  $.SUBRULE($.objectValue))
-
-        $.addCast({id, alias, roles, desc, value})
+        return {id, alias, roles, desc}
+        
     })
    
 }

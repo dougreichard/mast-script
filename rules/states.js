@@ -30,24 +30,9 @@ module.exports = ($) => {
         let sub = $.OPTION(() => $.SUBRULE($.subOperator)) 
         let id = $.OPTION1(()=> $.CONSUME(toks.Identifier).image)
         let alias = $.OPTION2(()=> $.SUBRULE($.aliasString).image)
-/* I may want thi stricter version
-        let id
-        let alias
-        $.OR([{
-            ALT: () => {
-                id = $.CONSUME(toks.Identifier)
-                alias = $.OPTION(()=> $.SUBRULE($.aliasString))
-            }
-        }, {
-            ALT: () => {
-                alias = $.SUBRULE1($.aliasString)
-            }
-        }])
-        */
         id = id ? id: $.anonymousID('shot') 
 
-        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
-        let shot = { type: SymbolTypes.Shot, id, alias,   value, sub}
+        let shot = { type: SymbolTypes.Shot, id, alias, sub}
         $.pushShot(shot)
         let content = $.SUBRULE($.stateCmdBlock);
         shot.content = content
@@ -61,8 +46,11 @@ module.exports = ($) => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
+            let annotations= $.SUBRULE($.annotationList)
             let cmd = $.SUBRULE($.stateCommand)
+            
             if (cmd) {
+                cmd.annotations = annotations
                 cmds.push(cmd)
             }
         })
@@ -78,8 +66,9 @@ module.exports = ($) => {
     //     ;
     $.RULE('stateCommand', () => {
        return  $.OR([
-            { ALT: () => $.SUBRULE($.asWithCmd) },
+            { ALT: () => $.SUBRULE($.asCmd) },
             { ALT: () => $.SUBRULE($.doCmd) },
+            { ALT: () => $.SUBRULE($.cueCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
             { ALT: () => $.SUBRULE($.setCmd) },
             { ALT: () => $.SUBRULE($.delayCmd) },

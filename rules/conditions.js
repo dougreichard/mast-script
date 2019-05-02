@@ -70,12 +70,18 @@ module.exports = ($) => {
         return {ids, elements}
     })
     $.RULE("identifierExpression", () => {
-        let exp = $.SUBRULE($.identifierLHS) 
-        $.OPTION(() => {
+        let exp = $.SUBRULE($.identifierLHS)
+        let annotation = $.OPTION(()=> $.SUBRULE($.annotationId)) 
+        annotation = annotation?annotation:'value';
+        let sub = ''
+        $.OPTION2(() => {
             $.MANY(() => {
-               exp += $.CONSUME(toks.DataId).image
+               sub += $.CONSUME(toks.DataId).image
             })
         })
+        if (sub) {
+            exp += annotation + sub
+        }
         return exp
     })
     $.RULE("Expression", () => {

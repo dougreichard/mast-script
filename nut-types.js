@@ -7,6 +7,7 @@ const SymbolTypes = {
     Shot: 6,
     Objective: 7,
     Interaction: 8,
+    Annotation: 9
 
 }
 
@@ -20,13 +21,22 @@ const CommandTypes = {
     Delay: cmdId++,
     Do: cmdId++,
     For: cmdId++,
-    Set: cmdId++
+    Set: cmdId++,
+    Scene: cmdId++,
+    As: cmdId++,
+    Cue: cmdId++
 }
 
 const TellTypes = {
     RoleCast: 1,  // Tell specific cast or role
     Scene: 2,   // tell everyone currently in a scene
     Story: 3  // tell everyone
+}
+
+
+const UnwindTypes = {
+    Shot: 1,  // Tell specific cast or role
+    Scene: 2,   // tell everyone currently in a scene
 }
 
 const IteratorTypes = {
@@ -45,10 +55,18 @@ const SetOperations = {
 
 }
 
+let interId = 1
+const InteractionTypes = {
+    Choice: interId++,  
+    Form: interId++,
+}
+
 module.exports = {
     SymbolTypes,
     TellTypes,
     CommandTypes,
     IteratorTypes,
-    SetOperations
+    SetOperations,
+    InteractionTypes,
+    UnwindTypes
 }

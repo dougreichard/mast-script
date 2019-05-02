@@ -4,10 +4,37 @@ const { IteratorTypes, SetOperations, TellTypes, CommandTypes } = require('../nu
 const toks = spsLexer.tokens
 
 module.exports = ($) => {
+    $.RULE('annotationId', () => {
+        $.CONSUME(toks.LT_Op)
+        let id = $.CONSUME(toks.Identifier).image
+        $.CONSUME(toks.GT_Op)
+        return id;
+    })
+    $.RULE('annotation', () => {
+        $.CONSUME(toks.LT_Op)
+        let id = $.CONSUME(toks.Identifier).image
+        let value = $.OPTION(()=> $.SUBRULE($.value))
+        // If there is no value we need it to be true to know the 
+        // annotations exists
+        if (value === undefined) {
+            value = true
+        }
+        $.CONSUME(toks.GT_Op)
+        return {  key: id,  value } 
+    })
+    $.RULE('annotationList', ()=> {
+        let annotations = {}
+        $.MANY(() => {
+            let {key, value} = $.SUBRULE1($.annotation)
+            annotations[key] = value
+        })
+        return annotations
+    })
+
     $.RULE('doCmd', () => {
         $.CONSUME(toks.DoCmd)
         let together = $.OPTION(() => $.CONSUME(toks.TogetherOp).image ? true : false)
-        let shots = $.OPTION1(() => $.SUBRULE($.shotList))
+        let shots = $.SUBRULE($.shotList)
         return { type: CommandTypes.Do, options: { together, shots } }
 
     })
@@ -32,6 +59,7 @@ module.exports = ($) => {
     // :  TELL_STATEMENT role-cast-list string
     // ;
     $.RULE('tellCmd', () => {
+        
         let desc;
         $.OR([{
             ALT: () => {
@@ -45,42 +73,58 @@ module.exports = ($) => {
             }
         }
         ])
+        $.OPTION(()=> $.SUBRULE($.annotationList))
         return { type: CommandTypes.Tell, options: { desc } }
 
     })
 
-    $.RULE('asWithCmd', () => {
-        $.OR([
-            {
-                ALT: () => {
-                    $.SUBRULE($.asCmd)
-                    $.OPTION(() => $.SUBRULE($.withCmd))
-                }
-            },
-            {
-                ALT: () => {
-                    $.SUBRULE1($.withCmd)
-                }
-            }
-        ])
+    $.RULE('cueCmd', () => {
+        $.OPTION(() => $.CONSUME(toks.CueCmd))
+        let content = $.SUBRULE($.aliasString)
+        return {type: CommandTypes.Cue, options: { content } }
 
     })
 
     $.RULE('asCmd', () => {
         $.OPTION(() => $.CONSUME(toks.AsCmd))
-        $.CONSUME(toks.CastId)
+        let id =$.CONSUME(toks.CastId)
+        let content = $.SUBRULE($.aliasCmdList)
+        return {type: CommandTypes.As, options: { id, content } }
+
     })
 
-    $.RULE('withCmd', () => {
-        $.OPTION(() => $.CONSUME(toks.WithCmd))
-        $.SUBRULE($.objectValue)
+    $.RULE("aliasCmdList", () => {
+        let cmds = []
+        $.CONSUME(toks.Colon);
+        $.CONSUME(toks.Indent)
+        
+        $.AT_LEAST_ONE(()=> { 
+            let annotations= $.SUBRULE($.annotationList)
+            let cmd = $.SUBRULE($.aliasCmd)
+            
+            if (cmd) {
+                cmd.annotations = annotations
+                cmds.push(cmd)
+            }
+        })
+        $.CONSUME(toks.Outdent)
+        return cmds
     })
 
     $.RULE("aliasCmd", () => {
-        $.OR([
+        return $.OR([
+          //  { ALT: () => $.SUBRULE($.asCmd) },
+            { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
+            { ALT: () => $.SUBRULE($.cueCmd) },
+            { ALT: () => $.SUBRULE($.sceneCmd) },
             { ALT: () => $.SUBRULE($.setCmd) },
-            { ALT: () => $.SUBRULE($.askCmd) },
+            { ALT: () => $.SUBRULE($.delayCmd) },
+            { ALT: () => $.SUBRULE($.completeCmd) },
+            { ALT: () => $.SUBRULE($.showCmd) },
+            { ALT: () => $.SUBRULE($.hideCmd) },
+            { ALT: () => $.SUBRULE($.failCmd) },
+            // {ALT: ()=> $.SUBRULE($.askCmd)}
         ])
     })
 
@@ -110,10 +154,11 @@ module.exports = ($) => {
 
     $.RULE('sceneCmd', () => {
         $.CONSUME(toks.SceneCmd)
-        $.OR([
-            { ALT: () => $.CONSUME(toks.SceneId) },
-            { ALT: () => $.CONSUME(toks.StorySec) }
+        let id = $.OR([
+            { ALT: () => $.CONSUME(toks.SceneId).image },
+            { ALT: () => $.CONSUME(toks.StorySec).image }
         ]);
+        return {type: CommandTypes.Scene, options: { id} }
     })
     // show-command
     // : SHOW_STATEMENT OBJECTIVE_ID boolean-value
@@ -178,7 +223,7 @@ module.exports = ($) => {
     // : DELAY_STATEMENT time-unit COLON when-command-block
     // ;
     $.RULE('delayCmd', () => {
-        $.CONSUME(toks.DelayCmd)
+        $.OPTION(()=>$.CONSUME(toks.DelayCmd))
         let ms = $.SUBRULE($.timeUnits);
         return { type: CommandTypes.Delay, options: { ms } }
     })
@@ -190,6 +235,7 @@ module.exports = ($) => {
             {ALT: ()=> $.SUBRULE($.forArray)},
             {ALT: ()=> $.SUBRULE($.forCast)},
             {ALT: ()=> $.SUBRULE($.forRoles)},
+            {ALT: ()=> $.SUBRULE($.forCastFromRoles)},
             {ALT: ()=> $.SUBRULE($.forScenes)},
             {ALT: ()=> $.SUBRULE($.forShots)},
         ])
@@ -271,6 +317,16 @@ module.exports = ($) => {
 
     $.RULE("forRoles", () => {
         let id = $.CONSUME(toks.RoleId).image
+        let elements = []
+        $.CONSUME(toks.InOp);
+        $.CONSUME(toks.LBracket)
+        $.AT_LEAST_ONE( () => $.CONSUME2(toks.RoleId).image)
+        $.CONSUME(toks.RBracket)
+        return { type: IteratorTypes.Set, id, elements }
+    })
+
+    $.RULE("forCastFromRoles", () => {
+        let id = $.CONSUME(toks.CastId).image
         let elements = []
         $.CONSUME(toks.InOp);
         $.CONSUME(toks.LBracket)

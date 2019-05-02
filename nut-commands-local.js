@@ -1,20 +1,37 @@
-const { IteratorTypes, CommandTypes, SymbolTypes } = require('./nut-types')
+const {UnwindTypes, InteractionTypes, IteratorTypes, CommandTypes, SymbolTypes } = require('./nut-types')
 const MastDown = require("./nut-format-simple")
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 class Runner {
+    constructor() {
+        
+    }
+
+    async prompt(n) {
+        return getRandomInt(n)            
+    }
 
     async runStory(listener) {
         let story = listener.story
         let scene = listener.firstScene
         this.scopes = listener.scopes
+        this.formatter = new MastDown(this.scopes)
 
         if (story) {
             await this.runScene(story.id)
-        } else {
+        } else if (scene) {
             await this.runScene(scene.id)
+        } else {
+            this.log('No entry point')
         }
     }
 
+    async log(...args) {
+        console.log(...args)
+    }
 
     async runCommandList(cmds) {
         for await (let cmd of cmds) {
@@ -28,6 +45,11 @@ class Runner {
                 await this.forCmd(cmd.options)
             } else if (cmd.type === CommandTypes.Set) {
                 await this.setCmd(cmd.options)
+            } else if (cmd.type === CommandTypes.As) {
+                await this.asCmd(cmd.options)
+            } else if (cmd.type === CommandTypes.Scene) {
+                // return Unwind Stack and play scene
+                return {type: UnwindTypes.Scene, next: cmd.options.id}
             }
         }
     }
@@ -49,63 +71,88 @@ class Runner {
 
 
         this.scopes.push(shotMap)
+        let unwind 
         if (scene.content && scene.content.startup) {
-            await this.runCommandList(scene.content.startup)
-        } if (scene.content && scene.content.enter) {
-            await this.runCommandList(scene.content.enter)
-        } if (scene.content && scene.content.shots) {
+            unwind = await this.runCommandList(scene.content.startup)
+        } 
+        if (!unwind && scene.content && scene.content.enter) {
+            unwind = await this.runCommandList(scene.content.enter)
+        } 
+        if (!unwind && scene.content && scene.content.shots) {
             if (firstShot) {
-                await this.runShots(firstShot)
+                unwind = await this.runShots(firstShot)
             }
         }
         this.scopes.pop();
 
         if (scene.type === SymbolTypes.Scene && scene.content && scene.content.leave) {
-            await this.runCommandList(scene.content.leave)
+            unwind = await this.runCommandList(scene.content.leave)
         }
+        let next = unwind? unwind.next : scene.next
         // If this is a scene play next after leave
-        if (scene.next) {
-            setImmediate(() => this.runScene(scene.next))
+        if (next) {
+            setImmediate(() => this.runScene(next))
         } else {
             let story = this.scopes.findStoryKey("story")
             if (story && story.content && story.content.leave) {
-                await runCommandList(story.content.leave)
+                await this.runCommandList(story.content.leave)
             }
         }
     }
 
     async runShots(firstShot) {
         return new Promise((res, rej) => {
-            setImmediate(() => runShot(firstShot.id, res))
+            setImmediate(() => this.runShot(firstShot.id, res))
         })
     }
 
     async runShot(shotId, done) {
-        let shot = scopes.findKey(shotId);
+        let shot = this.scopes.findKey(shotId);
         if (!shot) {
             done()
             return
         }
+        let unwind
         if (shot.type === SymbolTypes.Shot) {
             if (shot.content) {
-                await runCommandList(shot.content)
+                unwind = await this.runCommandList(shot.content)
             }
         } else if (shot.type === SymbolTypes.Interaction) {
-            console.log(`Interaction ${shot.id}`)
-
+            unwind = await this.runInteraction(shot)            
         }
-        if (shot.next) {
+        if (!unwind && shot.next) {
             setImmediate(() => this.runShot(shot.next, done))
         } else if (!shot.sub) {
-            done()
+            done(unwind)
         }
     }
 
+    
 
+    async runInteraction(inter) {
+        if (inter.content.type === InteractionTypes.Choice) {
+            this.log(inter.desc)
+            for(let i=0, l =inter.content.choices.length; i<l ;i++) {
+                let item = inter.content.choices[i];
+                this.log(`${i+1}. ${item.prompt}`)
+            }
+            // Selecting choice 0
+            let c = await this.prompt(inter.content.choices.length)
+            return await this.runCommandList(inter.content.choices[c].content)
+        }
+    }
+    ///////////////////////////////////////////////////////////////////////////
+    ////
+    ////  COMMANDS
+    ////
     async tell(options) {
         // early days
-        let formatter = new MastDown(this.scopes)
-        console.log(formatter.render(options.desc))
+        this.log(this.formatter.render(options.desc))
+    }
+
+    async asCmd(options) {
+        // As command lets the story put words into people mouths
+        await this.runCommandList(options.content)
     }
 
     // I am not a fan of timers, but --- early days
@@ -119,7 +166,7 @@ class Runner {
     async delay(options) {
         // early days 
         //console.log(options.ms)
-        await timeout(options.ms)
+        await this.timeout(options.ms)
     }
 
     async setCmd(options) {
@@ -163,198 +210,32 @@ class Runner {
     async forCmd(options) {
         let iter
         let scope = {}
+        let ret
         scope[options.id] = 0
         this.scopes.push(scope)
         if (options.type === IteratorTypes.Range) {
-            iter = range(options.start, options.end, options.step)
+            iter = this.range(options.start, options.end, options.step)
         }
         for await (let i of iter) {
             scope[options.id] = i
             // console.log(scopes.getValue(options.id))
-            await this.runCommandList(options.content)
+            ret = await this.runCommandList(options.content)
         }
         this.scopes.pop()
+        return ret
     }
 
 }
 
 
-runCommandList = async (cmds, scopes) => {
-    for await (let cmd of cmds) {
-        if (cmd.type === CommandTypes.Tell) {
-            await tell(cmd.options, scopes);
-        } else if (cmd.type === CommandTypes.Delay) {
-            await delay(cmd.options, scopes)
-        } else if (cmd.type === CommandTypes.Do) {
-            await doCmd(cmd.options, scopes)
-        } else if (cmd.type === CommandTypes.For) {
-            await forCmd(cmd.options, scopes)
-        } else if (cmd.type === CommandTypes.Set) {
-            await setCmd(cmd.options, scopes)
-        }
-    }
-}
 
 let runner = new Runner()
 runStory = async (listener) => {
     runner.runStory(listener)
 }
 
-runStoryOld = async (listener) => {
-    let story = listener.story
-    let scene = listener.firstScene
-    if (story) {
-        await runScene(story.id, listener.scopes)
-    } else {
-        await runScene(scene.id, listener.scopes)
-    }
-
-}
-
-runScene = async (sceneId, scopes) => {
-    let scene = scopes.findStoryKey(sceneId);
-    if (!scene) {
-        return
-    }
-    let firstShot
-    let shotMap = {}
-    if (scene.content.shots) {
-        for (let s of scene.content.shots) {
-            if (!firstShot && !s.sub) {
-                firstShot = s
-            }
-            shotMap[s.id] = s
-        }
-    }
-
-
-    scopes.push(shotMap)
-    if (scene.content && scene.content.startup) {
-        await runCommandList(scene.content.startup, scopes)
-    } if (scene.content && scene.content.enter) {
-        await runCommandList(scene.content.enter, scopes)
-    } if (scene.content && scene.content.shots) {
-        if (firstShot) {
-            await runShots(firstShot, scopes)
-        }
-    }
-    scopes.pop();
-
-    if (scene.type === SymbolTypes.Scene && scene.content && scene.content.leave) {
-        await runCommandList(scene.content.leave, scopes)
-    }
-    // If this is a scene play next after leave
-    if (scene.next) {
-        setImmediate(() => runScene(scene.next, scopes))
-    } else {
-        let story = scopes.findStoryKey("$$story")
-        if (story && story.content && story.content.leave) {
-            await runCommandList(story.content.leave, scopes)
-        }
-    }
-}
-
-runShots = async (firstShot, scopes) => {
-    return new Promise((res, rej) => {
-        setImmediate(() => runShot(firstShot.id, scopes, res))
-    })
-}
-
-runShot = async (shotId, scopes, done) => {
-    let shot = scopes.findKey(shotId);
-    if (!shot) {
-        done()
-        return
-    }
-    if (shot.type === SymbolTypes.Shot) {
-        if (shot.content) {
-            await runCommandList(shot.content, scopes)
-        }
-    } else if (shot.type === SymbolTypes.Interaction) {
-        console.log(`Interaction ${shot.id}`)
-
-    }
-    if (shot.next) {
-        setImmediate(() => runShot(shot.next, scopes, done))
-    } else if (!shot.sub) {
-        done()
-    }
-}
-
-
-tell = async (options, scopes) => {
-    // early days
-    let formatter = new MastDown(scopes)
-    console.log(formatter.render(options.desc))
-}
-// I am not a fan of timers, but --- early days
-function timeout(t, val) {
-    return new Promise(function (resolve) {
-        setTimeout(function () {
-            resolve(val);
-        }, t);
-    });
-}
-delay = async (options) => {
-    // early days 
-    //console.log(options.ms)
-    await timeout(options.ms)
-}
-
-setCmd = async (options, scopes) => {
-    let value = options.value
-    if (options.exp) {
-        value = scopes.getValue(options.exp)
-    }
-    for (let id of options.lhs.ids) {
-        let fqn = id + options.lhs.elements
-        scopes.setValue(fqn, value, options.op)
-    }
-
-}
-
-doCmd = async (options, scopes) => {
-    let shots = options.shots
-    if (options.together) {
-        let all = []
-        for (let s of shots) {
-            all.push(runShot(s, scopes, () => { }))
-        }
-        await Promise.all(all)
-    } else {
-        for (let s of shots) {
-            await runShot(s, scopes, () => { })
-        }
-    }
-
-}
-function* range(start, end, step) {
-    if (start < end && step > 0) {
-        for (var i = start; i < end; i += step) yield i;
-    } else if (start > end && step < 0) {
-        for (var i = start; i > end; i += step) yield i;
-    } else {
-        yield 0
-    }
-
-}
-
-forCmd = async (options, scopes) => {
-    let iter
-    let scope = {}
-    scope[options.id] = 0
-    scopes.push(scope)
-    if (options.type === IteratorTypes.Range) {
-        iter = range(options.start, options.end, options.step)
-    }
-    for await (let i of iter) {
-        scope[options.id] = i
-        // console.log(scopes.getValue(options.id))
-        await runCommandList(options.content, scopes)
-    }
-    scopes.pop()
-}
 
 module.exports = {
-    runStory
+   // runStory,
+    Runner
 }

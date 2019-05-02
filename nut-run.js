@@ -6,29 +6,31 @@ var art = require("ascii-art");
 const readline = require('readline');
 const NutParser = require("./nut-parser")
 const NutListener = require("./nut-listener")
-const { runStory } = require("./nut-commands-local")
+const { Runner } = require("./nut-commands-local")
 
 // reuse the same parser instance.
 const listener = new NutListener()
 const parser = new NutParser(listener)
+const runner = new Runner()
 
 
 function run(fileName) {
     //fileName = fileName ? fileName : 'tests/sample/flow.nut'
-    // fileName = fileName ? fileName : 'tests/sample/flow-do.nut'
+    //fileName = fileName ? fileName : 'tests/sample/flow-do.nut'
     //fileName = fileName ? fileName : 'tests/sample/groundcontrol.nut'
-    fileName = fileName ? fileName : 'tests/sample/sets.nut'
-    try {
+   fileName = fileName ? fileName : 'tests/sample/choice.nut'
+   //fileName = fileName ? fileName : '../harold.nut' 
+   try {
         listener.reset()
         let out = parser.parseFile(fileName)
-        console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors.length}`)
+        console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors?out.parseErrors.length:'not run'}`)
         for (let le of out.lexErrors) {
-            console.log(`${le.line}:${le.offset} - ${le.message}`)
+            console.log(`${le.line}:${le.column} - ${le.message}`)
         }
         for (let pe of out.parseErrors) {
             console.log(`${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
         }
-        runStory(listener)
+        runner.runStory(listener)
 
         return true;
     } catch (e) {

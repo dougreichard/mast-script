@@ -20,6 +20,7 @@ function tok(name, pattern, opt) {
     let tok = createToken(opt);
     allLex[name] = tok;
     tokStack.unshift(tok);
+    return tok
 }
 
 /**
@@ -194,6 +195,7 @@ tok("PassCmd", /pass/, { longer_alt: Identifier });
 tok("AsCmd", /as/, { longer_alt: Identifier });
 tok("WithCmd", /with/, { longer_alt: Identifier });
 tok("TellCmd", /tell/, { longer_alt: Identifier });
+tok("CueCmd", /cue/, { longer_alt: Identifier });
 tok("SceneCmd", /scene/, { longer_alt: Identifier });
 tok("SetCmd", /set/, { longer_alt: Identifier });
 tok("DelayCmd", /delay/, { longer_alt: Identifier });
@@ -299,7 +301,6 @@ tok("Outdent", matchOutdent, { line_breaks: false })
 // custom token patterns should explicitly specify the line_breaks option
 
 tok("Newline", /\n|\r\n|\r/, { group: "nl" });
-
 
 
 const spsLexer = new Lexer(tokStack);

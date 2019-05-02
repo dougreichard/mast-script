@@ -49,7 +49,7 @@ class Scopes {
         let scriptObject = (pattern.test(keys[0])) 
         for(let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
             key = keys[keyIndex]
-            if (key in value) {
+            if (key && key in value) {
                 scope = value
                 value = value[key]
             } else if (keyIndex == 1 && scriptObject 

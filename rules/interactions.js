@@ -2,7 +2,7 @@ const spsLexer = require('../nut-lex')
 const submitRules = require('./submit');
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
-const {SymbolTypes} = require('../nut-types')
+const {SymbolTypes, InteractionTypes} = require('../nut-types')
 
 module.exports = ($) => {
     submitRules($)
@@ -30,7 +30,7 @@ module.exports = ($) => {
     $.RULE('interaction', () => {
         let id = $.CONSUME(toks.InteractionId).image;
         let audience  = $.SUBRULE($.roleCastIdList)
-        let desc = $.CONSUME(toks.StringLiteral).image;
+        let desc = $.trimString($.CONSUME(toks.StringLiteral).image);
         //$.pushInteraction({id, audience, desc})
         
         let shot = { type: SymbolTypes.Interaction, id, audience, desc}
@@ -44,7 +44,7 @@ module.exports = ($) => {
     })
 
     $.RULE('interactionBlockItem', () => {
-        $.OR([
+        return $.OR([
             { ALT: () => $.SUBRULE($.form) },
             { ALT: () => $.SUBRULE($.choiceInteraction) },
             { ALT: () => $.SUBRULE($.searchCmd) },
@@ -58,13 +58,17 @@ module.exports = ($) => {
         $.CONSUME(toks.ChoiceBlock);
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
+        let content = {type: InteractionTypes.Choice , choices: []}
         
-        $.MANY(()=> {
-            $.OPTION(()=> $.SUBRULE($.roleCastIdList))
-            $.CONSUME(toks.StringLiteral)
-            $.SUBRULE($.IfElseCmdBlock)
+        $.AT_LEAST_ONE(()=> {
+            let choice = {}
+            choice.target = $.OPTION(()=> $.SUBRULE($.roleCastIdList))
+            choice.prompt = $.trimString($.CONSUME(toks.StringLiteral).image)
+            choice.content = $.SUBRULE($.IfElseCmdBlock)
+            content.choices.push(choice);
          })
          $.CONSUME(toks.Outdent) 
+         return content
     })
 
     $.RULE('KeysInteraction', () => {

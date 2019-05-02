@@ -9,10 +9,12 @@ module.exports = ($) => {
     // DEDENT
     // ;
     $.RULE('story', () => {
+        $.OPTION(()=> $.SUBRULE($.annotationList))
+
         $.CONSUME(toks.StorySec);
-        let alias = $.OPTION(() => $.SUBRULE($.aliasString))
-        let desc = $.OPTION1(() => $.CONSUME(toks.StringLiteral).image)
-        let value = $.OPTION2(() =>  $.SUBRULE($.objectValue))
+        let alias = $.OPTION1(() => $.SUBRULE($.aliasString))
+        let desc = $.OPTION2(() => $.CONSUME(toks.StringLiteral).image)
+        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
         let id = 'story'
         let scene = { id, alias, desc, value}
         $.pushStory(scene)
@@ -40,6 +42,29 @@ module.exports = ($) => {
         $.popScene(scene)
         return scene
     })
+
+    $.RULE('sceneContentStartStates', () => {
+        let content = {}
+        $.OPTION1(() => {
+            $.OPTION2(()=> $.SUBRULE1($.annotationList))
+            content.startup = $.SUBRULE($.startup)
+        })
+        $.OPTION3(() => {
+            $.OPTION4(()=> $.SUBRULE2($.annotationList))
+            content.enter = $.SUBRULE($.enter)
+        })
+        return content;
+    })
+
+    $.RULE('sceneContentObjInt', () => {
+        let content = {}
+        $.OPTION(() => {
+            $.SUBRULE($.objectives)
+        })
+        $.OPTION1(() => {
+            $.SUBRULE($.interactions)
+        })
+    })
     // Common for story and Scene 
     // Story is the main scene
     //  ... (alias-string)? string? COLON INDENT 
@@ -53,24 +78,17 @@ module.exports = ($) => {
     $.RULE('sceneContent', () => {
         let content = {}
 
+
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
-        $.OPTION2(() => {
-            $.SUBRULE($.objectives)
-        })
-        $.OPTION3(() => {
-            $.SUBRULE($.interactions)
-        })
-        $.OPTION4(() => {
-            content.startup = $.SUBRULE($.startup)
-        })
-        $.OPTION5(() => {
-            content.enter = $.SUBRULE($.enter)
-        })
-
+        
+        $.SUBRULE($.sceneContentObjInt)
+        Object.assign(content, $.SUBRULE($.sceneContentStartStates))
+        
         $.OPTION6(() => {
             let shots = []
             $.MANY(() => {
+                $.OPTION(()=> $.SUBRULE3($.annotationList))
                 let shot = $.OR([
                     {ALT: ()=> $.SUBRULE($.interaction)},
                     {ALT: ()=> $.SUBRULE($.shot)}
@@ -82,6 +100,7 @@ module.exports = ($) => {
             }
         })
         $.OPTION7(() => {
+            $.OPTION8(()=> $.SUBRULE4($.annotationList))
             content.leave = $.SUBRULE($.leave)
         })
 
@@ -101,6 +120,7 @@ module.exports = ($) => {
         $.CONSUME(toks.Colon);
         $.CONSUME(toks.Indent);
         $.MANY(() => {
+            $.OPTION(()=> $.SUBRULE($.annotationList))
             $.SUBRULE($.scene);
         })
         $.CONSUME(toks.Outdent);

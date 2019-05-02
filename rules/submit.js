@@ -52,8 +52,10 @@ module.exports = ($) => {
             { ALT: () => $.CONSUME(toks.PassCmd) },
             {
                 ALT: () => $.MANY(() => {
-                    let cmd = $.SUBRULE($.ifElseValidCmd)
+                    let annotations= $.SUBRULE($.annotationList)
+                    let cmd = $.SUBRULE($.ifElseValidCmd)          
                     if (cmd) {
+                        cmd.annotations = annotations
                         cmds.push(cmd)
                     }
                 })
@@ -66,9 +68,9 @@ module.exports = ($) => {
     $.RULE("ifElseValidCmd", () => {
         return $.OR([
             { ALT: () => $.SUBRULE($.asCmd) },
-            { ALT: () => $.SUBRULE($.withCmd) },
             { ALT: () => $.SUBRULE($.doCmd) },
             { ALT: () => $.SUBRULE($.tellCmd) },
+            { ALT: () => $.SUBRULE($.cueCmd) },
             { ALT: () => $.SUBRULE($.sceneCmd) },
             { ALT: () => $.SUBRULE($.setCmd) },
             { ALT: () => $.SUBRULE($.delayCmd) },

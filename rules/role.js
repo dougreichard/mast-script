@@ -8,7 +8,7 @@ module.exports = ($) => {
     // ;
     $.RULE('aliasString', () => {
         $.CONSUME(toks.LParen);
-        let alias = $.CONSUME(toks.StringLiteral).image
+        let alias = $.trimString($.CONSUME(toks.StringLiteral).image)
         $.CONSUME(toks.RParen);
         return alias
     })
@@ -20,7 +20,11 @@ module.exports = ($) => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            $.SUBRULE($.roleDef)
+            let annotations= $.SUBRULE($.annotationList)
+            let meta = $.SUBRULE($.roleDef)
+            annotations.meta = meta
+            annotations.id = meta.id;
+            $.addRole(annotations)
         })
         $.CONSUME(toks.Outdent)
     })
@@ -35,7 +39,7 @@ module.exports = ($) => {
         ]);
         let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
         let desc = $.OPTION2(() =>  $.CONSUME(toks.StringLiteral).image)
-        let value = $.OPTION3(() =>  $.SUBRULE($.objectValue))
-        $.addRole({id, alias, desc, value})
+        return {id,alias,desc}
+
     })
 }

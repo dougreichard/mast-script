@@ -60,12 +60,17 @@ this is  a lon g line
 going further'
 
     role2 'This is a role'
-    #roleV1 ('this') ' Desc' {a: 1,b: 2 }  
-    #roleV {
+    
+    <value {a: 1,b: 2 }>  
+    #roleV1 ('this') ' Desc'
+
+    <value {
         a: 1,
         b: 2
-    }
-    #roleV2 {a: 1,b: 2}
+    }>
+    #roleV 
+    <value  {a: 1,b: 2}>
+    #roleV2
     `
 
     
@@ -78,7 +83,7 @@ describe("Parse cast", () => {
     it("Test Parser", () => {
         let input =
             `cast:
-    @cast1 ('test') 'This is a cast' {
+    <value {
         d: 1, 
         s: "hello", 
         o: { 
@@ -86,7 +91,8 @@ describe("Parse cast", () => {
             b: 3
         },
         i: 3
-    }
+    }>
+    @cast1 ('test') 'This is a cast'
     @castr1 ('test') #role 'This is a cast'
     @castr2 ('test') [#role #role2] 'This is a cast'
     @castr3 #role1 'This is a cast'
