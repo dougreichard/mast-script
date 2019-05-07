@@ -1,15 +1,15 @@
 cast:
     <value {XP: 2, HP:5}>
-    @test ('Doug') 
+    @hero ('Doug') 
 
 story:
     enter:
-        `${@test<meta>.alias} your XP is ${@test.XP} your HP is ${@test.HP}`
+        `${@hero<meta>.alias} your XP is ${@hero.XP} your HP is ${@hero.HP}`
 
     (`INT. DAY Office`):
         ('The camera dollies in through a doorway landing in front of the desk')
 
-        @test:
+        @hero:
             ('slouched over paper pencil in hand writing frantically')
             <whispering>
             "Where is it..."
@@ -21,19 +21,19 @@ story:
 
 
 
-    ?test @test `Choose your fate` choice:
+    ?test @hero `Choose your fate` choice:
         "Impact XP":
-            set @test.XP += 1
+            set @hero.XP += 1
             scene story
 
         "Impact HP":
-            set @test.HP -= 1
+            set @hero.HP -= 1
             scene story
         "end":
             pass
     
     
     leave:
-        `Final stats XP=${@test.XP}  HP=${@test.HP}`
+        `Final stats XP=${@hero.XP}  HP=${@hero.HP}`
         `the end`
     
