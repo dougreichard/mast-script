@@ -1,29 +1,24 @@
-const chalk = require("chalk");
-// var chalk = require('ascii-art/kaolin');
-var art = require("ascii-art");
-
-// const figlet = require("figlet");
-const readline = require('readline');
 const NutParser = require("./nut-parser")
 const NutListener = require("./nut-listener")
 const { Runner } = require("./nut-commands-local")
+const {NutVisitor} = require('./nut-visitor')
+
 
 // reuse the same parser instance.
 const listener = new NutListener()
 const parser = new NutParser(listener)
 const runner = new Runner()
+const path = require('path');
+
+//const myVisitorInstance = new myCustomVisitor()
+const visitor = new NutVisitor()
 
 
-function run(fileName) {
-    //fileName = fileName ? fileName : 'tests/sample/flow.nut'
-    //fileName = fileName ? fileName : 'tests/sample/flow-do.nut'
-    //fileName = fileName ? fileName : 'tests/sample/groundcontrol.nut'
-   fileName = fileName ? fileName : 'tests/sample/choice.nut'
-   //fileName = fileName ? fileName : '../harold.nut' 
-   try {
+function run(fileNme) {
+    try {
         listener.reset()
         let out = parser.parseFile(fileName)
-        console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors?out.parseErrors.length:'not run'}`)
+        console.log(`Lex Errors: ${out.lexErrors.length} Parse errors: ${out.parseErrors ? out.parseErrors.length : 'not run'}`)
         for (let le of out.lexErrors) {
             console.log(`${le.line}:${le.column} - ${le.message}`)
         }
@@ -31,6 +26,8 @@ function run(fileName) {
             console.log(`${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
         }
         runner.runStory(listener)
+        visitor.visit(out.value)
+
 
         return true;
     } catch (e) {
@@ -51,4 +48,15 @@ const outPath = path.resolve(__dirname, "./")
 fs.writeFileSync(outPath + "/cmdline_diagrams.html", htmlText)
 */
 
-run()
+let fileName = process.argv[2]
+//fileName = fileName ? fileName : '../tests/sample/flow.nut'
+//fileName = fileName ? fileName : '../tests/sample/flow-do.nut'
+//fileName = fileName ? fileName : '../tests/sample/groundcontrol.nut'
+//fileName = fileName ? fileName : './tests/sample/sets.nut'
+//fileName = fileName ? fileName : './tests/sample/choice.nut'
+//fileName = fileName ? fileName : '../harold.nut' 
+fileName = fileName ? fileName : './tests/parse/for.nut'
+//fileName = fileName ? fileName : './tests/sample/flow-do.nut'
+fileName = path.resolve(fileName)
+
+run(fileName)

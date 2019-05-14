@@ -7,12 +7,9 @@ module.exports = ($) => {
         $.CONSUME(toks.ImportSec).image
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)  
-        $.pushImport()
         $.MANY(() => {
-            let script = $.trimString($.CONSUME(toks.StringLiteral).image)
-            $.importScript(script)
+            $.CONSUME(toks.StringLiteral)
         })
-        $.popImport()
         $.CONSUME(toks.Outdent)  
     })
 }

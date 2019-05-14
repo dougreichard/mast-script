@@ -8,9 +8,10 @@ Mast is a language for creating stories.
 
 ## Quick Start
 - [You first Story](./quick/structure)
-- [Screen play format](./quick/screenplay)
+- [Story flow](./quick/flow)
 - [Adding some character](./quick/cast)
-- [Adding value](./quick/values)
+- [Screen play format](./quick/screenplay)
+- [Adding value](./quick/values)stat
 
 
 ## Detailed Documentation

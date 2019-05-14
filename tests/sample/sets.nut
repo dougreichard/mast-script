@@ -39,7 +39,9 @@ story {x: 0}:
             `XP = ${@test3}`
             2s
             "well"
-            1s
+            1m 1s
+            "wait"
+            100ms
     <skip>
     - skip:
         <transition {type: "FADEOUT"}>

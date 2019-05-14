@@ -1,4 +1,4 @@
-const Scopes = require('../nut-scopes-local')
+const Scopes = require('../src/nut-scopes-local')
 
 describe("Test inmemory data model", () => {
     test("Can get keys", () => {

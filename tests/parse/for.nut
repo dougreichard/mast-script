@@ -37,3 +37,7 @@ scenes:
             for $i in [$a $b $c]:
                 tell `${i.value}`
                 tell `${i.index}`
+
+             for i in [a b c]:
+                tell `${i.value}`
+                tell `${i.index}`

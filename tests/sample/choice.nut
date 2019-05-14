@@ -1,10 +1,23 @@
+script('Space Oddity') `example` $main
+
+roles:
+    #friendly  ('test') 'test'
+    #foe ('test')
+    #noise
+
 cast:
-    <value {XP: 2, HP:5}>
+    <value {b: true, XP: 2, HP:5, s: 'hello', a: [1,2,3], n: null, o: {a:0, b:1}}>
     @hero ('Doug') 
+    @heal 
+    <zip>
+    <void>
+    @zero ('nada') 'nothing'
 
 story:
     enter:
+        tell [@hero @zero]
         `${@hero<meta>.alias} your XP is ${@hero.XP} your HP is ${@hero.HP}`
+        
 
     (`INT. DAY Office`):
         ('The camera dollies in through a doorway landing in front of the desk')
@@ -15,6 +28,7 @@ story:
             "Where is it..."
             ('hand goes through the hair showing frustration')
             "Where is the money"
+            set @zero.HP = 10
 
         ('The camera pans out the window overlooking the city')
     

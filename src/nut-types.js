@@ -16,15 +16,15 @@ const CommandTypes = {
     Tell: cmdId++,  
     Show: cmdId++,
     Hide: cmdId++,
-    MulAssign: cmdId++,
-    PresentAssign: cmdId++,
     Delay: cmdId++,
     Do: cmdId++,
     For: cmdId++,
     Set: cmdId++,
     Scene: cmdId++,
     As: cmdId++,
-    Cue: cmdId++
+    Cue: cmdId++,
+    Complete: cmdId++,
+    Fail: cmdId++
 }
 
 const TellTypes = {
@@ -41,7 +41,13 @@ const UnwindTypes = {
 
 const IteratorTypes = {
     Set: 1,
-    Range: 2
+    Range: 2,
+    Scene: 3,
+    Array: 4,
+    Cast: 5,
+    Role: 6,
+    CastInRole: 7,
+    Shots: 8
 }
 
 

@@ -21,7 +21,9 @@ const importRules = require('./rules/import');
 
 class NutParser extends Parser {
     constructor(listener) {
-        super(Object.values(NutLexer.tokens), { outputCst: false })
+        super(Object.values(NutLexer.tokens), 
+            { outputCst: true, recoveryEnabled : true }
+        )
         this.listener = listener
         expressionsRules(this);
         mediaRules(this);

@@ -1,6 +1,10 @@
 {
   "name": "mast-script",
   "version": "1.0.0",
+  "scripts": {
+    "dev": "webpack --target node --mode development",
+    "build": "webpack --target node --mode production"
+  },
   "dependencies": {
     "ascii-art": "^1.5.1",
     "chalk": "^2.4.2",
@@ -8,9 +12,11 @@
     "figlet": "^1.2.1",
     "lodash.isempty": "^4.4.0",
     "lodash.last": "^3.0.0",
-    "lodash.partialright": "^4.2.1"
+    "lodash.partialright": "^4.2.1",
+    "webpack": "^4.30.0"
   },
   "devDependencies": {
-    "jest": "^24.7.1"
+    "jest": "^24.7.1",
+    "webpack-cli": "^3.3.2"
   }
 }

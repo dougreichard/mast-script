@@ -19,3 +19,20 @@ https://github.com/godotengine/escoria
 
 Point and click example languages
 http://www.secretgeek.net/text_adventure_samples
+
+// Visitor
+*cast
+*commands
+conditions
+expressions
+*import
+interactions
+*media
+objectives
+*role
+scene
+*script
+states
+submit
+*value
+

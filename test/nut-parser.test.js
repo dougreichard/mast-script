@@ -1,11 +1,11 @@
 "use strict"
-const spsLexer = require('../nut-lex')
+const spsLexer = require('../src/nut-lex')
 //const expect = require("chai").expect
-const NutParser = require("../nut-parser")
-const NutListener = require("../nut-listener")
-
+const NutParser = require("../src/nut-parser")
+const NutListener = require("../src/nut-listener")
 // reuse the same parser instance.
 const parser = new NutParser(new NutListener())
+const path = require('path')
 
 
 function log (...args) {
@@ -172,7 +172,7 @@ leave:
 })
 function parseFile (folder, fn) {
     it(`Simple Parse  ${fn}`, ()=> {
-        let out = parser.parseFile(`./tests/${folder}/${fn}.nut`);
+        let out = parser.parseFile(path.resolve(`./tests/${folder}/${fn}.nut`));
         for (let le of out.lexErrors) {
             log(`${fn} TOKEN ERROR ${le.line}:${le.offset} - ${le.message}`)
         }

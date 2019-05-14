@@ -20,11 +20,8 @@ module.exports = ($) => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            let annotations= $.SUBRULE($.annotationList)
-            let meta = $.SUBRULE($.roleDef)
-            annotations.meta = meta
-            annotations.id = meta.id;
-            $.addRole(annotations)
+            let role = $.SUBRULE($.roleDef)
+            $.addRole(role)
         })
         $.CONSUME(toks.Outdent)
     })
@@ -33,13 +30,12 @@ module.exports = ($) => {
     // | ID (alias-string)? string?
     // ;
     $.RULE("roleDef", () => {
-        let id = $.OR([
+        $.SUBRULE($.annotationList)
+        $.OR([
             {ALT: ()=> $.CONSUME(toks.RoleId).image},
             {ALT: ()=> '#'+ $.CONSUME(toks.Identifier).image}
         ]);
-        let alias = $.OPTION(() =>  $.SUBRULE($.aliasString))
-        let desc = $.OPTION2(() =>  $.CONSUME(toks.StringLiteral).image)
-        return {id,alias,desc}
-
+        $.OPTION(() =>  $.SUBRULE($.aliasString))
+        $.OPTION2(() =>  $.CONSUME(toks.StringLiteral).image)
     })
 }
