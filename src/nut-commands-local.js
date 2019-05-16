@@ -1,11 +1,11 @@
-const {UnwindTypes, InteractionTypes, IteratorTypes, CommandTypes, SymbolTypes } = require('./nut-types')
-const MastDown = require("./nut-format-simple")
+import {UnwindTypes, InteractionTypes, IteratorTypes, CommandTypes, SymbolTypes } from './nut-types.js'
+import {MastDown} from "./nut-format-simple.js"
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-class Runner {
+export class Runner {
     constructor() {
         
     }
@@ -225,17 +225,4 @@ class Runner {
         return ret
     }
 
-}
-
-
-
-let runner = new Runner()
-runStory = async (listener) => {
-    runner.runStory(listener)
-}
-
-
-module.exports = {
-   // runStory,
-    Runner
 }

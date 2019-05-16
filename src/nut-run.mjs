@@ -1,14 +1,15 @@
-const NutParser = require("./nut-parser")
-const NutListener = require("./nut-listener")
-const { Runner } = require("./nut-commands-local")
-const {NutVisitor} = require('./nut-visitor')
-
+import NutParser from "./nut-parser.js"
+import NutListener from "./nut-listener.js"
+import { Runner } from "./nut-commands-local.js"
+import {NutVisitor} from './nut-visitor.js'
+import path from 'path';
+import { readFile } from 'fs';
 
 // reuse the same parser instance.
 const listener = new NutListener()
 const parser = new NutParser(listener)
 const runner = new Runner()
-const path = require('path');
+
 
 //const myVisitorInstance = new myCustomVisitor()
 const visitor = new NutVisitor(listener)

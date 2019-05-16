@@ -1,11 +1,13 @@
 "use strict"
-const { createToken, createTokenInstance, Lexer } = require("chevrotain")
-//const _ = require("lodash")
-const _ = {
-    isEmpty: require('lodash.isempty'),
-    last: require('lodash.last'),
-    partialRight: require('lodash.partialright')
-}
+
+import isEmpty from 'lodash.isempty'
+import last from 'lodash.last'
+import partialRight from 'lodash.partialright'
+import ch from "chevrotain"
+let Lexer = ch.Lexer
+let createToken = ch.createToken
+let createTokenInstance = ch.createTokenInstance 
+let _ = {isEmpty, last, partialRight}
 
 let allLex = {};
 let tokStack = [];
@@ -305,7 +307,8 @@ tok("Newline", /\n|\r\n|\r/, { group: "nl" });
 
 const spsLexer = new Lexer(tokStack);
 
-module.exports = {
+//module.exports = 
+export default  {
     tokens: allLex,
 
     tokenize: function (text) {

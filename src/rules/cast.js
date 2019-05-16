@@ -1,9 +1,9 @@
-const spsLexer = require('../nut-lex')
+import spsLexer from '../nut-lex.js'
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
-module.exports = //{castRules: 
-    ($) => {
+//module.exports = //{castRules: 
+export default ($) => {
     // cast-definition-block
     //  : CAST_STATEMENT COLON INDENT cast-definition* DEDENT
     // ;

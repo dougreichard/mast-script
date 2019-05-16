@@ -1,4 +1,4 @@
-const SymbolTypes = {
+export const SymbolTypes = {
     Media: 1,
     Cast: 2,
     Role: 3,
@@ -12,7 +12,7 @@ const SymbolTypes = {
 }
 
 let cmdId = 1
-const CommandTypes = {
+export const CommandTypes = {
     Tell: cmdId++,  
     Show: cmdId++,
     Hide: cmdId++,
@@ -27,19 +27,19 @@ const CommandTypes = {
     Fail: cmdId++
 }
 
-const TellTypes = {
+export const TellTypes = {
     RoleCast: 1,  // Tell specific cast or role
     Scene: 2,   // tell everyone currently in a scene
     Story: 3  // tell everyone
 }
 
 
-const UnwindTypes = {
+export const UnwindTypes = {
     Shot: 1,  // Tell specific cast or role
     Scene: 2,   // tell everyone currently in a scene
 }
 
-const IteratorTypes = {
+export const IteratorTypes = {
     Set: 1,
     Range: 2,
     Scene: 3,
@@ -51,7 +51,7 @@ const IteratorTypes = {
 }
 
 
-const SetOperations = {
+export const SetOperations = {
     Assign: 1,  
     AssignAdd: 2,
     AssignSub: 3,
@@ -62,17 +62,17 @@ const SetOperations = {
 }
 
 let interId = 1
-const InteractionTypes = {
+export const InteractionTypes = {
     Choice: interId++,  
     Form: interId++,
 }
 
-module.exports = {
-    SymbolTypes,
-    TellTypes,
-    CommandTypes,
-    IteratorTypes,
-    SetOperations,
-    InteractionTypes,
-    UnwindTypes
-}
+// module.exports = {
+//     SymbolTypes,
+//     TellTypes,
+//     CommandTypes,
+//     IteratorTypes,
+//     SetOperations,
+//     InteractionTypes,
+//     UnwindTypes
+// }

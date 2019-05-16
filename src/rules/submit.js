@@ -1,16 +1,8 @@
-const spsLexer = require('../nut-lex')
-// const { Parser } = require("chevrotain")
+import spsLexer from '../nut-lex.js'
 const toks = spsLexer.tokens
 
-/*
-    SUBMIT "OK"
-    if form.weapon == "Pistol":
-        tell
-    else if form.sender == @dawn 
-    else if form.user has role #human
-*/
-
-module.exports = ($) => {
+//module.exports = 
+export default ($) => {
     $.RULE('submitFormElement', () => {
         $.CONSUME(toks.SubmitElement)
         $.OPTION(() => $.CONSUME(toks.StringLiteral))

@@ -1,6 +1,6 @@
-const { SetOperations } = require('./nut-types')
+import { SetOperations } from './nut-types.js'
 
-class Scopes {
+export default class Scopes {
     constructor() {
         this.scopes = []
     }
@@ -106,4 +106,3 @@ class Scopes {
         }
     }
 }
-module.exports = Scopes

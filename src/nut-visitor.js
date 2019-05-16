@@ -1,9 +1,9 @@
-const NutParser = require("./nut-parser")
+import  NutParser from "./nut-parser.js"
 const parser = new NutParser()
 //const castVisits  = require('./rules/cast').visits
 
 //#region State Commands [ commands ]
-const { InteractionTypes, IteratorTypes, SetOperations, TellTypes, SymbolTypes, CommandTypes } = require('./nut-types')
+import { InteractionTypes, IteratorTypes, SetOperations, TellTypes, SymbolTypes, CommandTypes } from './nut-types.js'
 //const BaseNutVisitor = parser.getBaseCstVisitorConstructor()
 const BaseNutVisitorWithDefaults = parser.getBaseCstVisitorConstructorWithDefaults()
 //#endregion 
@@ -19,7 +19,7 @@ const BaseNutVisitorWithDefaults = parser.getBaseCstVisitorConstructorWithDefaul
 // }
 
 
-class NutVisitor extends BaseNutVisitorWithDefaults {
+export class NutVisitor extends BaseNutVisitorWithDefaults {
     constructor(listener) {
         super()
         this.listener =  listener
@@ -369,8 +369,10 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         // { ALT: () => $.CONSUME(toks.PassCmd) },
         if (ctx.ifElseValidCmd) {
             return this.visitChildrenArray(ctx.ifElseValidCmd)
+        } else if (ctx.passCmd) {
+            return []
         }
-        return
+        return []
     }
     ifElseValidCmd(ctx) {
         let cmds = ['asCmd', 'tellCmd', 'cueCmd', 'doCmd', "forCmd",
@@ -716,6 +718,6 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
 }
 
 //const myVisitorInstance = new myCustomVisitor()
-module.exports = {
-    NutVisitor: NutVisitor
-} 
+// module.exports = {
+//     NutVisitor: NutVisitor
+// } 

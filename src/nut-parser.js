@@ -1,25 +1,24 @@
-const NutLexer = require('./nut-lex')
-const { Parser } = require("chevrotain")
-const fs = require('fs')
-const path = require('path')
+import NutLexer from './nut-lex.js'
+import  ch from "chevrotain"
+import fs from 'fs'
+import path from 'path'
+import expressionsRules from './rules/expressions.js'
+import mediaRules from './rules/media.js'
+import roleRules from './rules/role.js'
+import castRules from './rules/cast.js'
+import scriptRules from './rules/script.js'
+import sceneRules from './rules/scene.js'
+import valueRules from './rules/value.js'
+import cmdRules from './rules/commands.js'
+import conRules from './rules/conditions.js'
+import stateRules from './rules/states.js'
+import objectiveRules from './rules/objectives.js'
+import interactionRules from './rules/interactions.js'
+import importRules from './rules/import.js'
+import module from 'module'
 
-const expressionsRules = require('./rules/expressions');
-const mediaRules = require('./rules/media');
-const roleRules = require('./rules/role');
-const castRules = require('./rules/cast');
-const scriptRules = require('./rules/script');
-const sceneRules = require('./rules/scene');
-const valueRules = require('./rules/value');
-const cmdRules = require('./rules/commands');
-const conRules = require('./rules/conditions');
-const stateRules = require('./rules/states');
-const objectiveRules = require('./rules/objectives');
-const interactionRules = require('./rules/interactions');
-const importRules = require('./rules/import');
 
-
-
-class NutParser extends Parser {
+export default class NutParser extends ch.Parser {
     constructor(listener) {
         super(Object.values(NutLexer.tokens), 
             { outputCst: true, recoveryEnabled : true }
@@ -117,5 +116,5 @@ class NutParser extends Parser {
     popImport() {if (this.listener) this.listener.popImport();}
     importScript(id) {if (this.listener) this.listener.importScript(id);}
 }
-NutParser.defaultPaths = [__dirname]
-module.exports = NutParser
+NutParser.defaultPaths = [module.__dirname]
+//module.exports = NutParser

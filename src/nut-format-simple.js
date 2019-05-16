@@ -1,5 +1,5 @@
-const SlimDown = require("./slimdown")
-class MastDown extends SlimDown {
+import {Slimdown} from "./slimdown.js"
+export class MastDown extends Slimdown {
     constructor(scopes) {
         super();
         this.scopes= scopes
@@ -19,6 +19,3 @@ class MastDown extends SlimDown {
 }
 
 }
-
-////////////
-module.exports = MastDown;

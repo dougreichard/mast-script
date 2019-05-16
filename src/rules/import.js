@@ -1,8 +1,8 @@
-const spsLexer = require('../nut-lex')
-// const { Parser } = require("chevrotain")
+import spsLexer from '../nut-lex.js'
 const toks = spsLexer.tokens
 
-module.exports = ($) => {
+//module.exports = 
+export default ($) => {
     $.RULE('imports', () => {
         $.CONSUME(toks.ImportSec).image
         $.CONSUME(toks.Colon)

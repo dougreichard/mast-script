@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Story Run",
-            "program": "${workspaceFolder}/src/nut-run.js"
+            "program": "${workspaceFolder}/src/nut-run.mjs"
         },
         {
             "type": "node",

@@ -1,10 +1,11 @@
-const spsLexer = require('../nut-lex')
-const submitRules = require('./submit');
-// const { Parser } = require("chevrotain")
+import spsLexer from '../nut-lex.js'
 const toks = spsLexer.tokens
-const {SymbolTypes, InteractionTypes} = require('../nut-types')
 
-module.exports = ($) => {
+import submitRules from './submit.js';
+// const { Parser } = require("chevrotain")
+import {SymbolTypes, InteractionTypes} from '../nut-types.js'
+
+export default ($) => {
     submitRules($)
     $.RULE('interactions', () => {
         $.CONSUME(toks.InteractionSec);

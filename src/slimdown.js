@@ -21,7 +21,7 @@
  * Website: https://gist.github.com/jbroadway/2836900
  * License: MIT
  */
-class Slimdown {
+export class Slimdown {
 
     constructor() {
         // Rules
@@ -93,8 +93,3 @@ class Slimdown {
         return text.trim();
     }
 }
-
-
-////////////
-module.exports = Slimdown;
-

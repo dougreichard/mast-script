@@ -1,9 +1,7 @@
-const spsLexer = require('../nut-lex')
-// const { Parser } = require("chevrotain")
+import spsLexer from '../nut-lex.js'
 const toks = spsLexer.tokens
-const {SymbolTypes} = require('../nut-types')
 
-module.exports = ($) => {
+export default  ($) => {
     // startup-section-block
     //     : STARTUP_STATEMENT COLON INDENT startup-section-item* DEDENT
     //     ;

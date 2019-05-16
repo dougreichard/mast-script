@@ -1,9 +1,10 @@
-const spsLexer = require('../nut-lex')
-const { IteratorTypes, SetOperations, TellTypes, CommandTypes } = require('../nut-types')
+import spsLexer from '../nut-lex.js'
+import { IteratorTypes, SetOperations, TellTypes, CommandTypes } from '../nut-types.js'
 // const { Parser } = require("chevrotain")
 const toks = spsLexer.tokens
 
-module.exports = ($) => {
+//module.exports = 
+export default ($) => {
     $.RULE('annotationId', () => {
         $.CONSUME(toks.LT_Op)
         $.CONSUME(toks.Identifier).image

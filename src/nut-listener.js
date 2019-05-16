@@ -1,8 +1,8 @@
-const NutParser = require('./nut-parser')
-const {SymbolTypes, TellTypes} = require('./nut-types')
-const Scopes = require('./nut-scopes-local')
+import NutParser from './nut-parser.js'
+import {SymbolTypes, TellTypes} from './nut-types.js'
+import Scopes from './nut-scopes-local.js'
 
-class NutListener {
+export default class NutListener {
     constructor() {
        this.reset()
         this.import = new NutParser( this)
@@ -111,4 +111,3 @@ class NutListener {
 }
 
 
-module.exports = NutListener
