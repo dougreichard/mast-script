@@ -50,6 +50,7 @@ class NutListener {
     pushStory(story) {
         this.story = story
         this.addSymbol(SymbolTypes.Story, story);
+       // this.previousShot = undefined
     }
     popStory(story) {
      

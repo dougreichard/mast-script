@@ -30,9 +30,9 @@ interactions
 *media
 objectives
 *role
-scene
+*scene
 *script
-states
+*states
 submit
 *value
 

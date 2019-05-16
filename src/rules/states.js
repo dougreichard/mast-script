@@ -8,54 +8,43 @@ module.exports = ($) => {
     //     : STARTUP_STATEMENT COLON INDENT startup-section-item* DEDENT
     //     ;
     $.RULE('startup', () => {
+        $.OPTION(()=> $.SUBRULE($.annotationList))
         $.CONSUME(toks.StartupBlock)
-        return $.SUBRULE($.stateCmdBlock)
+        $.SUBRULE($.stateCmdBlock)
     })
     // enter-section-block
     //     :  ENTER_STATEMENT COLON INDENT state-section-item* DEDENT
     //     ;
     $.RULE('enter', () => {
+        $.OPTION(()=> $.SUBRULE($.annotationList))
         $.CONSUME(toks.EnterBlock)
-        return $.SUBRULE($.stateCmdBlock)
+        $.SUBRULE($.stateCmdBlock)
     })
     // leave-section-block
     //     :  LEAVE_STATEMENT COLON INDENT state-section-item* DEDENT
     //     ;
     $.RULE('leave', () => {
+        $.OPTION(()=> $.SUBRULE($.annotationList))
         $.CONSUME(toks.LeaveBlock)
-        return $.SUBRULE($.stateCmdBlock)
+        $.SUBRULE($.stateCmdBlock)
     })
 
     $.RULE('shot', () => {
-        let sub = $.OPTION(() => $.SUBRULE($.subOperator)) 
-        let id = $.OPTION1(()=> $.CONSUME(toks.Identifier).image)
-        let alias = $.OPTION2(()=> $.SUBRULE($.aliasString).image)
-        id = id ? id: $.anonymousID('shot') 
-
-        let shot = { type: SymbolTypes.Shot, id, alias, sub}
-        $.pushShot(shot)
-        let content = $.SUBRULE($.stateCmdBlock);
-        shot.content = content
-        $.popShot(shot)
-        return shot
-
+        $.OPTION(()=> $.SUBRULE($.annotationList))
+        $.OPTION1(() => $.SUBRULE($.subOperator)) 
+        $.OPTION2(()=> $.CONSUME(toks.Identifier))
+        $.OPTION3(()=> $.SUBRULE($.aliasString))
+        $.SUBRULE($.stateCmdBlock);
     })
 
     $.RULE('stateCmdBlock', () => {
-        let cmds = []
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            let annotations= $.SUBRULE($.annotationList)
-            let cmd = $.SUBRULE($.stateCommand)
-            
-            if (cmd) {
-                cmd.annotations = annotations
-                cmds.push(cmd)
-            }
+            $.SUBRULE($.annotationList)
+            $.SUBRULE($.stateCommand)
         })
         $.CONSUME(toks.Outdent)
-        return cmds;
     })
 
     // startup-section-item

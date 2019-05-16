@@ -1,4 +1,4 @@
-const {SetOperations} = require('./nut-types')
+const { SetOperations } = require('./nut-types')
 
 class Scopes {
     constructor() {
@@ -12,8 +12,7 @@ class Scopes {
     }
     findKey(key) {
         var i = this.scopes.length;
-        while(i--)
-        {
+        while (i--) {
             if (key in this.scopes[i]) {
                 return (this.scopes[i][key])
             }
@@ -22,8 +21,7 @@ class Scopes {
     }
     findScope(key) {
         var i = this.scopes.length;
-        while(i--)
-        {
+        while (i--) {
             if (key in this.scopes[i]) {
                 return (this.scopes[i])
             }
@@ -44,37 +42,41 @@ class Scopes {
         let value = this.findScope(keys[0])
         let scope = value
         let key = keys[0]
+        value = value
+
 
         let pattern = /^[\$@!#\*]/
-        let scriptObject = (pattern.test(keys[0])) 
-        for(let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+        let scriptObject = (pattern.test(keys[0]))
+        for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
             key = keys[keyIndex]
+
             if (key && key in value) {
                 scope = value
                 value = value[key]
-            } else if (keyIndex == 1 && scriptObject 
+            } else if (keyIndex == 1 && scriptObject
                 && value.value && key in value.value) {
-                    scope = value.value
-                    value = value.value[key]
+                scope = value.value
+                value = value.value[key]
             }
             else {
                 value = undefined
                 break
             }
         }
-        return {value, scope, key}
+
+        return { value, scope, key }
     }
     getValue(fqn) {
-        let {value} = this.getScopeValue(fqn)
+        let { value } = this.getScopeValue(fqn)
         return value
     }
     setValue(fqn, toValue, op) {
-        let {scope, key, value} = this.getScopeValue(fqn)
+        let { scope, key, value } = this.getScopeValue(fqn)
         if (!op) {
             op = SetOperations.Assign
         }
         if (key && key in scope) {
-            switch(op) {
+            switch (op) {
                 case SetOperations.AssignAdd:
                     scope[key] += toValue
                     break;
@@ -88,19 +90,19 @@ class Scopes {
                     break;
 
                 case SetOperations.AssignPercentAdd:
-                    scope[key] +=  value * (toValue/100)
+                    scope[key] += value * (toValue / 100)
                     break;
-                
+
                 case SetOperations.AssignPercentSub:
-                    scope[key] -=  value * (toValue/100)
+                    scope[key] -= value * (toValue / 100)
                     break;
 
                 default:
                     scope[key] = toValue
                     break;
-                
+
             }
-            
+
         }
     }
 }

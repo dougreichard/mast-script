@@ -53,7 +53,8 @@ module.exports = ($) => {
             { ALT: () => $.CONSUME(toks.SceneId).image },
             { ALT: () => $.CONSUME(toks.InteractionId).image },
             { ALT: () => $.CONSUME(toks.ObjectiveId).image },
-            { ALT: () => $.SUBRULE($.roleCastId) },
+            { ALT: () => $.CONSUME(toks.CastId) },
+            { ALT: () => $.CONSUME(toks.RoleId) },
             { ALT: () => $.CONSUME(toks.Identifier).image }
             //{ ALT: () => $.CONSUME(toks.CastId) }
         ])

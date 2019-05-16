@@ -11,7 +11,7 @@ const runner = new Runner()
 const path = require('path');
 
 //const myVisitorInstance = new myCustomVisitor()
-const visitor = new NutVisitor()
+const visitor = new NutVisitor(listener)
 
 
 function run(fileNme) {
@@ -25,13 +25,14 @@ function run(fileNme) {
         for (let pe of out.parseErrors) {
             console.log(`${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
         }
-        runner.runStory(listener)
         visitor.visit(out.value)
+        runner.runStory(listener)
 
 
         return true;
     } catch (e) {
         console.log(e.message)
+        throw e
     }
 }
 /*
@@ -49,14 +50,14 @@ fs.writeFileSync(outPath + "/cmdline_diagrams.html", htmlText)
 */
 
 let fileName = process.argv[2]
-//fileName = fileName ? fileName : '../tests/sample/flow.nut'
-//fileName = fileName ? fileName : '../tests/sample/flow-do.nut'
-//fileName = fileName ? fileName : '../tests/sample/groundcontrol.nut'
-//fileName = fileName ? fileName : './tests/sample/sets.nut'
-//fileName = fileName ? fileName : './tests/sample/choice.nut'
-//fileName = fileName ? fileName : '../harold.nut' 
-fileName = fileName ? fileName : './tests/parse/for.nut'
+//fileName = fileName ? fileName : './tests/sample/flow.nut'
 //fileName = fileName ? fileName : './tests/sample/flow-do.nut'
+//fileName = fileName ? fileName : './tests/sample/groundcontrol.nut'
+//fileName = fileName ? fileName : './tests/sample/sets.nut'
+fileName = fileName ? fileName : './tests/sample/choice.nut'
+//fileName = fileName ? fileName : '../harold.nut' 
+//fileName = fileName ? fileName : './tests/parse/for.nut'
+
 fileName = path.resolve(fileName)
 
 run(fileName)

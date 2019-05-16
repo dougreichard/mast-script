@@ -2,11 +2,11 @@ const NutParser = require("./nut-parser")
 const parser = new NutParser()
 //const castVisits  = require('./rules/cast').visits
 
-
-const { IteratorTypes, SetOperations, TellTypes, SymbolTypes, CommandTypes } = require('./nut-types')
+//#region State Commands [ commands ]
+const { InteractionTypes, IteratorTypes, SetOperations, TellTypes, SymbolTypes, CommandTypes } = require('./nut-types')
 //const BaseNutVisitor = parser.getBaseCstVisitorConstructor()
 const BaseNutVisitorWithDefaults = parser.getBaseCstVisitorConstructorWithDefaults()
-
+//#endregion 
 // class myCustomVisitor extends BaseNutVisitor {
 //     constructor() {
 //         super()
@@ -20,8 +20,10 @@ const BaseNutVisitorWithDefaults = parser.getBaseCstVisitorConstructorWithDefaul
 
 
 class NutVisitor extends BaseNutVisitorWithDefaults {
-    constructor() {
+    constructor(listener) {
         super()
+        this.listener =  listener
+        this._anonymousId = 0
         this.validateVisitor()
     }
 
@@ -36,7 +38,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         return str.slice(1, -1)
     }
     fetchString(ctx) {
-        return this.trimString(ctx.StringLiteral[0].image)
+        return ctx.StringLiteral?this.trimString(ctx.StringLiteral[0].image):undefined
     }
     aliasString(ctx) {
         return ctx.aliasString ? this.fetchString(ctx.aliasString[0].children) : '';
@@ -62,6 +64,10 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
     script(ctx) {
         console.log('script');
         this.visitKeys(ctx);
+    }
+
+    onlyChild(ctx) {
+        return Object.values(ctx)[0][0];
     }
 
     visitKeys(ctx) {
@@ -120,6 +126,10 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         return {}
     }
 
+    annotationId(ctx) {
+        return ctx.Identifier[0].image
+    }
+
     annotation(ctx) {
         let key = ctx.Identifier[0].image
         // An annotation with no value is true
@@ -141,7 +151,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         let id = ctx.CastId[0].image
         annotations.meta = { id, alias, desc }
         annotations.id = id
-        console.log(`castDef: ${id} ${alias} ${desc}`);
+        this.addCast(annotations)
     }
     // #endregion
     // #region Roles
@@ -157,6 +167,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
 
         annotations.meta = { id, alias, desc }
         annotations.id = id
+        this.addRole( annotations)
 
         console.log(`roleDef: ${id} ${alias} ${desc}`);
     }
@@ -257,7 +268,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         return
     }
     aliasCmd(ctx) {
-        let cmds = ['tellCmd', 'cueCmd', 'doCmd',
+        let cmds = ['tellCmd', 'cueCmd', 'doCmd', "forCmd",
             'sceneCmd', 'setCmd', 'delayCmd', 'completeCmd', 'showCmd',
             'hideCmd', 'failCmd']
         for (let c=0, l = cmds.length;c<l;c++) {
@@ -268,6 +279,92 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         }
     }
 
+    story(ctx) {
+        this.storyScene(ctx, true)
+    }
+    scene(ctx) {
+        //$.pushScene(scene)
+        this.storyScene(ctx)
+    }
+    scenes(ctx) {
+        return this.visitChildrenArray(ctx.scene)
+    }
+
+    shotOrInt(ctx) {
+        return this.visit(this.onlyChild(ctx))
+    }
+
+    sceneContent(ctx) {
+        let leave = this.visit(ctx.leave)
+        let enter = this.visit(ctx.enter)
+        let startup = this.visit(ctx.startup)
+        let shots = this.visitChildrenArray(ctx.shotOrInt)
+        let objectives = this.visit(ctx.objectives)
+        let interactions = this.visit(ctx.interactions)
+        return {startup, enter, leave, shots, objectives, interactions}
+    }
+        
+    storyScene(ctx, isStory) {
+        //$.OPTION(()=> $.SUBRULE($.annotationList))
+        let alias = this.aliasString(ctx)
+        let desc = this.fetchString(ctx)
+        let id = 'story'
+        id = ctx.SceneId ? ctx.SceneId[0].image: id
+        let sub = ctx.subOperator?true:false 
+        let scene = { id, alias, desc, sub}
+        if (isStory) this.pushStory(scene)
+        else this.pushScene(scene)
+        scene.content = this.visit(ctx.sceneContent);
+        if (isStory) this.popStory(scene)
+        else this.popScene(scene)
+        
+    }
+
+    startup(ctx) {
+        return this.visit(ctx.stateCmdBlock)
+    }
+    enter(ctx) {
+        return this.visit(ctx.stateCmdBlock)
+    }
+    leave(ctx) {
+        return this.visit(ctx.stateCmdBlock)
+    }
+    shot(ctx) {
+        let id = ctx.Identifier? ctx.Identifier[0].image:undefined;
+        let sub = ctx.subOperator ? true:false;
+        let alias = this.aliasString(ctx)
+        let content = this.visit(ctx.stateCmdBlock)
+        id = id ? id: this.anonymousID('shot') 
+        // $.pushShot(shot)
+        
+        
+        // $.popShot(shot)
+        let shot = { type: SymbolTypes.Shot, id, alias, sub, content}
+        this.pushShot(shot)
+        return shot
+    }
+
+    //#region State Commands [ commands ]
+    stateCmdBlock(ctx) {
+        if (ctx.stateCommand) {
+            return this.visitChildrenArray(ctx.stateCommand)
+        }
+        return
+    }
+    stateCommand(ctx) {
+        let cmds = ['asCmd', 'tellCmd', 'cueCmd', 'doCmd', "forCmd",
+            'sceneCmd', 'setCmd', 'delayCmd']
+            // , 'completeCmd', 'showCmd','hideCmd', 'failCmd']
+        for (let c=0, l = cmds.length;c<l;c++) {
+            let item = ctx[cmds[c]]
+            if (item) {
+                return this[item[0].name](item[0].children)
+            }    
+        }
+    }
+    //#endregion
+
+
     IfElseCmdBlock(ctx) {
         // { ALT: () => $.CONSUME(toks.PassCmd) },
         if (ctx.ifElseValidCmd) {
@@ -276,7 +373,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         return
     }
     ifElseValidCmd(ctx) {
-        let cmds = ['asCmd', 'tellCmd', 'cueCmd', 'doCmd',
+        let cmds = ['asCmd', 'tellCmd', 'cueCmd', 'doCmd', "forCmd",
             'sceneCmd', 'setCmd', 'delayCmd', 'completeCmd', 'showCmd',
             'hideCmd', 'failCmd']
         for (let c=0, l = cmds.length;c<l;c++) {
@@ -304,32 +401,32 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
     asCmd(ctx) {
         // let annotations  = this.annotationList(ctx);
         let who = ctx.CastId.image
-        let cmds = this.aliasCmdList(ctx);
-        return { type: CommandTypes.As, options: { who, cmds } }
+        let content = this.aliasCmdList(ctx);
+        return { type: CommandTypes.As, options: { who, content } }
     }
 
     doCmd(ctx) {
         // let annotations  = this.annotationList(ctx);
         //let who  = ctx.CastId.image
         //let cmds = this.aliasCmdList(ctx);
-        let shotList = []
+        let shots = []
         let together = !!ctx.TogetherOp;
         let walk = ctx.shotList[0].children.Identifier
         for (let i = 0, l = walk.length; i < l; i++) {
-            shotList.push(walk[i].image)
+            shots.push(walk[i].image)
         }
 
-        return { type: CommandTypes.Do, options: { together, shotList } }
+        return { type: CommandTypes.Do, options: { together, shots } }
     }
     sceneCmd(ctx) {
         // let annotations  = this.annotationList(ctx);
-        let scene
+        let id
         if (ctx.StorySec) {
-            scene = ctx.StorySec[0].image
+            id = ctx.StorySec[0].image
         } else if (ctx.SceneId) {
-            scene = ctx.SceneId[0].image
+            id = ctx.SceneId[0].image
         }
-        return { type: CommandTypes.Scene, options: { scene } }
+        return { type: CommandTypes.Scene, options: { id } }
     }
 
 
@@ -349,13 +446,58 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         }
     }
 
+    identifierExpression(ctx) {
+        let exp = this.visit(ctx.identifierLHS)
+        let annotation = this.visit(ctx.annotationId) 
+        let elements  = ''
+        let da = ctx.DataId
+        if (da){
+            for(let i =0, l=da.length;i<l;i++) {
+                elements += da[i].image
+            }
+        }
+       
+        let ret = exp+(annotation?`.${annotation}`:'')+ elements
+        return ret
+    }
+
+    identifierLHSList(ctx) {
+        return this.visitChildrenArray(ctx.identifierLHS)
+    }
+    
+    identifierLHS(ctx)  {
+        let id;
+        id = this.onlyChild(ctx).image
+        return id;
+    }
+
+    setLHS(ctx) {
+        let elements
+        let da = ctx.DataId
+        if (da){
+            elements=''
+            for(let i =0, l=da.length;i<l;i++) {
+                elements += da[i].image
+            }
+        }
+        
+
+        let ids = this.visit(ctx.identifierLHSList);
+        return {ids, elements}
+    }
+
+
+
     setCmd(ctx) {
         // let annotations  = this.annotationList(ctx);
         //let who  = ctx.CastId.image
         //let cmds = this.aliasCmdList(ctx);
-        let lhs
+        let lhs = this.visit(ctx.setLHS)
         let op = this.setOperator(ctx.setOperator[0].children)
-        let exp
+        let exp 
+        if (ctx.identifierExpression) {
+            exp = this.visit(ctx.identifierExpression)
+        }
         let value
         if (ctx.value) {
             value = this.value(ctx.value[0].children)
@@ -366,7 +508,7 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
     scriptData(ctx) {
         let alias = this.aliasString(ctx)
         let desc = this.fetchString(ctx)
-        let main = ctx.SceneId[0].image
+        let main = ctx.SceneId?ctx.SceneId[0].image:undefined;
         //$.addScript({alias, desc, main})
     }
 
@@ -515,6 +657,62 @@ class NutVisitor extends BaseNutVisitorWithDefaults {
         }
         //$.popImport()
     }
+
+    choiceInteraction(ctx) {
+            let content = {type: InteractionTypes.Choice , choices: []}
+            
+            for(let i=0, l=ctx.StringLiteral.length;i<l;i++){
+                let choice = {}
+                // choice.target = $.OPTION(()=> $.SUBRULE($.roleCastIdList))
+                choice.prompt = this.trimString(ctx.StringLiteral[i].image)
+                choice.content = this.visit(ctx.IfElseCmdBlock[i])
+                content.choices.push(choice);
+        }
+        return content
+    }
+
+    interactionBlockItem(ctx)  {
+       // let cmds = ['form', 'choiceInteraction', 'searchCmd', 'completeObjCmd', 
+       // "KeysInteraction",'MediaInteraction']
+       return this.visit(this.onlyChild(ctx))
+    }
+
+    interaction(ctx) {
+        let id = ctx.InteractionId[0].image;
+        let audience  = this.visit(ctx.roleCastIdList)
+        let desc = this.fetchString(ctx)
+        // //$.pushInteraction({id, audience, desc})
+        
+        let shot = { type: SymbolTypes.Interaction, id, audience, desc}
+        this.pushShot(shot)
+        shot.content = this.visit(ctx.interactionBlockItem)
+        //this.popShot(id)
+        // // $.popInteraction(id)
+        // // probably need a sub
+        return shot
+        
+    }
+
+    // #region Default listener
+    addMedia(media) {if (this.listener) this.listener.addMedia(media);}
+    addCast(cast) {if (this.listener) this.listener.addCast(cast);}
+    addRole(role) {if (this.listener) this.listener.addRole(role);}
+    addObjective(obj) {if (this.listener) this.listener.addObjective(obj);}
+    pushInteraction(interaction) {if (this.listener) this.listener.pushInteraction(interaction);}
+    popInteraction(id) {if (this.listener) this.listener.popInteraction();}
+    addScript(script) {if (this.listener) this.listener.addScript(script);}
+    pushScript() {if (this.listener) this.listener.pushScript();}
+    popScript() {if (this.listener) this.listener.popScript();}
+    pushStory(story) {if (this.listener) this.listener.pushStory(story);}
+    popStory(story) {if (this.listener) this.listener.popStory(story);}
+    pushScene(scene) {if (this.listener) this.listener.pushScene(scene);}
+    popScene(scene) {if (this.listener) this.listener.popScene(scene);}
+    pushShot(shot) {if (this.listener) this.listener.pushShot(shot);}
+    popShot(shot) {if (this.listener) this.listener.popScene(shot);}
+    pushImport() {if (this.listener) this.listener.pushImport();}
+    popImport() {if (this.listener) this.listener.popImport();}
+    importScript(id) {if (this.listener) this.listener.importScript(id);}
+    // #endregion
 }
 
 //const myVisitorInstance = new myCustomVisitor()

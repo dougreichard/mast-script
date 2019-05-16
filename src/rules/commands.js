@@ -8,7 +8,6 @@ module.exports = ($) => {
         $.CONSUME(toks.LT_Op)
         $.CONSUME(toks.Identifier).image
         $.CONSUME(toks.GT_Op)
-        return id;
     })
     $.RULE('annotation', () => {
         $.CONSUME(toks.LT_Op)

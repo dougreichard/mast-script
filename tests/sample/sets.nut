@@ -18,12 +18,11 @@ cast:
 <title> 
 <author>
 <formatter "mastDown">
-story {x: 0}:
+story:
     startup:
         `${@test<test>}`
         `${@test<meta>.alias}`
         `2 = ${@test.XP}`
-        set @test.id += 2
         set @test.XP += 2
 
         `4 = ${@test.XP}`
@@ -35,13 +34,13 @@ story {x: 0}:
 
     enter:
         for i in range(1,10,1):
+            set @test3.HP = @test3<value>.XP
             set @test3.XP += i
-            `XP = ${@test3}`
+            `XP = ${@test3.XP}`
+            
+            `HP = ${@test3.HP}`
             2s
-            "well"
-            1m 1s
-            "wait"
-            100ms
+           
     <skip>
     - skip:
         <transition {type: "FADEOUT"}>
