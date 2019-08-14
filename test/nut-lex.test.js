@@ -1,10 +1,11 @@
-"use strict"
-const indentationExample = require("../src/nut-lex")
-const { tokenMatcher } = require("chevrotain")
-const tokenize = indentationExample.tokenize
+import nutLex from "../src/nut-lex"
+// const { tokenMatcher } = require("chevrotain")
+import  { tokenMatcher } from "chevrotain"
+import {expect} from 'chai'
+const tokenize = nutLex.tokenize
 
 describe("The Chevrotain Lexer ability to lex python like indentation.", () => {
-    test("Can Lex a simple python style if-else ", () => {
+    it("Can Lex a simple python style if-else ", () => {
         let input =
             "if (1)\n" +
             "  if (2)\n" +
@@ -15,39 +16,39 @@ describe("The Chevrotain Lexer ability to lex python like indentation.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.LParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[2], indentationExample.tokens.IntegerLiteral))
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.If)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[1], nutLex.tokens.LParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[2], nutLex.tokens.IntegerLiteral))
             .toBeTruthy()
-        expect(tokenMatcher(actualTokens[3], indentationExample.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[4], indentationExample.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[5], indentationExample.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[6], indentationExample.tokens.LParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[7], indentationExample.tokens.IntegerLiteral))
+        expect(tokenMatcher(actualTokens[3], nutLex.tokens.RParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[4], nutLex.tokens.Indent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[5], nutLex.tokens.If)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[6], nutLex.tokens.LParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[7], nutLex.tokens.IntegerLiteral))
             .toBeTruthy()
-        expect(tokenMatcher(actualTokens[8], indentationExample.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[9], indentationExample.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[10], indentationExample.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[11], indentationExample.tokens.LParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[8], nutLex.tokens.RParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[9], nutLex.tokens.Indent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[10], nutLex.tokens.If)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[11], nutLex.tokens.LParen)).toBeTruthy()
         expect(
-            tokenMatcher(actualTokens[12], indentationExample.tokens.IntegerLiteral)
+            tokenMatcher(actualTokens[12], nutLex.tokens.IntegerLiteral)
         ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[13], indentationExample.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[14], indentationExample.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[15], indentationExample.tokens.TellCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[13], nutLex.tokens.RParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[14], nutLex.tokens.Indent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[15], nutLex.tokens.TellCmd)).toBeTruthy()
         expect(
-            tokenMatcher(actualTokens[16], indentationExample.tokens.IntegerLiteral)
+            tokenMatcher(actualTokens[16], nutLex.tokens.IntegerLiteral)
         ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[17], indentationExample.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[18], indentationExample.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[19], indentationExample.tokens.Else)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[20], indentationExample.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[21], indentationExample.tokens.TellCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[17], nutLex.tokens.Outdent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[18], nutLex.tokens.Outdent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[19], nutLex.tokens.Else)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[20], nutLex.tokens.Indent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[21], nutLex.tokens.TellCmd)).toBeTruthy()
         expect(
-            tokenMatcher(actualTokens[22], indentationExample.tokens.StringLiteral)
+            tokenMatcher(actualTokens[22], nutLex.tokens.StringLiteral)
         ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[23], indentationExample.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[24], indentationExample.tokens.Outdent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[23], nutLex.tokens.Outdent)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[24], nutLex.tokens.Outdent)).toBeTruthy()
     })
 })
 
@@ -57,8 +58,8 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.MinuteLiteral))
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[1], nutLex.tokens.MinuteLiteral))
             .toBeTruthy()
         
     })
@@ -67,8 +68,8 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.SecondLiteral))
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[1], nutLex.tokens.SecondLiteral))
             .toBeTruthy()
         
     })
@@ -77,8 +78,8 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], indentationExample.tokens.DelayCmd)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[1], indentationExample.tokens.MillisecondLiteral))
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[1], nutLex.tokens.MillisecondLiteral))
             .toBeTruthy()
         
     })

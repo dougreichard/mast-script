@@ -1,18 +1,22 @@
-const chalk = require("chalk");
-// var chalk = require('ascii-art/kaolin');
-var art = require("ascii-art");
+ import chalk from "chalk";
+//import chalk from 'ascii-art/kaolin';
+import art from "ascii-art";
 
 // const figlet = require("figlet");
-const readline = require('readline');
-const NutParser = require("./nut-parser")
-const NutListener = require("./nut-listener")
-const { Runner } = require("./nut-commands-local")
-const { Parser, Lexer, createToken } = require("chevrotain")
+import readline from 'readline';
+import NutParser from "./nut-parser.js"
+import NutListener from "./nut-listener.js"
+import { Runner } from "./nut-commands-local.js"
+import chevrotain from "chevrotain"
+let {Parser, Lexer, createToken} = chevrotain
+
+const __filename = import.meta.url.slice(7);
+const __dirname = import.meta.url.slice(7, import.meta.url.lastIndexOf("/"));
 
 // reuse the same parser instance.
 const listener = new NutListener()
 const parser = new NutParser(listener)
-art.Figlet.fontPath = __dirname + '/fonts/';
+art.Figlet.fontPath = process.cwd() + '/fonts/';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -22,17 +26,23 @@ const rl = readline.createInterface({
 
 
 
+let font = 'ANSI Shadow'
+//font = 'doom'
 const init = () => {
     // DOS Rebel
-    return art.font('M', 'ANSI Shadow', 'green')
-        .font('A', 'ANSI Shadow', 'blue')
-        .font('S', 'ANSI Shadow', 'yellow')
-        .font('T', 'ANSI Shadow', 'magenta').toPromise().then((rendered) => {
+    //art.colors = 256
+    return art.font('M', font, 'green')
+        .font('A', font, 'blue')
+        .font('S', font, 'yellow')
+        .font('T', font, 'magenta').toPromise().then((rendered) => {
             console.log(chalk.blue('Multi-Audience Storytelling'))
+            rendered = rendered.replace(/[\r]+/g,'')
             console.log(rendered);
             console.log(chalk.keyword("orange")('Control your narrative'))
         })
 }
+
+
 
 class NutRunner extends Runner {
 
@@ -54,7 +64,7 @@ let runner = new NutRunner()
 
 const main = async () => {
     await init();
-    rl.prompt()
+   rl.prompt()
 }
 
 const run = createToken({ name: "run", pattern: /run/ })
@@ -64,9 +74,9 @@ const list = createToken({ name: "list", pattern: /list/ })
 const WhiteSpace = createToken({ name: "WhiteSpace", pattern: /[ \t\n\r]+/, group: Lexer.SKIPPED })
 const file = createToken({ name: "file", pattern: /[\w+\/\.]+/ })
 const allTokens = [load, run, exit, list, WhiteSpace, file]
-const commandLexer = new Lexer(allTokens);
+const commandLexer = new chevrotain.Lexer(allTokens);
 
-class CommandParser extends Parser {
+class CommandParser extends chevrotain.Parser {
     constructor() {
         super(allTokens, { outputCst: false })
         this.commands(this)
@@ -149,7 +159,7 @@ class CommandParser extends Parser {
         })
     }
 }
-cmdLine = new CommandParser()
+let cmdLine = new CommandParser()
 
 rl.on('line', (line) => {
     rl.prompt();
