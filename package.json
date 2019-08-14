@@ -2,16 +2,15 @@
   "name": "mast-script",
   "version": "1.0.0",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "src/index.js",
+  "files": [
+    "/src"
+  ],
   "scripts": {
     "start": "node --experimental-modules src/nut-repl.mjs"
   },
   "dependencies": {
-    "ascii-art": "^1.5.1",
-    "canvas": "^2.5.0",
-    "chalk": "^2.4.2",
     "chevrotain": "^4.3.2",
-    "figlet": "^1.2.1",
     "lodash.isempty": "^4.4.0",
     "lodash.last": "^3.0.0",
     "lodash.partialright": "^4.2.1"
@@ -21,5 +20,9 @@
     "esm": "^3.2.25",
     "jest": "^24.7.1",
     "mocha": "^6.2.0"
-  }
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
+  },
+  "homepage": "https://mast-script.com"
 }
