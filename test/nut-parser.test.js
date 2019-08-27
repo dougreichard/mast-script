@@ -1,11 +1,14 @@
 "use strict"
-const spsLexer = require('../src/nut-lex')
+const {NutLexer} = require('../src/nut-lex')
 //const expect = require("chai").expect
-const NutParser = require("../src/nut-parser")
-const NutListener = require("../src/nut-listener")
+const {NutParser} = require("../src/nut-parser")
+const {NutListener} = require("../src/nut-listener")
+const {NutVisitor} = require("../src/nut-visitor")
 // reuse the same parser instance.
 const parser = new NutParser(new NutListener())
+const visitor = new NutVisitor(new NutListener())
 const path = require('path')
+import {expect} from 'chai'
 
 
 function log (...args) {
@@ -27,7 +30,7 @@ describe("Parse json", () => {
     it("Test Parse JSON", () => {
         let input = `{ "k" : 1,   "k2":"Hello, World" }`
         let out = parseFragment(input, 'objectValue');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
     it("Test JSON values", ()=> {
         let v = {
@@ -42,9 +45,10 @@ describe("Parse json", () => {
         }
         let input = JSON.stringify(v);
         let out = parseFragment(input, 'objectValue');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
       //  expect(out.value).to.not.be.undefined("Test")
-        expect(out.value).toEqual(v, "Value does not equal")
+        let obj = visitor.objectValue(out.value);
+        expect(obj).to.deep.equal(v, "Value does not equal")
     })
 })
 
@@ -75,7 +79,7 @@ going further'
 
     
         let out = parseFragment(input, 'roles');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
 })
 
@@ -101,7 +105,7 @@ describe("Parse cast", () => {
 this is  a lon g line
 going further'`
         let out = parseFragment(input, 'cast');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
 })
 
@@ -116,7 +120,7 @@ cast:
 
 `
         let out = parseFragment(input, 'script');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
 })
 
@@ -130,7 +134,7 @@ describe("Parse media", () => {
     !image3 ('test')
 `
         let out = parseFragment(input, 'media');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
 })
 
@@ -145,7 +149,7 @@ startup:
 
 `
         let out = parseFragment(input, 'startup');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
     it("Test enter", () => {
         let input =
@@ -156,7 +160,7 @@ enter:
     tell "World"
 `
         let out = parseFragment(input, 'enter');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
     it("Test leave", () => {
         let input =
@@ -167,7 +171,7 @@ leave:
     tell "world"
 `
         let out = parseFragment(input, 'leave');
-        expect(out.parseErrors.length).toEqual(0, 'Expected no errors')
+        expect(out.parseErrors.length).to.equal(0, 'Expected no errors')
     })
 })
 function parseFile (folder, fn) {
@@ -179,9 +183,9 @@ function parseFile (folder, fn) {
         for (let pe of out.parseErrors) {
             log(`${fn} PARSE ERROR ${pe.token.startLine}:${pe.token.startOffset} - ${pe.message}`)
         }
-        expect(out.lexErrors.length).toEqual(0, 
+        expect(out.lexErrors.length).to.equal(0, 
             'Error '+fn + dumpTokenErrors(out.lexErrors))
-        expect(out.parseErrors.length).toEqual(0, 
+        expect(out.parseErrors.length).to.equal(0, 
             'Error '+fn + dumpErrors(out.parseErrors))
     })
 }

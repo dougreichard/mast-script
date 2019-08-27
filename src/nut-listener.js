@@ -1,8 +1,8 @@
-import NutParser from './nut-parser.js'
+import {NutParser} from './nut-parser.js'
 import {SymbolTypes, TellTypes} from './nut-types.js'
 import Scopes from './nut-scopes-local.js'
 
-export default class NutListener {
+export  class NutListener {
     constructor() {
        this.reset()
         this.import = new NutParser( this)

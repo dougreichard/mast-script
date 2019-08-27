@@ -16,39 +16,39 @@ describe("The Chevrotain Lexer ability to lex python like indentation.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], nutLex.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[1], nutLex.tokens.LParen)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.If)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[1], nutLex.tokens.LParen)).to.not.equal(null)
         expect(tokenMatcher(actualTokens[2], nutLex.tokens.IntegerLiteral))
-            .toBeTruthy()
-        expect(tokenMatcher(actualTokens[3], nutLex.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[4], nutLex.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[5], nutLex.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[6], nutLex.tokens.LParen)).toBeTruthy()
+            .to.not.equal(null)
+        expect(tokenMatcher(actualTokens[3], nutLex.tokens.RParen)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[4], nutLex.tokens.Indent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[5], nutLex.tokens.If)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[6], nutLex.tokens.LParen)).to.not.equal(null)
         expect(tokenMatcher(actualTokens[7], nutLex.tokens.IntegerLiteral))
-            .toBeTruthy()
-        expect(tokenMatcher(actualTokens[8], nutLex.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[9], nutLex.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[10], nutLex.tokens.If)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[11], nutLex.tokens.LParen)).toBeTruthy()
+            .to.not.equal(null)
+        expect(tokenMatcher(actualTokens[8], nutLex.tokens.RParen)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[9], nutLex.tokens.Indent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[10], nutLex.tokens.If)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[11], nutLex.tokens.LParen)).to.not.equal(null)
         expect(
             tokenMatcher(actualTokens[12], nutLex.tokens.IntegerLiteral)
-        ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[13], nutLex.tokens.RParen)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[14], nutLex.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[15], nutLex.tokens.TellCmd)).toBeTruthy()
+        ).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[13], nutLex.tokens.RParen)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[14], nutLex.tokens.Indent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[15], nutLex.tokens.TellCmd)).to.not.equal(null)
         expect(
             tokenMatcher(actualTokens[16], nutLex.tokens.IntegerLiteral)
-        ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[17], nutLex.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[18], nutLex.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[19], nutLex.tokens.Else)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[20], nutLex.tokens.Indent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[21], nutLex.tokens.TellCmd)).toBeTruthy()
+        ).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[17], nutLex.tokens.Outdent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[18], nutLex.tokens.Outdent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[19], nutLex.tokens.Else)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[20], nutLex.tokens.Indent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[21], nutLex.tokens.TellCmd)).to.not.equal(null)
         expect(
             tokenMatcher(actualTokens[22], nutLex.tokens.StringLiteral)
-        ).toBeTruthy()
-        expect(tokenMatcher(actualTokens[23], nutLex.tokens.Outdent)).toBeTruthy()
-        expect(tokenMatcher(actualTokens[24], nutLex.tokens.Outdent)).toBeTruthy()
+        ).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[23], nutLex.tokens.Outdent)).to.not.equal(null)
+        expect(tokenMatcher(actualTokens[24], nutLex.tokens.Outdent)).to.not.equal(null)
     })
 })
 
@@ -58,9 +58,9 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).to.not.equal(null)
         expect(tokenMatcher(actualTokens[1], nutLex.tokens.MinuteLiteral))
-            .toBeTruthy()
+            .to.not.equal(null)
         
     })
     it("Can Lex time seconds", () => {
@@ -68,9 +68,9 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).to.not.equal(null)
         expect(tokenMatcher(actualTokens[1], nutLex.tokens.SecondLiteral))
-            .toBeTruthy()
+            .to.not.equal(null)
         
     })
     it("Can Lex time ms", () => {
@@ -78,9 +78,9 @@ describe("Sps lex.", () => {
 
         let lexResult = tokenize(input)
         let actualTokens = lexResult.tokens
-        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).toBeTruthy()
+        expect(tokenMatcher(actualTokens[0], nutLex.tokens.DelayCmd)).to.not.equal(null)
         expect(tokenMatcher(actualTokens[1], nutLex.tokens.MillisecondLiteral))
-            .toBeTruthy()
+            .to.not.equal(null)
         
     })
 })

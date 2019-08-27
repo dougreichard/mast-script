@@ -1,4 +1,4 @@
-import  NutParser from "./nut-parser.js"
+import  {NutParser} from "./nut-parser.js"
 const parser = new NutParser()
 //const castVisits  = require('./rules/cast').visits
 
@@ -175,15 +175,11 @@ export class NutVisitor extends BaseNutVisitorWithDefaults {
 
     // #region JSON
     objectValue(ctx) {
-        let x = 1
-        x++
-        // let value
-        // value = $.OR([
-        //     // using ES6 Arrow functions to reduce verbosity.
-        //     { ALT: () => $.SUBRULE($.object) },
-        //     { ALT: () => $.SUBRULE($.array) }
-        // ])
-        // return value
+        if (ctx.children.array) {
+            return this.array(ctx.children.array[0].children)
+        } else if (ctx.children.object) {
+            return this.object(ctx.children.object[0].children)
+        }
     }
 
     // the parsing methods
@@ -199,7 +195,12 @@ export class NutVisitor extends BaseNutVisitorWithDefaults {
     }
 
     objectItem(ctx) {
-        let key = ctx.Identifier[0].image
+        let key;
+        if (ctx.Identifier) {
+            key = ctx.Identifier[0].image
+        } else if (ctx.StringLiteral) {
+            key = this.trimString(ctx.StringLiteral[0].image)
+        }
         let value = this.value(ctx.value[0].children);
         return { key, value }
     }

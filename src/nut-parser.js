@@ -15,10 +15,9 @@ import stateRules from './rules/states.js'
 import objectiveRules from './rules/objectives.js'
 import interactionRules from './rules/interactions.js'
 import importRules from './rules/import.js'
-import module from 'module'
 
 
-export default class NutParser extends ch.Parser {
+export class NutParser extends ch.Parser {
     constructor(listener) {
         super(Object.values(NutLexer.tokens), 
             { outputCst: true, recoveryEnabled : true }
@@ -116,5 +115,5 @@ export default class NutParser extends ch.Parser {
     popImport() {if (this.listener) this.listener.popImport();}
     importScript(id) {if (this.listener) this.listener.importScript(id);}
 }
-NutParser.defaultPaths = [module.__dirname]
-//module.exports = NutParser
+
+NutParser.defaultPaths = [process.cwd()]

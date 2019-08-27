@@ -1,5 +1,5 @@
-import NutParser from "./nut-parser.js"
-import NutListener from "./nut-listener.js"
+import {NutParser} from "./nut-parser.js"
+import {NutListener} from "./nut-listener.js"
 import { Runner } from "./nut-commands-local.js"
 import {NutVisitor} from './nut-visitor.js'
 import path from 'path';

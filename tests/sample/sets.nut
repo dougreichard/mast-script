@@ -1,6 +1,6 @@
 cast:
     <css {width: "2em", color:"blue"}>
-    <value {XP: 2, HP:5}>
+    <Health {XP: 2, HP:5}>
     <test 2>
     @test ('Doug was here') 
 

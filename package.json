@@ -1,13 +1,13 @@
 {
   "name": "mast-script",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "src/index.js",
   "files": [
     "/src"
   ],
   "scripts": {
-    "start": "node --experimental-modules src/nut-repl.mjs"
+    "test": ""
   },
   "dependencies": {
     "chevrotain": "^4.3.2",
@@ -21,7 +21,7 @@
     "mocha": "^6.2.0"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "homepage": "https://mast-script.com"
 }

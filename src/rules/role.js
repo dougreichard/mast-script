@@ -20,8 +20,9 @@ export default ($) => {
         $.CONSUME(toks.Colon)
         $.CONSUME(toks.Indent)
         $.MANY(() => {
-            let role = $.SUBRULE($.roleDef)
-            $.addRole(role)
+            //let role = 
+            $.SUBRULE($.roleDef)
+//            $.addRole(role)
         })
         $.CONSUME(toks.Outdent)
     })
@@ -32,10 +33,10 @@ export default ($) => {
     $.RULE("roleDef", () => {
         $.SUBRULE($.annotationList)
         $.OR([
-            {ALT: ()=> $.CONSUME(toks.RoleId).image},
-            {ALT: ()=> '#'+ $.CONSUME(toks.Identifier).image}
+            {ALT: ()=> $.CONSUME(toks.RoleId)},
+            {ALT: ()=> '#'+ $.CONSUME(toks.Identifier)}
         ]);
         $.OPTION(() =>  $.SUBRULE($.aliasString))
-        $.OPTION2(() =>  $.CONSUME(toks.StringLiteral).image)
+        $.OPTION2(() =>  $.CONSUME(toks.StringLiteral))
     })
 }
